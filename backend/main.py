@@ -1,4 +1,5 @@
 import os
+import requests
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
@@ -10,6 +11,7 @@ load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("Les variables d'environnement SUPABASE_URL ou SUPABASE_KEY sont manquantes.")
@@ -27,6 +29,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def send_welcome_email(to_email: str, token: str):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+    
+    # Lien de désinscription (pointant vers ton serveur local pour l'instant)
+    unsubscribe_link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={token}"
+    
+    payload = {
+        "sender": {"name": "Azimut", "email": "arthurlouette12@gmail.com"}, # ⚠️ À REMPLACER
+        "to": [{"email": to_email}],
+        "subject": "Bienvenue dans la newsletter de la section ! 🏕️",
+        "htmlContent": f"""
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #2E7D32;">Bienvenue !</h2>
+            <p>Tu es maintenant inscrit(e) pour recevoir toutes les informations de la section.</p>
+            <br><br>
+            <p style="font-size: 12px; color: gray;">
+                Pour te désabonner à tout moment, <a href="{unsubscribe_link}">clique ici</a>.
+            </p>
+        </div>
+        """
+    }
+    
+    # On envoie la requête à Brevo
+    response = requests.post(url, json=payload, headers=headers)
+    
+    # Petit affichage dans le terminal pour vérifier que ça a marché
+    if response.status_code == 201:
+        print(f"✅ E-mail envoyé avec succès à {to_email}")
+    else:
+        print(f"❌ Erreur lors de l'envoi : {response.text}")
+
 # Modèle de données pour valider l'e-mail reçu
 class SubscriberRequest(BaseModel):
     email: EmailStr
@@ -43,12 +81,12 @@ def subscribe(payload: SubscriberRequest):
             "is_subscribed": True
         }).execute()
         
-        # Si l'insertion réussit, on récupère les données de l'abonné (notamment son token)
+        # On récupère les données de l'abonné UNE SEULE FOIS :
         subscriber_data = response.data[0]
         token = subscriber_data["unsubscribe_token"]
         
-        # C'est ici que nous brancherons le script d'envoi d'e-mail à la prochaine étape !
-        print(f"👉 TODO: Envoyer l'e-mail de confirmation à {payload.email} avec le token {token}")
+        # Envoi du vrai e-mail de bienvenue
+        send_welcome_email(payload.email, str(token))
         
         return {
             "status": "success",
