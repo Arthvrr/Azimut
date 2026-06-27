@@ -1,0 +1,5 @@
+1. faire mass mail avec interface propre pour admin (envoi d'emails à tout les emails de la newsletters abonnés)
+2. faire interface client (connexion + mdp + mdp oublié etc) pour voir calendrier d'éphéméride et derniers mails envoyés
+3. faire bouton se désabonner/s'abonner newsletter client
+4. ajouter interface admin ajout réunion + évent à calendrier interactif
+5. faire form absence parents

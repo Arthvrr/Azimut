@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azimut - Espace Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        scout: {
+                            green: '#2E7D32',
+                            light: '#E8F5E9',
+                            dark: '#1B5E20'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
+            <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Chef</span></h1>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto mt-10 p-6">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6 border-b border-gray-100 pb-4">Rédiger une Newsletter</h2>
+            
+            <form id="massMailForm" class="space-y-6">
+                <div>
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Sujet de l'e-mail</label>
+                    <input type="text" id="subject" name="subject" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green focus:border-scout-green outline-none transition-colors"
+                        placeholder="Ex: Convocation pour la réunion du 15 mars">
+                </div>
+
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message (Supporte les sauts de ligne)</label>
+                    <textarea id="message" name="message" rows="8" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green focus:border-scout-green outline-none transition-colors resize-y"
+                        placeholder="Bonjour à tous..."></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-4">
+                    <p id="statusMessage" class="text-sm font-medium"></p>
+                    <button type="submit" id="submitBtn" 
+                        class="bg-scout-green hover:bg-scout-dark text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2">
+                        <span>Envoyer à la section</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        document.getElementById('massMailForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Empêche la page de se recharger
+
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const btn = document.getElementById('submitBtn');
+            const statusText = document.getElementById('statusMessage');
+
+            // Mise à jour de l'UI pendant le chargement
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.innerHTML = 'Envoi en cours...';
+            statusText.textContent = '';
+
+            try {
+                // Appel à ton API locale
+                const response = await fetch('http://127.0.0.1:8000/api/v1/send-mass-newsletter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: subject,
+                        message: message,
+                        section_id: 1
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusText.textContent = data.message;
+                    statusText.className = "text-sm font-medium text-scout-green";
+                    document.getElementById('massMailForm').reset(); // Vide le formulaire
+                } else {
+                    throw new Error(data.detail || "Une erreur est survenue.");
+                }
+            } catch (error) {
+                statusText.textContent = "Erreur : " + error.message;
+                statusText.className = "text-sm font-medium text-red-600";
+            } finally {
+                // Restauration du bouton
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.innerHTML = 'Envoyer à la section';
+            }
+        });
+    </script>
+</body>
+</html>
