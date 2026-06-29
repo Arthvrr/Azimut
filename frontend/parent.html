@@ -25,7 +25,12 @@
             <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
-        <button id="logoutBtn" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
+        
+        <div id="userMenu" class="hidden">
+            <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
+                Connecté en tant que : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
+            </span>
+        </div>
     </nav>
 
     <main class="max-w-xl mx-auto mt-10 p-6">
@@ -34,14 +39,27 @@
             <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">Connexion Parent</h2>
             <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
             
-            <div id="authForm" class="space-y-4">
+            <div id="authForm" class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse E-mail</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none transition-colors">
                 </div>
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                    <div class="relative">
+                        <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none pr-12 transition-colors">
+                        <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-scout-green transition-colors">
+                            <svg id="eyeIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Le mot de passe doit contenir au moins 6 caractères.
+                    </p>
                 </div>
                 
                 <div class="flex gap-4 pt-2">
@@ -54,7 +72,8 @@
             </div>
         </div>
 
-        <div id="dashboardSection" class="hidden">
+        <div id="dashboardSection" class="hidden space-y-6">
+            
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
                 <div class="w-16 h-16 bg-scout-light rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -67,6 +86,34 @@
                 </button>
                 <p id="subMessage" class="mt-4 text-sm font-medium"></p>
             </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Modifier mon mot de passe</h3>
+                        <p class="text-sm text-gray-500">Sécurisez votre compte.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 6 caractères)" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none transition-colors">
+                    <button type="button" id="updatePasswordBtn" class="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors w-full sm:w-auto">
+                        Mettre à jour
+                    </button>
+                    <p id="updatePasswordMsg" class="mt-2 text-sm font-medium"></p>
+                </div>
+            </div>
+
+            <div class="text-center pt-4">
+                <button id="logoutBtn" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Se déconnecter de mon espace
+                </button>
+            </div>
+            
         </div>
     </main>
 
@@ -84,10 +131,26 @@
             subBtn: document.getElementById('toggleSubBtn'),
             subMsg: document.getElementById('subMessage'),
             emailInput: document.getElementById('email'),
-            passwordInput: document.getElementById('password')
+            passwordInput: document.getElementById('password'),
+            userMenu: document.getElementById('userMenu'),
+            userEmailDisplay: document.getElementById('userEmailDisplay')
         };
 
-        // Fonction pour récupérer l'e-mail en toute sécurité
+        // --- GESTION DE L'OEIL DU MOT DE PASSE ---
+        document.getElementById('togglePasswordBtn').addEventListener('click', () => {
+            const type = ui.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            ui.passwordInput.setAttribute('type', type);
+            
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (type === 'text') {
+                // Icône oeil barré
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />`;
+            } else {
+                // Icône oeil ouvert
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
+        });
+
         async function getActiveEmail() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             return session?.user?.email;
@@ -101,6 +164,12 @@
                 
                 if (!email || !password) {
                     ui.msg.textContent = "Veuillez remplir l'e-mail et le mot de passe.";
+                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                    return;
+                }
+
+                if (password.length < 6) {
+                    ui.msg.textContent = "Le mot de passe doit faire au moins 6 caractères.";
                     ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
                     return;
                 }
@@ -119,8 +188,8 @@
                     ui.msg.textContent = result.error.message;
                     ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
                 } else {
-                    showDashboard();
-                    await checkSubscriptionStatus(); // L'auto-abonnement se fera ici
+                    await showDashboard();
+                    await checkSubscriptionStatus(); 
                 }
             } catch (err) {
                 console.error("Erreur d'authentification:", err);
@@ -166,7 +235,6 @@
                 ui.subBtn.disabled = true;
                 ui.subBtn.textContent = "Chargement...";
 
-                // CORRECTION ICI : .from() au lieu de .table()
                 const { data, error } = await supabaseClient
                     .from('newsletter_subscribers')
                     .select('*')
@@ -178,7 +246,6 @@
                 if (data && data.length > 0) {
                     isSubscribed = data[0].is_subscribed;
                 } else {
-                    // CORRECTION ICI : .from()
                     const { error: insErr } = await supabaseClient
                         .from('newsletter_subscribers')
                         .insert([{ section_id: 1, email: activeEmail, is_subscribed: true }]);
@@ -200,14 +267,13 @@
         document.getElementById('toggleSubBtn').addEventListener('click', async () => {
             try {
                 const activeEmail = await getActiveEmail();
-                if (!activeEmail) throw new Error("Votre session a expiré, veuillez vous reconnecter.");
+                if (!activeEmail) throw new Error("Votre session a expiré.");
 
                 ui.subBtn.disabled = true;
                 ui.subBtn.textContent = "Mise à jour...";
                 
                 const newStatus = !isSubscribed;
 
-                // CORRECTION ICI : .from() au lieu de .table()
                 const { error } = await supabaseClient
                     .from('newsletter_subscribers')
                     .update({ is_subscribed: newStatus })
@@ -240,21 +306,60 @@
             }
         }
 
+        // --- MISE A JOUR DU MOT DE PASSE (DEPUIS LE DASHBOARD) ---
+        document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPassword').value;
+            const msg = document.getElementById('updatePasswordMsg');
+            const btn = document.getElementById('updatePasswordBtn');
+
+            if (!newPassword || newPassword.length < 6) {
+                msg.textContent = "Le mot de passe doit faire au moins 6 caractères.";
+                msg.className = "mt-2 text-sm font-medium text-red-600";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Mise à jour...";
+
+            const { data, error } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                msg.textContent = "Erreur : " + error.message;
+                msg.className = "mt-2 text-sm font-medium text-red-600";
+            } else {
+                msg.textContent = "Mot de passe mis à jour avec succès !";
+                msg.className = "mt-2 text-sm font-medium text-scout-green";
+                document.getElementById('newPassword').value = ""; // Vider le champ
+            }
+            
+            btn.disabled = false;
+            btn.textContent = "Mettre à jour";
+        });
+
         // --- GESTION DE L'AFFICHAGE ---
-        function showDashboard() {
+        async function showDashboard() {
             ui.auth.classList.add('hidden');
             ui.dash.classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.remove('hidden');
+            ui.userMenu.classList.remove('hidden');
+            
+            // Affichage de l'e-mail dans la barre de navigation
+            const activeEmail = await getActiveEmail();
+            ui.userEmailDisplay.textContent = activeEmail;
         }
 
         function showLogin() {
             ui.auth.classList.remove('hidden');
             ui.dash.classList.add('hidden');
-            document.getElementById('logoutBtn').classList.add('hidden');
+            ui.userMenu.classList.add('hidden');
+            
             ui.emailInput.value = "";
             ui.passwordInput.value = "";
             ui.msg.textContent = "";
             ui.subMsg.textContent = "";
+            document.getElementById('updatePasswordMsg').textContent = "";
+            document.getElementById('newPassword').value = "";
         }
 
         // Vérification de la session au démarrage
