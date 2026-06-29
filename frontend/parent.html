@@ -24,10 +24,11 @@
             <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
-        <div id="userMenu" class="hidden">
+        <div id="userMenu" class="hidden flex items-center gap-4">
             <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
                 Connecté : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
             </span>
+            <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
         </div>
     </nav>
 
@@ -43,7 +44,15 @@
             
             <form id="loginForm" class="space-y-4">
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label><input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <button type="button" onclick="togglePassword('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                        </button>
+                    </div>
+                </div>
                 <button type="submit" id="loginBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Se connecter</button>
                 <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button></div>
             </form>
@@ -57,10 +66,26 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Section</label>
                     <select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green bg-white"><option value="">-- Choisir une unité d'abord --</option></select>
                 </div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label><input type="text" id="regCode" required placeholder="Ex: PARENTS-TROUPE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label>
+                    <div class="relative">
+                        <input type="password" id="regCode" required placeholder="Ex: PARENTS-CODE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </button>
+                    </div>
+                </div>
                 <hr class="my-4">
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label><input type="password" id="regPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label>
+                    <div class="relative">
+                        <input type="password" id="regPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <button type="button" onclick="togglePassword('regPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </button>
+                    </div>
+                </div>
                 <button type="submit" id="registerBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Créer mon compte</button>
             </form>
         </div>
@@ -95,11 +120,16 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-2">Sécurité</h3>
-                    <div class="flex gap-2">
-                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="flex-1 px-4 py-2 rounded-lg border outline-none text-sm">
-                        <button type="button" id="updatePasswordBtn" class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium">Modifier</button>
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full px-4 py-2 rounded-lg border outline-none text-sm pr-10">
+                            <button type="button" onclick="togglePassword('newPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                            </button>
+                        </div>
+                        <button type="button" id="updatePasswordBtn" class="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">Modifier</button>
+                        <p id="updatePasswordMsg" class="mt-2 text-xs font-medium text-center"></p>
                     </div>
-                    <p id="updatePasswordMsg" class="mt-2 text-xs font-medium"></p>
                 </div>
             </div>
 
@@ -111,7 +141,7 @@
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
 
-            <div class="text-center pt-4 pb-10"><button id="logoutBtn" class="text-red-500 hover:text-red-700 font-medium">Se déconnecter</button></div>
+            <div class="text-center pt-4 pb-10"><button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium">Se déconnecter de l'Espace Parent</button></div>
         </div>
     </main>
 
@@ -149,7 +179,7 @@
         
         let isSubscribed = false;
         let parentCalendarInstance = null; 
-        let currentSectionId = null; // LA VARIABLE MAGIQUE !
+        let currentSectionId = null;
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -157,6 +187,18 @@
             tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister'),
             userMenu: document.getElementById('userMenu'), userEmailDisplay: document.getElementById('userEmailDisplay')
         };
+
+        // --- FONCTION MAGIQUE : AFFICHER/MASQUER LE MOT DE PASSE ---
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = `<svg class="w-5 h-5 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`;
+            } else {
+                input.type = 'password';
+                btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>`;
+            }
+        }
 
         // --- GESTION DES ONGLETS AUTHENTIFICATION ---
         ui.tabLogin.addEventListener('click', () => {
@@ -196,7 +238,6 @@
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                // On cherche la section_id dans newsletter_subscribers
                 const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', email).maybeSingle();
                 if(sub) currentSectionId = sub.section_id;
                 else throw new Error("Votre compte n'est lié à aucune section. Veuillez vous réinscrire.");
@@ -216,15 +257,12 @@
             ui.msg.textContent = "Vérification..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
             
             try {
-                // 1. Vérifier le code_parent dans la base
                 const { data: sec } = await supabaseClient.from('sections').select('code_parent').eq('id', sectionId).single();
                 if(!sec || sec.code_parent !== codeInput) throw new Error("Code secret parent invalide.");
 
-                // 2. Créer le compte
                 const { error } = await supabaseClient.auth.signUp({ email, password });
                 if (error) throw error;
 
-                // 3. Lier directement à la section (Auto-abonnement de base)
                 await supabaseClient.from('newsletter_subscribers').insert([{ section_id: sectionId, email: email, is_subscribed: true }]);
                 
                 currentSectionId = sectionId;
@@ -232,11 +270,31 @@
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
+        // Gestion de la Déconnexion
+        const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
+        document.getElementById('logoutBtnNav').addEventListener('click', logoutAction);
+        document.getElementById('logoutBtnMain').addEventListener('click', logoutAction);
+
+        // --- MOT DE PASSE OUBLIÉ ET SÉCURITÉ ---
+        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            if (!email) { ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus."; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; return; }
+            ui.msg.textContent = "Envoi du lien..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            if (error) { ui.msg.textContent = error.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; }
+            else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-scout-green"; }
+        });
+
+        document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPassword').value;
+            const msg = document.getElementById('updatePasswordMsg');
+            if (!newPassword || newPassword.length < 6) { msg.textContent = "Min. 6 caractères."; msg.className = "mt-2 text-sm font-medium text-red-600"; return; }
+            const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+            if (error) { msg.textContent = error.message; msg.className = "mt-2 text-sm font-medium text-red-600"; } 
+            else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-scout-green"; document.getElementById('newPassword').value = ""; }
+        });
 
         // --- TABLEAU DE BORD DYNAMIQUE ---
-        // (Toutes les requêtes utilisent désormais `currentSectionId` !)
-
         async function loadChildren() {
             const email = await getActiveEmail();
             const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email).eq('section_id', currentSectionId);
@@ -251,7 +309,7 @@
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
-        // Modale Enfant (Ajout de section_id)
+        // Modale Enfant
         document.getElementById('openChildModalBtn').addEventListener('click', () => { document.getElementById('childForm').reset(); document.getElementById('childModal').classList.remove('hidden'); });
         document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
 
@@ -266,7 +324,7 @@
                     pdfUrl = supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
                 }
                 const childData = {
-                    parent_email: email, section_id: currentSectionId, // L'ENFANT EST LIÉ À LA SECTION !
+                    parent_email: email, section_id: currentSectionId,
                     first_name: document.getElementById('cFirstName').value, last_name: document.getElementById('cLastName').value,
                     allergies: document.getElementById('cAllergies').value, care_instructions: document.getElementById('cCare').value,
                     parent1_name: document.getElementById('cP1Name').value, parent1_phone: document.getElementById('cP1Phone').value,
@@ -279,7 +337,7 @@
             } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
         });
 
-        // Absences (lié aux événements de la section_id)
+        // Absences
         async function loadUpcomingEvents() {
             const select = document.getElementById('absEvent');
             const { data } = await supabaseClient.from('events').select('id, title, start_time').eq('section_id', currentSectionId).gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
@@ -297,7 +355,7 @@
             } catch (err) { msg.textContent = err.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold"; }
         });
 
-        // Calendrier (lié à la section_id)
+        // Calendrier
         function initParentCalendar() {
             if (parentCalendarInstance) parentCalendarInstance.destroy();
             parentCalendarInstance = new FullCalendar.Calendar(document.getElementById('parentCalendar'), {
@@ -337,7 +395,6 @@
 
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
-                // Au rechargement, on doit retrouver le currentSectionId
                 const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', session.user.email).maybeSingle();
                 if(sub) { currentSectionId = sub.section_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
             } else { ui.auth.classList.remove('hidden'); }
