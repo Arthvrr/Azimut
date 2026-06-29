@@ -8,10 +8,11 @@
 - listing gouter
 - qr code paiement du camp
 - messagerie privée à un parent d'enfant OK
-- ajout chefs d'u (email à tout les parents d'une même unité)
+- ajout chefs d'u (email à tout les parents d'une même unité) OK
 - rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
-- possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent) ex : carnet de camp
+- possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent et email chefs d'unités) ex : carnet de camp
 - listes de TODO à faire pour chaque parent
+- message de redirection qualis
 
 - faire index.html de présentation du site
 - faire logo et icone du site
