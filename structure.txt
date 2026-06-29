@@ -1,0 +1,5 @@
+une unité comporte plusieurs sections (scoute, louveteaux, baladins, guides,... au moins 1)
+une section possède plusieurs admins/chefs (au moins 1)
+une section possède sa propre base de données de parents (lié à un email)
+un parent peut avoir plusieurs enfants dans une section
+une section d'une unité doit avoir son propre environnement (newsletter avec emails de parent unique, admins/chefs uniques,...)

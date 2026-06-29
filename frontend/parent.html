@@ -8,13 +8,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' } }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' } } } } }
     </script>
     <style>
         .fc .fc-toolbar-title { font-size: 1.1rem; font-weight: 700; color: #111827; text-transform: capitalize; }
@@ -39,72 +33,56 @@
 
     <main class="max-w-6xl mx-auto mt-10 p-6">
         
-        <div id="authSection" class="max-w-xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">Connexion Parent</h2>
+        <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div class="flex mb-6 border-b border-gray-200">
+                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green transition-colors">Se connecter</button>
+                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Rejoindre une section</button>
+            </div>
+            
             <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
             
-            <div id="authForm" class="space-y-5">
+            <form id="loginForm" class="space-y-4">
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label><input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <button type="submit" id="loginBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Se connecter</button>
+                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button></div>
+            </form>
+
+            <form id="registerForm" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse E-mail</label>
-                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Unité</label>
+                    <select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green bg-white"><option value="">Chargement...</option></select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label>
-                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Section</label>
+                    <select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green bg-white"><option value="">-- Choisir une unité d'abord --</option></select>
                 </div>
-                <div class="flex gap-4 pt-2">
-                    <button type="button" id="loginBtn" class="flex-1 bg-scout-green hover:bg-scout-dark text-white px-4 py-3 rounded-lg font-medium">Se connecter</button>
-                    <button type="button" id="registerBtn" class="flex-1 bg-white border-2 border-scout-green text-scout-green hover:bg-scout-light px-4 py-3 rounded-lg font-medium">S'inscrire</button>
-                </div>
-            </div>
-            <div class="mt-6 text-center">
-                <button id="forgotPasswordBtn" class="text-sm text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button>
-            </div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label><input type="text" id="regCode" required placeholder="Ex: PARENTS-TROUPE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <hr class="my-4">
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label><input type="password" id="regPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <button type="submit" id="registerBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Créer mon compte</button>
+            </form>
         </div>
 
         <div id="dashboardSection" class="hidden space-y-6">
-            
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2>
-                            <p class="text-sm text-gray-500">Gérez les fiches médicales.</p>
-                        </div>
-                        <button id="openChildModalBtn" class="bg-scout-light text-scout-green hover:bg-scout-green hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-                            + Ajouter
-                        </button>
+                        <div><h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2><p class="text-sm text-gray-500">Gérez les fiches médicales.</p></div>
+                        <button id="openChildModalBtn" class="bg-scout-light text-scout-green hover:bg-scout-green hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">+ Ajouter</button>
                     </div>
-                    <div id="childrenList" class="space-y-3 flex-1 overflow-y-auto max-h-[300px]">
-                        <p class="text-sm text-gray-500 text-center italic mt-4">Chargement...</p>
-                    </div>
+                    <div id="childrenList" class="space-y-3 flex-1 overflow-y-auto max-h-[300px]"><p class="text-sm text-gray-500 text-center italic mt-4">Chargement...</p></div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-2">Signaler une absence</h2>
                     <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Prévenez les chefs en un clic.</p>
-                    
                     <form id="absenceForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label>
-                            <select id="absChild" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none bg-white">
-                                <option value="">Chargement...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label>
-                            <select id="absEvent" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none bg-white">
-                                <option value="">Chargement...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label>
-                            <input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
-                        </div>
-                        <button type="submit" id="submitAbsenceBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Envoyer le signalement
-                        </button>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label><select id="absChild" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label><select id="absEvent" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label><input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border outline-none"></div>
+                        <button type="submit" id="submitAbsenceBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Envoyer le signalement</button>
                         <p id="absenceMsg" class="text-sm text-center mt-2"></p>
                     </form>
                 </div>
@@ -112,19 +90,14 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Newsletter</h3>
-                        <p class="text-sm text-gray-500">Convocations et actus.</p>
-                        <p id="subMessage" class="mt-1 text-xs font-medium"></p>
-                    </div>
+                    <div><h3 class="text-lg font-bold text-gray-900">Newsletter</h3><p class="text-sm text-gray-500">Convocations et actus.</p><p id="subMessage" class="mt-1 text-xs font-medium"></p></div>
                     <button id="toggleSubBtn" class="px-6 py-2 rounded-lg font-medium transition-colors text-sm">Chargement...</button>
                 </div>
-
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-2">Sécurité</h3>
                     <div class="flex gap-2">
-                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none text-sm">
-                        <button type="button" id="updatePasswordBtn" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-sm font-medium">Modifier</button>
+                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="flex-1 px-4 py-2 rounded-lg border outline-none text-sm">
+                        <button type="button" id="updatePasswordBtn" class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium">Modifier</button>
                     </div>
                     <p id="updatePasswordMsg" class="mt-2 text-xs font-medium"></p>
                 </div>
@@ -138,12 +111,7 @@
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
 
-            <div class="text-center pt-4 pb-10">
-                <button id="logoutBtn" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">
-                    Se déconnecter
-                </button>
-            </div>
-            
+            <div class="text-center pt-4 pb-10"><button id="logoutBtn" class="text-red-500 hover:text-red-700 font-medium">Se déconnecter</button></div>
         </div>
     </main>
 
@@ -152,32 +120,19 @@
             <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
             <form id="childForm" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg"></div>
                 </div>
-                
                 <div class="bg-scout-light p-4 rounded-lg">
-                    <label class="block text-sm font-bold text-scout-dark mb-1">Fiche médicale (PDF)</label>
-                    <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm text-gray-600">
-                    <p class="text-xs text-scout-green mt-1">Optionnel. Remplacera l'ancien fichier si fourni.</p>
+                    <label class="block text-sm font-bold">Fiche médicale (PDF)</label>
+                    <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm mt-1">
                 </div>
-
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none" placeholder="Arachides, piqûres de guêpes..."></textarea></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none"></textarea></div>
-                
+                <div><label class="block text-sm font-medium">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea></div>
+                <div><label class="block text-sm font-medium">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea></div>
                 <div class="grid grid-cols-2 gap-4 border-t pt-4">
-                    <div>
-                        <p class="font-bold text-sm text-gray-800 mb-2">Parent 1</p>
-                        <input type="text" id="cP1Name" placeholder="Nom complet" required class="w-full px-3 py-2 border rounded-lg outline-none mb-2 text-sm">
-                        <input type="tel" id="cP1Phone" placeholder="Téléphone" required class="w-full px-3 py-2 border rounded-lg outline-none text-sm">
-                    </div>
-                    <div>
-                        <p class="font-bold text-sm text-gray-800 mb-2">Parent 2 (Optionnel)</p>
-                        <input type="text" id="cP2Name" placeholder="Nom complet" class="w-full px-3 py-2 border rounded-lg outline-none mb-2 text-sm">
-                        <input type="tel" id="cP2Phone" placeholder="Téléphone" class="w-full px-3 py-2 border rounded-lg outline-none text-sm">
-                    </div>
+                    <div><p class="font-bold text-sm mb-2">Parent 1</p><input type="text" id="cP1Name" placeholder="Nom" required class="w-full px-3 py-2 border rounded-lg mb-2 text-sm"><input type="tel" id="cP1Phone" placeholder="Tél" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
+                    <div><p class="font-bold text-sm mb-2">Parent 2 (Optionnel)</p><input type="text" id="cP2Name" placeholder="Nom" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm"><input type="tel" id="cP2Phone" placeholder="Tél" class="w-full px-3 py-2 border rounded-lg text-sm"></div>
                 </div>
-
                 <div class="flex gap-2 pt-4">
                     <button type="button" id="closeChildModalBtn" class="flex-1 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-medium">Annuler</button>
                     <button type="submit" id="saveChildBtn" class="flex-1 bg-scout-green text-white px-4 py-2 rounded-lg font-medium">Enregistrer</button>
@@ -194,223 +149,198 @@
         
         let isSubscribed = false;
         let parentCalendarInstance = null; 
+        let currentSectionId = null; // LA VARIABLE MAGIQUE !
 
         const ui = {
-            auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'),
-            msg: document.getElementById('authMessage'), subBtn: document.getElementById('toggleSubBtn'),
-            subMsg: document.getElementById('subMessage'), emailInput: document.getElementById('email'),
-            passwordInput: document.getElementById('password'), userMenu: document.getElementById('userMenu'),
-            userEmailDisplay: document.getElementById('userEmailDisplay')
+            auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
+            loginForm: document.getElementById('loginForm'), registerForm: document.getElementById('registerForm'),
+            tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister'),
+            userMenu: document.getElementById('userMenu'), userEmailDisplay: document.getElementById('userEmailDisplay')
         };
 
-        async function getActiveEmail() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            return session?.user?.email;
-        }
+        // --- GESTION DES ONGLETS AUTHENTIFICATION ---
+        ui.tabLogin.addEventListener('click', () => {
+            ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            ui.msg.textContent = "";
+        });
+        ui.tabRegister.addEventListener('click', () => {
+            ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden');
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            ui.msg.textContent = ""; loadUnites(); // Charger les unités
+        });
 
-        // --- AUTHENTIFICATION ---
-        async function handleAuth(action) {
+        // --- CHARGEMENT DYNAMIQUE UNITÉS & SECTIONS ---
+        async function loadUnites() {
+            const { data } = await supabaseClient.from('unites').select('id, nom_complet');
+            const select = document.getElementById('regUnite');
+            if(data) select.innerHTML = '<option value="">-- Choisir une unité --</option>' + data.map(u => `<option value="${u.id}">${u.nom_complet}</option>`).join('');
+        }
+        document.getElementById('regUnite').addEventListener('change', async (e) => {
+            const uniteId = e.target.value;
+            const select = document.getElementById('regSection');
+            if(!uniteId) { select.innerHTML = '<option value="">-- Choisir une unité d\'abord --</option>'; return; }
+            const { data } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', uniteId);
+            if(data) select.innerHTML = '<option value="">-- Choisir une section --</option>' + data.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
+        });
+
+        async function getActiveEmail() { const { data: { session } } = await supabaseClient.auth.getSession(); return session?.user?.email; }
+
+        // --- CONNEXION ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value;
+            ui.msg.textContent = "Connexion..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
             try {
-                const email = ui.emailInput.value, password = ui.passwordInput.value;
-                if (!email || !password) throw new Error("Veuillez remplir l'e-mail et le mot de passe.");
-                ui.msg.textContent = "Chargement..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
-
-                let res = action === 'login' ? await supabaseClient.auth.signInWithPassword({ email, password }) : await supabaseClient.auth.signUp({ email, password });
-                if (res.error) throw res.error;
-                
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                // On cherche la section_id dans newsletter_subscribers
+                const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', email).maybeSingle();
+                if(sub) currentSectionId = sub.section_id;
+                else throw new Error("Votre compte n'est lié à aucune section. Veuillez vous réinscrire.");
                 await showDashboard();
-                await checkSubscriptionStatus(); 
-            } catch (err) {
-                ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
-            }
-        }
-        document.getElementById('loginBtn').addEventListener('click', () => handleAuth('login'));
-        document.getElementById('registerBtn').addEventListener('click', () => handleAuth('register'));
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
+        // --- INSCRIPTION & VERIFICATION DU CODE ---
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sectionId = document.getElementById('regSection').value;
+            const codeInput = document.getElementById('regCode').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            if(!sectionId) return alert("Veuillez choisir une section.");
+            ui.msg.textContent = "Vérification..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
+            
+            try {
+                // 1. Vérifier le code_parent dans la base
+                const { data: sec } = await supabaseClient.from('sections').select('code_parent').eq('id', sectionId).single();
+                if(!sec || sec.code_parent !== codeInput) throw new Error("Code secret parent invalide.");
+
+                // 2. Créer le compte
+                const { error } = await supabaseClient.auth.signUp({ email, password });
+                if (error) throw error;
+
+                // 3. Lier directement à la section (Auto-abonnement de base)
+                await supabaseClient.from('newsletter_subscribers').insert([{ section_id: sectionId, email: email, is_subscribed: true }]);
+                
+                currentSectionId = sectionId;
+                await showDashboard();
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
         document.getElementById('logoutBtn').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
 
-        // --- GESTION ENFANTS ---
+        // --- TABLEAU DE BORD DYNAMIQUE ---
+        // (Toutes les requêtes utilisent désormais `currentSectionId` !)
+
         async function loadChildren() {
             const email = await getActiveEmail();
-            const { data, error } = await supabaseClient.from('children').select('*').eq('parent_email', email);
-            const list = document.getElementById('childrenList');
-            const absSelect = document.getElementById('absChild');
+            const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email).eq('section_id', currentSectionId);
+            const list = document.getElementById('childrenList'), absSelect = document.getElementById('absChild');
             
-            if (error || !data || data.length === 0) {
+            if (!data || data.length === 0) {
                 list.innerHTML = `<p class="text-sm text-gray-500 italic mt-2">Aucun enfant ajouté.</p>`;
                 absSelect.innerHTML = `<option value="">Ajoutez d'abord un enfant</option>`;
                 return;
             }
-
-            list.innerHTML = data.map(c => `
-                <div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-gray-800">${c.first_name} ${c.last_name}</p>
-                        ${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}
-                    </div>
-                    ${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 text-scout-green font-bold">📄 Voir PDF</a>` : '<span class="text-xs text-gray-400">Pas de PDF</span>'}
-                </div>
-            `).join('');
-
+            list.innerHTML = data.map(c => `<div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center"><div><p class="font-bold">${c.first_name} ${c.last_name}</p>${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}</div>${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded text-scout-green font-bold">📄 Voir PDF</a>` : ''}</div>`).join('');
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
-        document.getElementById('openChildModalBtn').addEventListener('click', () => {
-            document.getElementById('childForm').reset();
-            document.getElementById('childModal').classList.remove('hidden');
-        });
+        // Modale Enfant (Ajout de section_id)
+        document.getElementById('openChildModalBtn').addEventListener('click', () => { document.getElementById('childForm').reset(); document.getElementById('childModal').classList.remove('hidden'); });
         document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
 
         document.getElementById('childForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('saveChildBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
-            const err = document.getElementById('childErrorMsg'); err.classList.add('hidden');
-            const email = await getActiveEmail();
-
+            e.preventDefault(); const btn = document.getElementById('saveChildBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
             try {
-                // 1. Upload PDF si présent
-                const fileInput = document.getElementById('cMedicalFile');
-                let pdfUrl = null;
+                const email = await getActiveEmail(); let pdfUrl = null; const fileInput = document.getElementById('cMedicalFile');
                 if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const fileName = `${email}_${Date.now()}_${file.name}`;
-                    const { data, error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, file);
-                    if (uploadErr) throw new Error("Erreur PDF. Avez-vous créé le bucket 'medical_files' public ?");
+                    const fileName = `${email}_${Date.now()}_${fileInput.files[0].name}`;
+                    const { error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, fileInput.files[0]);
+                    if (uploadErr) throw uploadErr;
                     pdfUrl = supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
                 }
-
-                // 2. Sauvegarde base de données
                 const childData = {
-                    parent_email: email,
-                    first_name: document.getElementById('cFirstName').value,
-                    last_name: document.getElementById('cLastName').value,
-                    allergies: document.getElementById('cAllergies').value,
-                    care_instructions: document.getElementById('cCare').value,
-                    parent1_name: document.getElementById('cP1Name').value,
-                    parent1_phone: document.getElementById('cP1Phone').value,
-                    parent2_name: document.getElementById('cP2Name').value,
-                    parent2_phone: document.getElementById('cP2Phone').value
+                    parent_email: email, section_id: currentSectionId, // L'ENFANT EST LIÉ À LA SECTION !
+                    first_name: document.getElementById('cFirstName').value, last_name: document.getElementById('cLastName').value,
+                    allergies: document.getElementById('cAllergies').value, care_instructions: document.getElementById('cCare').value,
+                    parent1_name: document.getElementById('cP1Name').value, parent1_phone: document.getElementById('cP1Phone').value,
+                    parent2_name: document.getElementById('cP2Name').value, parent2_phone: document.getElementById('cP2Phone').value,
+                    medical_file_url: pdfUrl
                 };
-                if (pdfUrl) childData.medical_file_url = pdfUrl;
-
                 const { error } = await supabaseClient.from('children').insert([childData]);
                 if (error) throw error;
-
-                document.getElementById('childModal').classList.add('hidden');
-                await loadChildren();
-            } catch (error) {
-                err.textContent = error.message; err.classList.remove('hidden');
-            } finally {
-                btn.disabled = false; btn.textContent = "Enregistrer";
-            }
+                document.getElementById('childModal').classList.add('hidden'); await loadChildren();
+            } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
         });
 
-        // --- GESTION ABSENCES ---
+        // Absences (lié aux événements de la section_id)
         async function loadUpcomingEvents() {
             const select = document.getElementById('absEvent');
-            const { data, error } = await supabaseClient.from('events').select('id, title, start_time').gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
-            
-            if (error || !data || data.length === 0) {
-                select.innerHTML = `<option value="">Aucun événement futur</option>`;
-                return;
-            }
-            select.innerHTML = `<option value="">-- Choisir --</option>` + data.map(e => {
-                const date = new Date(e.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit'});
-                return `<option value="${e.id}">${e.title} (${date})</option>`;
-            }).join('');
+            const { data } = await supabaseClient.from('events').select('id, title, start_time').eq('section_id', currentSectionId).gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
+            if (!data || data.length === 0) { select.innerHTML = `<option value="">Aucun événement futur</option>`; return; }
+            select.innerHTML = `<option value="">-- Choisir --</option>` + data.map(e => `<option value="${e.id}">${e.title} (${new Date(e.start_time).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'})})</option>`).join('');
         }
-
         document.getElementById('absenceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitAbsenceBtn'); btn.disabled = true;
-            const msg = document.getElementById('absenceMsg'); msg.textContent = "Envoi..."; msg.className = "text-sm text-center mt-2 text-gray-500";
-            
+            e.preventDefault(); const msg = document.getElementById('absenceMsg'); msg.textContent = "Envoi...";
             try {
-                const childId = document.getElementById('absChild').value;
-                const eventId = document.getElementById('absEvent').value;
-                const reason = document.getElementById('absReason').value;
-
-                if (!childId || !eventId) throw new Error("Veuillez sélectionner un enfant et un événement.");
-
+                const childId = document.getElementById('absChild').value, eventId = document.getElementById('absEvent').value, reason = document.getElementById('absReason').value;
+                if (!childId || !eventId) throw new Error("Sélection manquante.");
                 const { error } = await supabaseClient.from('absences').insert([{ child_id: childId, event_id: eventId, reason: reason }]);
-                
-                if (error) {
-                    if (error.code === '23505') throw new Error("Cette absence est déjà signalée."); // Code SQL unique
-                    throw error;
-                }
-
-                msg.textContent = "Absence signalée avec succès aux chefs !"; msg.className = "text-sm text-center mt-2 text-scout-green font-bold";
-                document.getElementById('absReason').value = "";
-            } catch (error) {
-                msg.textContent = error.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold";
-            } finally {
-                btn.disabled = false;
-            }
+                if (error) throw error;
+                msg.textContent = "Absence signalée !"; msg.className = "text-sm text-center mt-2 text-scout-green font-bold"; document.getElementById('absReason').value = "";
+            } catch (err) { msg.textContent = err.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold"; }
         });
 
-
-        // --- CALENDRIER PARENT ---
+        // Calendrier (lié à la section_id)
         function initParentCalendar() {
             if (parentCalendarInstance) parentCalendarInstance.destroy();
-            var calendarEl = document.getElementById('parentCalendar');
-            parentCalendarInstance = new FullCalendar.Calendar(calendarEl, {
+            parentCalendarInstance = new FullCalendar.Calendar(document.getElementById('parentCalendar'), {
                 initialView: 'dayGridMonth', locale: 'fr', firstDay: 1,
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
-                buttonText: { today: "Aujourd'hui", month: 'Mois', week: 'Semaine', list: 'Planning' },
                 events: async function(info, successCallback, failureCallback) {
-                    const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', 1);
+                    const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', currentSectionId);
                     if (error) failureCallback(error);
-                    else {
-                        successCallback(data.map(e => ({
-                            id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time),
-                            extendedProps: { description: e.description, location: e.location },
-                            backgroundColor: '#2E7D32', borderColor: '#1B5E20'
-                        })));
-                    }
+                    else successCallback(data.map(e => ({ id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#2E7D32', borderColor: '#1B5E20' })));
                 },
-                eventClick: function(info) {
-                    const desc = info.event.extendedProps.description || "Aucune description.";
-                    const loc = info.event.extendedProps.location || "Non précisé.";
-                    alert(`Événement : ${info.event.title}\nLieu : ${loc}\n\nDétails : ${desc}`);
-                }
+                eventClick: function(info) { alert(`Événement : ${info.event.title}\nLieu : ${info.event.extendedProps.location || "Non précisé"}\nDétails : ${info.event.extendedProps.description || "Aucun"}`); }
             });
             parentCalendarInstance.render();
         }
 
-        // --- GESTION NEWSLETTER (inchangée) ---
+        // Newsletter
         async function checkSubscriptionStatus() {
             const activeEmail = await getActiveEmail();
-            if (!activeEmail) return;
-            const { data, error } = await supabaseClient.from('newsletter_subscribers').select('*').eq('email', activeEmail).eq('section_id', 1);
-            if (data && data.length > 0) isSubscribed = data[0].is_subscribed;
-            else {
-                await supabaseClient.from('newsletter_subscribers').insert([{ section_id: 1, email: activeEmail, is_subscribed: true }]);
-                isSubscribed = true;
-            }
+            const { data } = await supabaseClient.from('newsletter_subscribers').select('is_subscribed').eq('email', activeEmail).eq('section_id', currentSectionId).maybeSingle();
+            isSubscribed = data ? data.is_subscribed : false;
             updateSubButton();
         }
         document.getElementById('toggleSubBtn').addEventListener('click', async () => {
-            const activeEmail = await getActiveEmail();
-            const newStatus = !isSubscribed;
-            await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', 1);
+            const activeEmail = await getActiveEmail(); const newStatus = !isSubscribed;
+            await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', currentSectionId);
             isSubscribed = newStatus; updateSubButton();
         });
-        function updateSubButton() {
-            ui.subBtn.textContent = isSubscribed ? "Se désabonner" : "S'abonner";
-            ui.subBtn.className = isSubscribed ? "px-6 py-2 rounded-lg font-medium text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg font-medium text-sm bg-scout-green text-white";
-        }
+        function updateSubButton() { document.getElementById('toggleSubBtn').textContent = isSubscribed ? "Se désabonner" : "S'abonner"; document.getElementById('toggleSubBtn').className = isSubscribed ? "px-6 py-2 rounded-lg text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg text-sm bg-scout-green text-white"; }
 
         // --- INITIALISATION GLOBALE ---
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
             ui.userEmailDisplay.textContent = await getActiveEmail();
-            await loadChildren();
-            await loadUpcomingEvents();
+            await loadChildren(); await loadUpcomingEvents(); await checkSubscriptionStatus();
             setTimeout(() => { initParentCalendar(); }, 100);
         }
 
-        supabaseClient.auth.getSession().then(({ data: { session } }) => {
-            if (session) { showDashboard(); checkSubscriptionStatus(); } 
-            else { ui.auth.classList.remove('hidden'); }
+        supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+            if (session) {
+                // Au rechargement, on doit retrouver le currentSectionId
+                const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', session.user.email).maybeSingle();
+                if(sub) { currentSectionId = sub.section_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
+            } else { ui.auth.classList.remove('hidden'); }
         });
     </script>
 </body>

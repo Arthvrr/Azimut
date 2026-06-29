@@ -8,22 +8,13 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' }
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' } } } } }
     </script>
     <style>
         .fc .fc-toolbar-title { font-size: 1.25rem; font-weight: 700; color: #111827; text-transform: capitalize; }
         .fc .fc-button-primary { background-color: #2E7D32 !important; border-color: #2E7D32 !important; }
         .fc .fc-button-primary:hover { background-color: #1B5E20 !important; }
-        .fc-event { cursor: pointer; transition: opacity 0.2s; }
-        .fc-event:hover { opacity: 0.9; }
+        .fc-event { cursor: pointer; transition: opacity 0.2s; } .fc-event:hover { opacity: 0.9; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
@@ -33,43 +24,79 @@
             <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Chef</span></h1>
         </div>
+        <button id="logoutBtn" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
     </nav>
 
     <main class="max-w-6xl mx-auto mt-10 p-6 space-y-8">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Rédiger une Newsletter</h2>
-                <form id="massMailForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
-                        <input type="text" id="subject" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                        <textarea id="message" rows="5" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none resize-y"></textarea>
-                    </div>
-                    <button type="submit" id="submitBtn" class="w-full bg-scout-green hover:bg-scout-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                        Envoyer à la section
-                    </button>
-                    <p id="statusMessage" class="mt-2 text-sm font-medium text-center"></p>
-                </form>
+        <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div class="flex mb-6 border-b border-gray-200">
+                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green transition-colors">Connexion Chef</button>
+                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Nouveau Chef</button>
             </div>
+            <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div><label class="block text-sm font-medium">E-mail Scout</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div><label class="block text-sm font-medium">Mot de passe</label><input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <button type="submit" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark">Se connecter</button>
+            </form>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Absences signalées</h2>
-                <div id="absencesList" class="space-y-4 overflow-y-auto flex-1 max-h-[350px] pr-2">
-                    <p class="text-gray-500 text-sm text-center italic mt-10">Chargement des absences...</p>
+            <form id="registerForm" class="space-y-4 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Unité</label><select id="regUnite" required class="w-full px-3 py-2 border rounded outline-none"><option value="">Chargement...</option></select></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Section</label><select id="regSection" required class="w-full px-3 py-2 border rounded outline-none"><option value="">-- Unité ? --</option></select></div>
                 </div>
-            </div>
+                <div><label class="block text-sm font-medium text-red-600 mb-1">Code secret staff</label><input type="text" id="regCode" required placeholder="Ex: STAFF-TROUPE-SECURE" class="w-full px-4 py-2 rounded-lg border outline-none border-red-200 focus:ring-2 focus:ring-red-400"></div>
+                <hr>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="regFName" required class="w-full px-3 py-2 border rounded outline-none"></div>
+                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="regLName" required class="w-full px-3 py-2 border rounded outline-none"></div>
+                </div>
+                <div><label class="block text-sm font-medium">Totem</label><input type="text" id="regTotem" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <div><label class="block text-sm font-medium">Mot de passe (min. 6 car.)</label><input type="password" id="regPassword" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <button type="submit" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark">Valider mon profil Chef</button>
+            </form>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                <h2 class="text-xl font-bold text-gray-900">Calendrier de la section</h2>
-                <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Cliquez pour ajouter/modifier</span>
+        <div id="dashboardSection" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Newsletter Générale</h2>
+                    <form id="massMailForm" class="space-y-4">
+                        <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="subject" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                        <div><label class="block text-sm font-medium">Message</label><textarea id="message" rows="5" required class="w-full px-4 py-2 border rounded-lg outline-none"></textarea></div>
+                        <button type="submit" id="submitBtn" class="w-full bg-scout-green text-white px-6 py-3 rounded-lg font-medium">Envoyer à la section</button>
+                        <p id="statusMessage" class="mt-2 text-sm font-medium text-center"></p>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Contacter un parent</h2>
+                    <form id="directMailForm" class="space-y-4">
+                        <div><label class="block text-sm font-medium">Enfant concerné</label><select id="dmChild" required class="w-full px-4 py-2 border rounded-lg outline-none bg-white"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="dmSubject" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                        <div><label class="block text-sm font-medium">Message</label><textarea id="dmMessage" rows="3" required class="w-full px-4 py-2 border rounded-lg outline-none"></textarea></div>
+                        <button type="submit" id="submitDmBtn" class="w-full bg-gray-800 text-white px-6 py-3 rounded-lg font-medium">Envoyer l'e-mail</button>
+                        <p id="dmStatusMessage" class="mt-2 text-sm font-medium text-center"></p>
+                        <p class="text-xs text-gray-400 italic text-center">Nécessite la route API backend /send-single-email</p>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1 flex flex-col">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Absences signalées</h2>
+                    <div id="absencesList" class="space-y-4 overflow-y-auto flex-1 max-h-[350px] pr-2"><p class="text-gray-500 text-sm text-center mt-10">Chargement...</p></div>
+                </div>
             </div>
-            <div id="calendar" class="min-h-[600px]"></div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Calendrier de la section</h2>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Cliquez pour ajouter/modifier</span>
+                </div>
+                <div id="calendar" class="min-h-[600px]"></div>
+            </div>
         </div>
     </main>
 
@@ -77,35 +104,19 @@
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             <h3 id="modalTitle" class="text-lg font-bold text-gray-900 mb-4">Ajouter un événement</h3>
             <form id="eventForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Titre</label>
-                    <input type="text" id="eventTitle" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Lieu / Adresse</label>
-                    <input type="text" id="eventLocation" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none" placeholder="Ex: Au local">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description (Matériel...)</label>
-                    <textarea id="eventDesc" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none"></textarea>
-                </div>
+                <div><label class="block text-sm font-medium">Titre</label><input type="text" id="eventTitle" required class="w-full px-4 py-2 border rounded-lg"></div>
+                <div><label class="block text-sm font-medium">Lieu / Adresse</label><input type="text" id="eventLocation" class="w-full px-4 py-2 border rounded-lg" placeholder="Ex: Au local"></div>
+                <div><label class="block text-sm font-medium">Description</label><textarea id="eventDesc" rows="2" class="w-full px-4 py-2 border rounded-lg"></textarea></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Début</label>
-                        <input type="datetime-local" id="eventStart" required class="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fin</label>
-                        <input type="datetime-local" id="eventEnd" required class="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none">
-                    </div>
+                    <div><label class="block text-sm font-medium">Début</label><input type="datetime-local" id="eventStart" required class="w-full px-4 py-2 border rounded-lg"></div>
+                    <div><label class="block text-sm font-medium">Fin</label><input type="datetime-local" id="eventEnd" required class="w-full px-4 py-2 border rounded-lg"></div>
                 </div>
-                
                 <div class="flex gap-2 pt-4">
-                    <button type="button" id="deleteEventBtn" class="hidden flex-1 bg-white border-2 border-red-500 text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg font-medium transition-colors">Supprimer</button>
-                    <button type="button" id="closeModalBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg font-medium transition-colors">Annuler</button>
-                    <button type="submit" id="saveEventBtn" class="flex-1 bg-scout-green hover:bg-scout-dark text-white px-3 py-2 rounded-lg font-medium transition-colors">Enregistrer</button>
+                    <button type="button" id="deleteEventBtn" class="hidden flex-1 bg-white border-2 border-red-500 text-red-500 px-3 py-2 rounded-lg font-medium">Supprimer</button>
+                    <button type="button" id="closeModalBtn" class="flex-1 bg-gray-100 text-gray-800 px-3 py-2 rounded-lg font-medium">Annuler</button>
+                    <button type="submit" id="saveEventBtn" class="flex-1 bg-scout-green text-white px-3 py-2 rounded-lg font-medium">Enregistrer</button>
                 </div>
-                <p id="eventError" class="text-sm text-red-600 hidden text-center mt-2"></p>
+                <p id="eventError" class="text-sm text-red-600 hidden mt-2"></p>
             </form>
         </div>
     </div>
@@ -115,176 +126,191 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // --- CHARGEMENT DES ABSENCES ---
+        let currentSectionId = null;
+
+        const ui = {
+            auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
+            loginForm: document.getElementById('loginForm'), registerForm: document.getElementById('registerForm'),
+            tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister')
+        };
+
+        // --- GESTION DES ONGLETS AUTHENTIFICATION ---
+        ui.tabLogin.addEventListener('click', () => {
+            ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            ui.msg.textContent = "";
+        });
+        ui.tabRegister.addEventListener('click', () => {
+            ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden');
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            ui.msg.textContent = ""; loadUnites();
+        });
+
+        // --- CHARGEMENT DYNAMIQUE UNITÉS & SECTIONS ---
+        async function loadUnites() {
+            const { data } = await supabaseClient.from('unites').select('id, nom_complet');
+            const select = document.getElementById('regUnite');
+            if(data) select.innerHTML = '<option value="">-- Choisir une unité --</option>' + data.map(u => `<option value="${u.id}">${u.nom_complet}</option>`).join('');
+        }
+        document.getElementById('regUnite').addEventListener('change', async (e) => {
+            const select = document.getElementById('regSection');
+            if(!e.target.value) { select.innerHTML = '<option value="">-- Unité ? --</option>'; return; }
+            const { data } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', e.target.value);
+            if(data) select.innerHTML = '<option value="">-- Choisir une section --</option>' + data.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
+        });
+
+        // --- AUTHENTIFICATION CHEF ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value;
+            ui.msg.textContent = "Vérification..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                // Vérifier si l'utilisateur est bien dans la table admins
+                const { data: admin } = await supabaseClient.from('admins').select('section_id').eq('email', email).maybeSingle();
+                if(admin) { currentSectionId = admin.section_id; showDashboard(); }
+                else { await supabaseClient.auth.signOut(); throw new Error("Accès refusé. Vous n'êtes pas reconnu comme membre du Staff."); }
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sectionId = document.getElementById('regSection').value;
+            const codeInput = document.getElementById('regCode').value;
+            const email = document.getElementById('regEmail').value, password = document.getElementById('regPassword').value;
+            const fname = document.getElementById('regFName').value, lname = document.getElementById('regLName').value, totem = document.getElementById('regTotem').value;
+            
+            if(!sectionId) return alert("Choisissez une section.");
+            ui.msg.textContent = "Création du profil chef..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
+            
+            try {
+                // 1. Validation du CODE SECRET CHEF
+                const { data: sec } = await supabaseClient.from('sections').select('code_chef').eq('id', sectionId).single();
+                if(!sec || sec.code_chef !== codeInput) throw new Error("Code secret staff invalide !");
+
+                // 2. Création Auth
+                const { error: authErr } = await supabaseClient.auth.signUp({ email, password });
+                if (authErr) throw authErr;
+
+                // 3. Insertion Admin
+                const { error: adminErr } = await supabaseClient.from('admins').insert([{ email: email, first_name: fname, last_name: lname, totem: totem, section_id: sectionId }]);
+                if (adminErr) throw adminErr;
+                
+                currentSectionId = sectionId; showDashboard();
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
+
+        // --- DASHBOARD (Isolé par currentSectionId) ---
+
+        // 1. Absences
         async function fetchAbsences() {
             const list = document.getElementById('absencesList');
-            // On joint les tables pour avoir les noms des enfants et les titres des événements !
-            const { data, error } = await supabaseClient
-                .from('absences')
-                .select(`
-                    reason,
-                    created_at,
-                    events (title, start_time),
-                    children (first_name, last_name)
-                `)
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                list.innerHTML = `<p class="text-red-500 text-sm">Erreur: ${error.message}</p>`;
-                return;
-            }
-
-            if (data.length === 0) {
-                list.innerHTML = `<p class="text-gray-500 text-sm text-center mt-10">Aucune absence signalée.</p>`;
-                return;
-            }
-
-            list.innerHTML = data.map(abs => {
-                const eventDate = new Date(abs.events.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: 'long'});
-                return `
-                <div class="p-4 border border-gray-100 rounded-lg bg-red-50 border-l-4 border-l-red-500">
-                    <div class="flex justify-between items-start mb-1">
-                        <h4 class="font-bold text-gray-900">${abs.children.first_name} ${abs.children.last_name}</h4>
-                        <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">Absent(e)</span>
-                    </div>
-                    <p class="text-sm font-medium text-gray-800 mb-1">🏕️ ${abs.events.title} (${eventDate})</p>
-                    <p class="text-sm text-gray-600 italic">Motif : ${abs.reason || 'Non précisé'}</p>
-                </div>
-                `;
-            }).join('');
+            // Grâce à currentSectionId, on ne voit QUE les absences de notre section !
+            const { data, error } = await supabaseClient.from('absences').select(`reason, created_at, events!inner(title, start_time, section_id), children(first_name, last_name)`).eq('events.section_id', currentSectionId).order('created_at', { ascending: false });
+            if (!data || data.length === 0) { list.innerHTML = `<p class="text-gray-500 text-sm text-center mt-10">Aucune absence.</p>`; return; }
+            list.innerHTML = data.map(abs => `<div class="p-4 border border-gray-100 rounded-lg bg-red-50 border-l-4 border-l-red-500"><div class="flex justify-between items-start mb-1"><h4 class="font-bold text-gray-900">${abs.children.first_name} ${abs.children.last_name}</h4><span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">Absent(e)</span></div><p class="text-sm font-medium text-gray-800 mb-1">🏕️ ${abs.events.title} (${new Date(abs.events.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: 'long'})})</p><p class="text-sm text-gray-600 italic">Motif : ${abs.reason || 'Non précisé'}</p></div>`).join('');
         }
 
-        // --- GESTION NEWSLETTER ---
+        // 2. Messagerie Directe (Charge les enfants de la section)
+        async function loadDmChildren() {
+            const { data } = await supabaseClient.from('children').select('parent_email, first_name, last_name').eq('section_id', currentSectionId);
+            const select = document.getElementById('dmChild');
+            if(data) select.innerHTML = '<option value="">-- Choisir un enfant --</option>' + data.map(c => `<option value="${c.parent_email}">${c.first_name} ${c.last_name} (Parent: ${c.parent_email})</option>`).join('');
+        }
+        
+        document.getElementById('directMailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // TODO : Lier avec une nouvelle route FastAPI /api/v1/send-direct-email
+            document.getElementById('dmStatusMessage').textContent = "⚠️ Fonctionnalité en développement côté Backend.";
+            document.getElementById('dmStatusMessage').className = "mt-2 text-sm text-orange-600 font-bold text-center";
+        });
+
+        // 3. Newsletter de masse
         document.getElementById('massMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const statusText = document.getElementById('statusMessage');
+            const btn = document.getElementById('submitBtn'), statusText = document.getElementById('statusMessage');
             btn.disabled = true; btn.textContent = 'Envoi...'; statusText.textContent = '';
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/v1/send-mass-newsletter', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        subject: document.getElementById('subject').value,
-                        message: document.getElementById('message').value,
-                        section_id: 1
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subject: document.getElementById('subject').value, message: document.getElementById('message').value, section_id: currentSectionId })
                 });
                 const data = await response.json();
-                if (response.ok) {
-                    statusText.textContent = data.message;
-                    statusText.className = "mt-2 text-sm font-medium text-center text-scout-green";
-                    document.getElementById('massMailForm').reset();
-                } else throw new Error(data.detail);
-            } catch (error) {
-                statusText.textContent = "Erreur : " + error.message;
-                statusText.className = "mt-2 text-sm font-medium text-center text-red-600";
-            } finally {
-                btn.disabled = false; btn.textContent = 'Envoyer à la section';
-            }
+                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold"; document.getElementById('massMailForm').reset(); }
+                else throw new Error(data.detail);
+            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
+            finally { btn.disabled = false; btn.textContent = 'Envoyer à la section'; }
         });
 
-        // --- CALENDRIER ---
-        function toDatetimeLocal(date) {
-            if (!date) return "";
-            const d = new Date(date);
-            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-            return d.toISOString().slice(0, 16);
-        }
+        // 4. Calendrier Admin
+        let calendar; const eventModal = document.getElementById('eventModal'); let currentEventId = null; 
+        function toDatetimeLocal(date) { if (!date) return ""; const d = new Date(date); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
 
-        let calendar;
-        const eventModal = document.getElementById('eventModal');
-        let currentEventId = null; 
-
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchAbsences(); // Charger les absences au démarrage
-            
+        function initAdminCalendar() {
             var calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'fr',
-                firstDay: 1, 
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listMonth'
-                },
-                buttonText: { today: "Aujourd'hui", month: 'Mois', week: 'Semaine', list: 'Planning' },
+                initialView: 'dayGridMonth', locale: 'fr', firstDay: 1, 
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
                 events: async function(info, successCallback, failureCallback) {
-                    const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', 1);
-                    if (error) failureCallback(error);
-                    else {
-                        const mappedEvents = data.map(e => ({
-                            id: e.id, title: e.title,
-                            start: new Date(e.start_time), end: new Date(e.end_time),
-                            extendedProps: { description: e.description, location: e.location },
-                            backgroundColor: '#2E7D32', borderColor: '#1B5E20'
-                        }));
-                        successCallback(mappedEvents);
-                    }
+                    const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', currentSectionId);
+                    if (error) failureCallback(error); else successCallback(data.map(e => ({ id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#2E7D32', borderColor: '#1B5E20' })));
                 },
                 dateClick: function(info) {
-                    currentEventId = null;
-                    document.getElementById('eventForm').reset();
-                    document.getElementById('modalTitle').textContent = "Ajouter un événement";
-                    document.getElementById('deleteEventBtn').classList.add('hidden');
-                    const dateStr = info.dateStr;
-                    document.getElementById('eventStart').value = `${dateStr}T14:00`;
-                    document.getElementById('eventEnd').value = `${dateStr}T17:00`;
-                    document.getElementById('eventError').classList.add('hidden');
+                    currentEventId = null; document.getElementById('eventForm').reset();
+                    document.getElementById('modalTitle').textContent = "Ajouter un événement"; document.getElementById('deleteEventBtn').classList.add('hidden');
+                    document.getElementById('eventStart').value = `${info.dateStr}T14:00`; document.getElementById('eventEnd').value = `${info.dateStr}T17:00`;
                     eventModal.classList.remove('hidden');
                 },
                 eventClick: function(info) {
-                    currentEventId = info.event.id;
-                    document.getElementById('modalTitle').textContent = "Modifier l'événement";
-                    document.getElementById('eventTitle').value = info.event.title;
-                    document.getElementById('eventDesc').value = info.event.extendedProps.description || "";
+                    currentEventId = info.event.id; document.getElementById('modalTitle').textContent = "Modifier l'événement";
+                    document.getElementById('eventTitle').value = info.event.title; document.getElementById('eventDesc').value = info.event.extendedProps.description || "";
                     document.getElementById('eventLocation').value = info.event.extendedProps.location || "";
-                    document.getElementById('eventStart').value = toDatetimeLocal(info.event.start);
-                    document.getElementById('eventEnd').value = toDatetimeLocal(info.event.end || info.event.start);
-                    document.getElementById('deleteEventBtn').classList.remove('hidden');
-                    document.getElementById('eventError').classList.add('hidden');
-                    eventModal.classList.remove('hidden');
+                    document.getElementById('eventStart').value = toDatetimeLocal(info.event.start); document.getElementById('eventEnd').value = toDatetimeLocal(info.event.end || info.event.start);
+                    document.getElementById('deleteEventBtn').classList.remove('hidden'); eventModal.classList.remove('hidden');
                 }
             });
             calendar.render();
-        });
+        }
 
         document.getElementById('closeModalBtn').addEventListener('click', () => { eventModal.classList.add('hidden'); });
 
         document.getElementById('eventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('saveEventBtn');
-            const errorMsg = document.getElementById('eventError');
-            btn.disabled = true; btn.textContent = "Sauvegarde..."; errorMsg.classList.add('hidden');
-
+            e.preventDefault(); const btn = document.getElementById('saveEventBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
             const eventData = {
-                section_id: 1,
-                title: document.getElementById('eventTitle').value,
-                description: document.getElementById('eventDesc').value,
+                section_id: currentSectionId, // LIÉ À LA SECTION DU CHEF !
+                title: document.getElementById('eventTitle').value, description: document.getElementById('eventDesc').value,
                 location: document.getElementById('eventLocation').value,
-                start_time: new Date(document.getElementById('eventStart').value).toISOString(),
-                end_time: new Date(document.getElementById('eventEnd').value).toISOString()
+                start_time: new Date(document.getElementById('eventStart').value).toISOString(), end_time: new Date(document.getElementById('eventEnd').value).toISOString()
             };
-
             let res = currentEventId ? await supabaseClient.from('events').update(eventData).eq('id', currentEventId) : await supabaseClient.from('events').insert([eventData]);
-            
-            if (res.error) {
-                errorMsg.textContent = res.error.message; errorMsg.classList.remove('hidden');
-            } else {
-                eventModal.classList.add('hidden'); calendar.refetchEvents();
-            }
+            if (res.error) alert(res.error.message); else { eventModal.classList.add('hidden'); calendar.refetchEvents(); }
             btn.disabled = false; btn.textContent = "Enregistrer";
         });
 
         document.getElementById('deleteEventBtn').addEventListener('click', async () => {
-            if (!currentEventId || !confirm("Supprimer définitivement cet événement ?")) return;
-            const btn = document.getElementById('deleteEventBtn');
-            btn.disabled = true; btn.textContent = "...";
-            const { error } = await supabaseClient.from('events').delete().eq('id', currentEventId);
-            if (error) { alert("Erreur: " + error.message); } 
-            else { eventModal.classList.add('hidden'); calendar.refetchEvents(); }
-            btn.disabled = false; btn.textContent = "Supprimer";
+            if (!currentEventId || !confirm("Supprimer définitivement ?")) return;
+            await supabaseClient.from('events').delete().eq('id', currentEventId);
+            eventModal.classList.add('hidden'); calendar.refetchEvents();
+        });
+
+        // --- AFFICHAGE ---
+        function showDashboard() {
+            ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); document.getElementById('logoutBtn').classList.remove('hidden');
+            fetchAbsences(); loadDmChildren();
+            setTimeout(() => { initAdminCalendar(); }, 100);
+        }
+
+        // Vérification de session au démarrage
+        supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+            if (session) {
+                const { data: admin } = await supabaseClient.from('admins').select('section_id').eq('email', session.user.email).maybeSingle();
+                if(admin) { currentSectionId = admin.section_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
+            } else { ui.auth.classList.remove('hidden'); }
         });
     </script>
 </body>

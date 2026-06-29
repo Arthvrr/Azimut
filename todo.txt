@@ -1,7 +1,10 @@
 - abonnement/désabonnement newsletter email OK
 - connexion/inscription à portail parent OK
 - calendrier interactif avec réunions lieux des réunions etc OK
-- ajout signaler absence sur un event enfant
-- gestion fiches médicales, contacts d'urgences etc...
+- ajout signaler absence sur un event enfant OK
+- gestion fiches médicales, contacts d'urgences etc... OK
 - covoiturage ?
 - avoir graphes portail admin avec enfants absents etc...
+- listing gouter
+- qr code paiement du camp
+- messagerie privée à un parent d'enfant
