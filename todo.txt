@@ -7,4 +7,10 @@
 - avoir graphes portail admin avec enfants absents etc...
 - listing gouter
 - qr code paiement du camp
-- messagerie privée à un parent d'enfant
+- messagerie privée à un parent d'enfant OK
+- ajout chefs d'u (email à tout les parents d'une même unité)
+- rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
+- possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent) ex : carnet de camp
+- listes de TODO à faire pour chaque parent
+
+- faire index.html de présentation du site

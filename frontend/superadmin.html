@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azimut - Chef d'Unité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { 
+            unite: { primary: '#1E3A8A', light: '#EFF6FF', dark: '#1E40AF' },
+            scout: { green: '#2E7D32' }
+        } } } }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-unite-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
+            <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Chef d'Unité</span></h1>
+        </div>
+        <button id="logoutBtnNav" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
+    </nav>
+
+    <main class="max-w-5xl mx-auto mt-10 p-6 space-y-8">
+        
+        <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div class="flex mb-6 border-b border-gray-200">
+                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary transition-colors">Connexion</button>
+                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Nouveau Chef d'Unité</button>
+            </div>
+            <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
+                <div><label class="block text-sm font-medium">Mot de passe</label><input type="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
+                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark">Se connecter</button>
+            </form>
+
+            <form id="registerForm" class="space-y-4 hidden">
+                <div><label class="block text-sm font-medium mb-1">Votre Unité</label><select id="regUnite" required class="w-full px-3 py-2 border rounded outline-none"><option value="">Chargement...</option></select></div>
+                <div><label class="block text-sm font-medium text-red-600 mb-1">Code Secret d'Unité</label><input type="password" id="regCode" required class="w-full px-4 py-2 border rounded-lg outline-none border-red-200 focus:ring-2 focus:ring-red-400"></div>
+                <hr>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="regFName" required class="w-full px-3 py-2 border rounded outline-none"></div>
+                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="regLName" required class="w-full px-3 py-2 border rounded outline-none"></div>
+                </div>
+                <div><label class="block text-sm font-medium">Totem</label><input type="text" id="regTotem" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <div><label class="block text-sm font-medium">Mot de passe (min. 6 car.)</label><input type="password" id="regPassword" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark">Valider mon profil</button>
+            </form>
+        </div>
+
+        <div id="dashboardSection" class="hidden space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col border-t-4 border-t-unite-primary">
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Communiquer avec une Section</h2>
+                    <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Envoie un e-mail à tous les parents et staffs de la section sélectionnée.</p>
+                    <form id="sectionMailForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Destinataires (Section)</label>
+                            <select id="mailSection" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary bg-white"><option value="">Chargement...</option></select>
+                        </div>
+                        <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="subject" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
+                        <div><label class="block text-sm font-medium">Message</label><textarea id="message" rows="5" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></textarea></div>
+                        <button type="submit" id="submitBtn" class="w-full bg-unite-primary hover:bg-unite-dark text-white py-3 rounded-lg font-medium">Envoyer le message</button>
+                        <p id="statusMessage" class="mt-2 text-sm font-medium text-center"></p>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col h-[600px]">
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Annuaire de l'Unité</h2>
+                    <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-4">Liste de tous les membres (Staffs & Parents).</p>
+                    <div id="directoryList" class="overflow-y-auto flex-1 pr-2 space-y-6">
+                        <p class="text-gray-500 text-sm text-center mt-10">Chargement de l'annuaire...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-4 pb-10">
+                <button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">Se déconnecter</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUniteId = null;
+
+        const ui = {
+            auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
+            loginForm: document.getElementById('loginForm'), registerForm: document.getElementById('registerForm'),
+            tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister')
+        };
+
+        // --- GESTION ONGLETS ---
+        ui.tabLogin.addEventListener('click', () => {
+            ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary";
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+        });
+        ui.tabRegister.addEventListener('click', () => {
+            ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden');
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary";
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            loadUnites();
+        });
+
+        async function loadUnites() {
+            const { data } = await supabaseClient.from('unites').select('id, nom_complet');
+            const select = document.getElementById('regUnite');
+            if(data) select.innerHTML = '<option value="">-- Choisir l\'unité --</option>' + data.map(u => `<option value="${u.id}">${u.nom_complet}</option>`).join('');
+        }
+
+        // --- AUTHENTIFICATION ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value;
+            ui.msg.textContent = "Vérification..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                const { data: admin } = await supabaseClient.from('admins').select('unite_id, role').eq('email', email).maybeSingle();
+                if(admin && admin.role === 'super_admin') { currentUniteId = admin.unite_id; showDashboard(); }
+                else { await supabaseClient.auth.signOut(); throw new Error("Accès refusé. Vous n'êtes pas Animateur d'Unité."); }
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const uniteId = document.getElementById('regUnite').value, codeInput = document.getElementById('regCode').value;
+            const email = document.getElementById('regEmail').value, password = document.getElementById('regPassword').value;
+            const fname = document.getElementById('regFName').value, lname = document.getElementById('regLName').value, totem = document.getElementById('regTotem').value;
+            
+            if(!uniteId) return alert("Choisissez une unité.");
+            ui.msg.textContent = "Vérification..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
+            
+            try {
+                const { data: u } = await supabaseClient.from('unites').select('code_superadmin').eq('id', uniteId).single();
+                if(!u || u.code_superadmin !== codeInput) throw new Error("Code secret de Chef d'Unité invalide !");
+
+                const { error: authErr } = await supabaseClient.auth.signUp({ email, password });
+                if (authErr) throw authErr;
+
+                const { error: adminErr } = await supabaseClient.from('admins').insert([{ email: email, first_name: fname, last_name: lname, totem: totem, unite_id: uniteId, role: 'super_admin' }]);
+                if (adminErr) throw adminErr;
+                
+                currentUniteId = uniteId; showDashboard();
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+        });
+
+        const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
+        document.getElementById('logoutBtnNav').addEventListener('click', logoutAction);
+        document.getElementById('logoutBtnMain').addEventListener('click', logoutAction);
+
+        // --- DASHBOARD ---
+
+        async function loadDirectoryAndSections() {
+            const list = document.getElementById('directoryList');
+            const select = document.getElementById('mailSection');
+            
+            const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
+            if (!sections || sections.length === 0) { list.innerHTML = '<p class="text-sm text-gray-500">Aucune section existante.</p>'; return; }
+
+            // Remplir le menu déroulant des e-mails
+            select.innerHTML = '<option value="">-- Sélectionner une section --</option>' + sections.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
+
+            // Construire l'annuaire
+            let html = '';
+            for (const sec of sections) {
+                html += `
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-unite-primary border-b border-unite-light pb-1 mb-3">${sec.nom}</h3>
+                `;
+                
+                // Les Chefs
+                const { data: staff } = await supabaseClient.from('admins').select('first_name, last_name, totem, email').eq('section_id', sec.id);
+                html += `<h4 class="font-bold text-xs text-gray-400 uppercase mb-2">Le Staff</h4>`;
+                if (staff && staff.length > 0) {
+                    html += `<ul class="space-y-2 mb-4">` + staff.map(s => `<li class="text-sm bg-gray-50 p-2 rounded border border-gray-100 flex justify-between"><span class="font-medium">${s.first_name} "${s.totem}" ${s.last_name}</span> <span class="text-gray-500">${s.email}</span></li>`).join('') + `</ul>`;
+                } else { html += `<p class="text-sm text-gray-400 italic mb-4">Aucun chef enregistré.</p>`; }
+
+                // Les Parents
+                const { data: parents } = await supabaseClient.from('newsletter_subscribers').select('email').eq('section_id', sec.id);
+                html += `<h4 class="font-bold text-xs text-gray-400 uppercase mb-2">Parents Abonnés</h4>`;
+                if (parents && parents.length > 0) {
+                    html += `<ul class="space-y-2">` + parents.map(p => `<li class="text-sm bg-white p-2 rounded border border-gray-100 text-gray-600">${p.email}</li>`).join('') + `</ul>`;
+                } else { html += `<p class="text-sm text-gray-400 italic">Aucun parent inscrit.</p>`; }
+                
+                html += `</div>`;
+            }
+            list.innerHTML = html;
+        }
+
+        // E-mail ciblé vers une section entière
+        document.getElementById('sectionMailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn'), statusText = document.getElementById('statusMessage');
+            btn.disabled = true; btn.textContent = 'Envoi en cours...'; statusText.textContent = '';
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/send-superadmin-section-newsletter', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        subject: document.getElementById('subject').value, 
+                        message: document.getElementById('message').value, 
+                        section_id: document.getElementById('mailSection').value,
+                        unite_id: currentUniteId 
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-unite-primary font-bold"; document.getElementById('sectionMailForm').reset(); }
+                else throw new Error(data.detail);
+            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
+            finally { btn.disabled = false; btn.textContent = 'Envoyer le message'; }
+        });
+
+        // --- AFFICHAGE ---
+        function showDashboard() {
+            ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); document.getElementById('logoutBtnNav').classList.remove('hidden');
+            loadDirectoryAndSections();
+        }
+
+        supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+            if (session) {
+                const { data: admin } = await supabaseClient.from('admins').select('unite_id, role').eq('email', session.user.email).maybeSingle();
+                if(admin && admin.role === 'super_admin') { currentUniteId = admin.unite_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
+            } else { ui.auth.classList.remove('hidden'); }
+        });
+    </script>
+</body>
+</html>
