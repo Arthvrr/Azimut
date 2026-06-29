@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azimut - Espace Parent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
+            <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
+        </div>
+        <button id="logoutBtn" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
+    </nav>
+
+    <main class="max-w-xl mx-auto mt-10 p-6">
+        
+        <div id="authSection" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">Connexion Parent</h2>
+            <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
+            
+            <div id="authForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                </div>
+                
+                <div class="flex gap-4 pt-2">
+                    <button type="button" id="loginBtn" class="flex-1 bg-scout-green hover:bg-scout-dark text-white px-4 py-3 rounded-lg font-medium transition-colors">Se connecter</button>
+                    <button type="button" id="registerBtn" class="flex-1 bg-white border-2 border-scout-green text-scout-green hover:bg-scout-light px-4 py-3 rounded-lg font-medium transition-colors">S'inscrire</button>
+                </div>
+            </div>
+            <div class="mt-6 text-center">
+                <button id="forgotPasswordBtn" class="text-sm text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button>
+            </div>
+        </div>
+
+        <div id="dashboardSection" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+                <div class="w-16 h-16 bg-scout-light rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Newsletter de la section</h3>
+                <p class="text-gray-500 mb-6">Gérez votre abonnement pour recevoir les convocations et les actualités.</p>
+                
+                <button id="toggleSubBtn" class="px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full sm:w-auto">
+                    Chargement...
+                </button>
+                <p id="subMessage" class="mt-4 text-sm font-medium"></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let isSubscribed = false;
+
+        const ui = {
+            auth: document.getElementById('authSection'),
+            dash: document.getElementById('dashboardSection'),
+            msg: document.getElementById('authMessage'),
+            subBtn: document.getElementById('toggleSubBtn'),
+            subMsg: document.getElementById('subMessage'),
+            emailInput: document.getElementById('email'),
+            passwordInput: document.getElementById('password')
+        };
+
+        // Fonction pour récupérer l'e-mail en toute sécurité
+        async function getActiveEmail() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            return session?.user?.email;
+        }
+
+        // --- GESTION DE L'AUTHENTIFICATION ---
+        async function handleAuth(action) {
+            try {
+                const email = ui.emailInput.value;
+                const password = ui.passwordInput.value;
+                
+                if (!email || !password) {
+                    ui.msg.textContent = "Veuillez remplir l'e-mail et le mot de passe.";
+                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                    return;
+                }
+
+                ui.msg.textContent = action === 'login' ? "Connexion en cours..." : "Inscription en cours...";
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+
+                let result;
+                if (action === 'login') {
+                    result = await supabaseClient.auth.signInWithPassword({ email, password });
+                } else {
+                    result = await supabaseClient.auth.signUp({ email, password });
+                }
+
+                if (result.error) {
+                    ui.msg.textContent = result.error.message;
+                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                } else {
+                    showDashboard();
+                    await checkSubscriptionStatus(); // L'auto-abonnement se fera ici
+                }
+            } catch (err) {
+                console.error("Erreur d'authentification:", err);
+                ui.msg.textContent = "Erreur système : " + err.message;
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+            }
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', () => handleAuth('login'));
+        document.getElementById('registerBtn').addEventListener('click', () => handleAuth('register'));
+
+        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+            const email = ui.emailInput.value;
+            if (!email) {
+                ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus.";
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                return;
+            }
+            ui.msg.textContent = "Envoi du lien...";
+            ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+            
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            if (error) {
+                ui.msg.textContent = error.message;
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+            } else {
+                ui.msg.textContent = "E-mail envoyé (vérifiez vos spams).";
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-scout-green";
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            showLogin();
+        });
+
+        // --- GESTION DE LA NEWSLETTER ---
+        async function checkSubscriptionStatus() {
+            try {
+                const activeEmail = await getActiveEmail();
+                if (!activeEmail) return;
+
+                ui.subBtn.disabled = true;
+                ui.subBtn.textContent = "Chargement...";
+
+                // CORRECTION ICI : .from() au lieu de .table()
+                const { data, error } = await supabaseClient
+                    .from('newsletter_subscribers')
+                    .select('*')
+                    .eq('email', activeEmail)
+                    .eq('section_id', 1);
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    isSubscribed = data[0].is_subscribed;
+                } else {
+                    // CORRECTION ICI : .from()
+                    const { error: insErr } = await supabaseClient
+                        .from('newsletter_subscribers')
+                        .insert([{ section_id: 1, email: activeEmail, is_subscribed: true }]);
+                    
+                    if (insErr) throw insErr;
+                    isSubscribed = true;
+                }
+            } catch (err) {
+                console.error("Erreur de statut:", err);
+                ui.subMsg.textContent = "Erreur : " + err.message;
+                ui.subMsg.className = "mt-4 text-sm font-medium text-red-600";
+                isSubscribed = false;
+            } finally {
+                updateSubButton();
+                ui.subBtn.disabled = false;
+            }
+        }
+
+        document.getElementById('toggleSubBtn').addEventListener('click', async () => {
+            try {
+                const activeEmail = await getActiveEmail();
+                if (!activeEmail) throw new Error("Votre session a expiré, veuillez vous reconnecter.");
+
+                ui.subBtn.disabled = true;
+                ui.subBtn.textContent = "Mise à jour...";
+                
+                const newStatus = !isSubscribed;
+
+                // CORRECTION ICI : .from() au lieu de .table()
+                const { error } = await supabaseClient
+                    .from('newsletter_subscribers')
+                    .update({ is_subscribed: newStatus })
+                    .eq('email', activeEmail)
+                    .eq('section_id', 1);
+
+                if (error) throw error;
+
+                isSubscribed = newStatus;
+                ui.subMsg.textContent = isSubscribed ? "Vous êtes abonné avec succès ! 🏕️" : "Vous avez été désabonné.";
+                ui.subMsg.className = isSubscribed ? "mt-4 text-sm font-medium text-scout-green" : "mt-4 text-sm font-medium text-gray-500";
+                
+            } catch (err) {
+                console.error("Erreur de mise à jour:", err);
+                ui.subMsg.textContent = "Erreur : " + err.message;
+                ui.subMsg.className = "mt-4 text-sm font-medium text-red-600";
+            } finally {
+                updateSubButton();
+                ui.subBtn.disabled = false;
+            }
+        });
+
+        function updateSubButton() {
+            if (isSubscribed) {
+                ui.subBtn.textContent = "Se désabonner";
+                ui.subBtn.className = "px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full sm:w-auto bg-white border-2 border-red-500 text-red-500 hover:bg-red-50";
+            } else {
+                ui.subBtn.textContent = "S'abonner à la newsletter";
+                ui.subBtn.className = "px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full sm:w-auto bg-scout-green text-white hover:bg-scout-dark";
+            }
+        }
+
+        // --- GESTION DE L'AFFICHAGE ---
+        function showDashboard() {
+            ui.auth.classList.add('hidden');
+            ui.dash.classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            ui.auth.classList.remove('hidden');
+            ui.dash.classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            ui.emailInput.value = "";
+            ui.passwordInput.value = "";
+            ui.msg.textContent = "";
+            ui.subMsg.textContent = "";
+        }
+
+        // Vérification de la session au démarrage
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                showDashboard();
+                checkSubscriptionStatus();
+            } else {
+                showLogin();
+            }
+        });
+    </script>
+</body>
+</html>
