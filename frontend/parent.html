@@ -11,9 +11,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' }
-                    }
+                    colors: { scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' } }
                 }
             }
         }
@@ -22,7 +20,7 @@
         .fc .fc-toolbar-title { font-size: 1.1rem; font-weight: 700; color: #111827; text-transform: capitalize; }
         .fc .fc-button-primary { background-color: #2E7D32 !important; border-color: #2E7D32 !important; }
         .fc .fc-button-primary:hover { background-color: #1B5E20 !important; }
-        .fc-event { cursor: default; } /* Pas de pointeur car lecture seule */
+        .fc-event { cursor: pointer; } 
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
@@ -32,15 +30,14 @@
             <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
-        
         <div id="userMenu" class="hidden">
             <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
-                Connecté en tant que : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
+                Connecté : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
             </span>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto mt-10 p-6">
+    <main class="max-w-6xl mx-auto mt-10 p-6">
         
         <div id="authSection" class="max-w-xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">Connexion Parent</h2>
@@ -49,29 +46,15 @@
             <div id="authForm" class="space-y-5">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Adresse E-mail</label>
-                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none transition-colors">
+                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
                 </div>
-                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-                    <div class="relative">
-                        <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none pr-12 transition-colors">
-                        <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-scout-green transition-colors">
-                            <svg id="eyeIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Le mot de passe doit contenir au moins 6 caractères.
-                    </p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label>
+                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
                 </div>
-                
                 <div class="flex gap-4 pt-2">
-                    <button type="button" id="loginBtn" class="flex-1 bg-scout-green hover:bg-scout-dark text-white px-4 py-3 rounded-lg font-medium transition-colors">Se connecter</button>
-                    <button type="button" id="registerBtn" class="flex-1 bg-white border-2 border-scout-green text-scout-green hover:bg-scout-light px-4 py-3 rounded-lg font-medium transition-colors">S'inscrire</button>
+                    <button type="button" id="loginBtn" class="flex-1 bg-scout-green hover:bg-scout-dark text-white px-4 py-3 rounded-lg font-medium">Se connecter</button>
+                    <button type="button" id="registerBtn" class="flex-1 bg-white border-2 border-scout-green text-scout-green hover:bg-scout-light px-4 py-3 rounded-lg font-medium">S'inscrire</button>
                 </div>
             </div>
             <div class="mt-6 text-center">
@@ -81,32 +64,69 @@
 
         <div id="dashboardSection" class="hidden space-y-6">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center flex flex-col justify-center">
-                    <div class="w-16 h-16 bg-scout-light rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2>
+                            <p class="text-sm text-gray-500">Gérez les fiches médicales.</p>
+                        </div>
+                        <button id="openChildModalBtn" class="bg-scout-light text-scout-green hover:bg-scout-green hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                            + Ajouter
+                        </button>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Newsletter de la section</h3>
-                    <p class="text-gray-500 mb-6">Recevez les convocations et les actualités.</p>
-                    <button id="toggleSubBtn" class="px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full mx-auto">Chargement...</button>
-                    <p id="subMessage" class="mt-4 text-sm font-medium"></p>
+                    <div id="childrenList" class="space-y-3 flex-1 overflow-y-auto max-h-[300px]">
+                        <p class="text-sm text-gray-500 text-center italic mt-4">Chargement...</p>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Signaler une absence</h2>
+                    <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Prévenez les chefs en un clic.</p>
+                    
+                    <form id="absenceForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label>
+                            <select id="absChild" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none bg-white">
+                                <option value="">Chargement...</option>
+                            </select>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">Mot de passe</h3>
-                            <p class="text-sm text-gray-500">Sécurisez votre compte.</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label>
+                            <select id="absEvent" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none bg-white">
+                                <option value="">Chargement...</option>
+                            </select>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label>
+                            <input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                        </div>
+                        <button type="submit" id="submitAbsenceBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            Envoyer le signalement
+                        </button>
+                        <p id="absenceMsg" class="text-sm text-center mt-2"></p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Newsletter</h3>
+                        <p class="text-sm text-gray-500">Convocations et actus.</p>
+                        <p id="subMessage" class="mt-1 text-xs font-medium"></p>
                     </div>
-                    <div class="space-y-4">
-                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 6 car.)" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
-                        <button type="button" id="updatePasswordBtn" class="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors w-full">Mettre à jour</button>
-                        <p id="updatePasswordMsg" class="mt-2 text-sm font-medium"></p>
+                    <button id="toggleSubBtn" class="px-6 py-2 rounded-lg font-medium transition-colors text-sm">Chargement...</button>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Sécurité</h3>
+                    <div class="flex gap-2">
+                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none text-sm">
+                        <button type="button" id="updatePasswordBtn" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-sm font-medium">Modifier</button>
                     </div>
+                    <p id="updatePasswordMsg" class="mt-2 text-xs font-medium"></p>
                 </div>
             </div>
 
@@ -120,13 +140,52 @@
 
             <div class="text-center pt-4 pb-10">
                 <button id="logoutBtn" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Se déconnecter de mon espace
+                    Se déconnecter
                 </button>
             </div>
             
         </div>
     </main>
+
+    <div id="childModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
+            <form id="childForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                </div>
+                
+                <div class="bg-scout-light p-4 rounded-lg">
+                    <label class="block text-sm font-bold text-scout-dark mb-1">Fiche médicale (PDF)</label>
+                    <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm text-gray-600">
+                    <p class="text-xs text-scout-green mt-1">Optionnel. Remplacera l'ancien fichier si fourni.</p>
+                </div>
+
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none" placeholder="Arachides, piqûres de guêpes..."></textarea></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none"></textarea></div>
+                
+                <div class="grid grid-cols-2 gap-4 border-t pt-4">
+                    <div>
+                        <p class="font-bold text-sm text-gray-800 mb-2">Parent 1</p>
+                        <input type="text" id="cP1Name" placeholder="Nom complet" required class="w-full px-3 py-2 border rounded-lg outline-none mb-2 text-sm">
+                        <input type="tel" id="cP1Phone" placeholder="Téléphone" required class="w-full px-3 py-2 border rounded-lg outline-none text-sm">
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm text-gray-800 mb-2">Parent 2 (Optionnel)</p>
+                        <input type="text" id="cP2Name" placeholder="Nom complet" class="w-full px-3 py-2 border rounded-lg outline-none mb-2 text-sm">
+                        <input type="tel" id="cP2Phone" placeholder="Téléphone" class="w-full px-3 py-2 border rounded-lg outline-none text-sm">
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-4">
+                    <button type="button" id="closeChildModalBtn" class="flex-1 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-medium">Annuler</button>
+                    <button type="submit" id="saveChildBtn" class="flex-1 bg-scout-green text-white px-4 py-2 rounded-lg font-medium">Enregistrer</button>
+                </div>
+                <p id="childErrorMsg" class="text-sm text-red-500 text-center hidden"></p>
+            </form>
+        </div>
+    </div>
 
     <script>
         const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
@@ -134,276 +193,224 @@
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         
         let isSubscribed = false;
-        let parentCalendarInstance = null; // Stocke l'instance du calendrier
+        let parentCalendarInstance = null; 
 
         const ui = {
-            auth: document.getElementById('authSection'),
-            dash: document.getElementById('dashboardSection'),
-            msg: document.getElementById('authMessage'),
-            subBtn: document.getElementById('toggleSubBtn'),
-            subMsg: document.getElementById('subMessage'),
-            emailInput: document.getElementById('email'),
-            passwordInput: document.getElementById('password'),
-            userMenu: document.getElementById('userMenu'),
+            auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'),
+            msg: document.getElementById('authMessage'), subBtn: document.getElementById('toggleSubBtn'),
+            subMsg: document.getElementById('subMessage'), emailInput: document.getElementById('email'),
+            passwordInput: document.getElementById('password'), userMenu: document.getElementById('userMenu'),
             userEmailDisplay: document.getElementById('userEmailDisplay')
         };
-
-        // --- GESTION DE L'OEIL DU MOT DE PASSE ---
-        document.getElementById('togglePasswordBtn').addEventListener('click', () => {
-            const type = ui.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            ui.passwordInput.setAttribute('type', type);
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (type === 'text') {
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />`;
-            } else {
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
-            }
-        });
 
         async function getActiveEmail() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             return session?.user?.email;
         }
 
-        // --- GESTION DE L'AUTHENTIFICATION ---
+        // --- AUTHENTIFICATION ---
         async function handleAuth(action) {
             try {
-                const email = ui.emailInput.value;
-                const password = ui.passwordInput.value;
+                const email = ui.emailInput.value, password = ui.passwordInput.value;
+                if (!email || !password) throw new Error("Veuillez remplir l'e-mail et le mot de passe.");
+                ui.msg.textContent = "Chargement..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+
+                let res = action === 'login' ? await supabaseClient.auth.signInWithPassword({ email, password }) : await supabaseClient.auth.signUp({ email, password });
+                if (res.error) throw res.error;
                 
-                if (!email || !password) {
-                    ui.msg.textContent = "Veuillez remplir l'e-mail et le mot de passe.";
-                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
-                    return;
-                }
-                if (password.length < 6) {
-                    ui.msg.textContent = "Le mot de passe doit faire au moins 6 caractères.";
-                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
-                    return;
-                }
-
-                ui.msg.textContent = action === 'login' ? "Connexion en cours..." : "Inscription en cours...";
-                ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
-
-                let result = action === 'login' 
-                    ? await supabaseClient.auth.signInWithPassword({ email, password })
-                    : await supabaseClient.auth.signUp({ email, password });
-
-                if (result.error) {
-                    ui.msg.textContent = result.error.message;
-                    ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
-                } else {
-                    await showDashboard();
-                    await checkSubscriptionStatus(); 
-                }
+                await showDashboard();
+                await checkSubscriptionStatus(); 
             } catch (err) {
-                ui.msg.textContent = "Erreur système : " + err.message;
-                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
             }
         }
-
         document.getElementById('loginBtn').addEventListener('click', () => handleAuth('login'));
         document.getElementById('registerBtn').addEventListener('click', () => handleAuth('register'));
+        document.getElementById('logoutBtn').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
 
-        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
-            const email = ui.emailInput.value;
-            if (!email) {
-                ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus.";
-                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+        // --- GESTION ENFANTS ---
+        async function loadChildren() {
+            const email = await getActiveEmail();
+            const { data, error } = await supabaseClient.from('children').select('*').eq('parent_email', email);
+            const list = document.getElementById('childrenList');
+            const absSelect = document.getElementById('absChild');
+            
+            if (error || !data || data.length === 0) {
+                list.innerHTML = `<p class="text-sm text-gray-500 italic mt-2">Aucun enfant ajouté.</p>`;
+                absSelect.innerHTML = `<option value="">Ajoutez d'abord un enfant</option>`;
                 return;
             }
-            ui.msg.textContent = "Envoi du lien...";
-            ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
-            
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-            if (error) {
-                ui.msg.textContent = error.message;
-                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
-            } else {
-                ui.msg.textContent = "E-mail envoyé (vérifiez vos spams).";
-                ui.msg.className = "mb-4 text-sm text-center font-medium text-scout-green";
-            }
-        });
 
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
-            showLogin();
-        });
+            list.innerHTML = data.map(c => `
+                <div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-gray-800">${c.first_name} ${c.last_name}</p>
+                        ${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}
+                    </div>
+                    ${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 text-scout-green font-bold">📄 Voir PDF</a>` : '<span class="text-xs text-gray-400">Pas de PDF</span>'}
+                </div>
+            `).join('');
 
-        // --- GESTION DE LA NEWSLETTER ---
-        async function checkSubscriptionStatus() {
+            absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
+        }
+
+        document.getElementById('openChildModalBtn').addEventListener('click', () => {
+            document.getElementById('childForm').reset();
+            document.getElementById('childModal').classList.remove('hidden');
+        });
+        document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
+
+        document.getElementById('childForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveChildBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
+            const err = document.getElementById('childErrorMsg'); err.classList.add('hidden');
+            const email = await getActiveEmail();
+
             try {
-                const activeEmail = await getActiveEmail();
-                if (!activeEmail) return;
-
-                ui.subBtn.disabled = true;
-                ui.subBtn.textContent = "Chargement...";
-
-                const { data, error } = await supabaseClient.from('newsletter_subscribers').select('*').eq('email', activeEmail).eq('section_id', 1);
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    isSubscribed = data[0].is_subscribed;
-                } else {
-                    const { error: insErr } = await supabaseClient.from('newsletter_subscribers').insert([{ section_id: 1, email: activeEmail, is_subscribed: true }]);
-                    if (insErr) throw insErr;
-                    isSubscribed = true;
+                // 1. Upload PDF si présent
+                const fileInput = document.getElementById('cMedicalFile');
+                let pdfUrl = null;
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const fileName = `${email}_${Date.now()}_${file.name}`;
+                    const { data, error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, file);
+                    if (uploadErr) throw new Error("Erreur PDF. Avez-vous créé le bucket 'medical_files' public ?");
+                    pdfUrl = supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
                 }
-            } catch (err) {
-                ui.subMsg.textContent = "Erreur : " + err.message;
-                ui.subMsg.className = "mt-4 text-sm font-medium text-red-600";
-                isSubscribed = false;
-            } finally {
-                updateSubButton();
-                ui.subBtn.disabled = false;
-            }
-        }
 
-        document.getElementById('toggleSubBtn').addEventListener('click', async () => {
-            try {
-                const activeEmail = await getActiveEmail();
-                if (!activeEmail) throw new Error("Session expirée.");
-                ui.subBtn.disabled = true; ui.subBtn.textContent = "Mise à jour...";
-                
-                const newStatus = !isSubscribed;
-                const { error } = await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', 1);
+                // 2. Sauvegarde base de données
+                const childData = {
+                    parent_email: email,
+                    first_name: document.getElementById('cFirstName').value,
+                    last_name: document.getElementById('cLastName').value,
+                    allergies: document.getElementById('cAllergies').value,
+                    care_instructions: document.getElementById('cCare').value,
+                    parent1_name: document.getElementById('cP1Name').value,
+                    parent1_phone: document.getElementById('cP1Phone').value,
+                    parent2_name: document.getElementById('cP2Name').value,
+                    parent2_phone: document.getElementById('cP2Phone').value
+                };
+                if (pdfUrl) childData.medical_file_url = pdfUrl;
 
+                const { error } = await supabaseClient.from('children').insert([childData]);
                 if (error) throw error;
-                isSubscribed = newStatus;
-                ui.subMsg.textContent = isSubscribed ? "Vous êtes abonné avec succès ! 🏕️" : "Vous avez été désabonné.";
-                ui.subMsg.className = isSubscribed ? "mt-4 text-sm font-medium text-scout-green" : "mt-4 text-sm font-medium text-gray-500";
-                
-            } catch (err) {
-                ui.subMsg.textContent = "Erreur : " + err.message;
-                ui.subMsg.className = "mt-4 text-sm font-medium text-red-600";
+
+                document.getElementById('childModal').classList.add('hidden');
+                await loadChildren();
+            } catch (error) {
+                err.textContent = error.message; err.classList.remove('hidden');
             } finally {
-                updateSubButton();
-                ui.subBtn.disabled = false;
+                btn.disabled = false; btn.textContent = "Enregistrer";
             }
         });
 
-        function updateSubButton() {
-            if (isSubscribed) {
-                ui.subBtn.textContent = "Se désabonner";
-                ui.subBtn.className = "px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full bg-white border-2 border-red-500 text-red-500 hover:bg-red-50";
-            } else {
-                ui.subBtn.textContent = "S'abonner à la newsletter";
-                ui.subBtn.className = "px-8 py-3 rounded-lg font-medium transition-colors shadow-sm w-full bg-scout-green text-white hover:bg-scout-dark";
-            }
-        }
-
-        // --- MISE A JOUR DU MOT DE PASSE ---
-        document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
-            const newPassword = document.getElementById('newPassword').value;
-            const msg = document.getElementById('updatePasswordMsg');
-            const btn = document.getElementById('updatePasswordBtn');
-
-            if (!newPassword || newPassword.length < 6) {
-                msg.textContent = "Le mot de passe doit faire au moins 6 caractères.";
-                msg.className = "mt-2 text-sm font-medium text-red-600";
+        // --- GESTION ABSENCES ---
+        async function loadUpcomingEvents() {
+            const select = document.getElementById('absEvent');
+            const { data, error } = await supabaseClient.from('events').select('id, title, start_time').gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
+            
+            if (error || !data || data.length === 0) {
+                select.innerHTML = `<option value="">Aucun événement futur</option>`;
                 return;
             }
-            btn.disabled = true; btn.textContent = "Mise à jour...";
+            select.innerHTML = `<option value="">-- Choisir --</option>` + data.map(e => {
+                const date = new Date(e.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit'});
+                return `<option value="${e.id}">${e.title} (${date})</option>`;
+            }).join('');
+        }
 
-            const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+        document.getElementById('absenceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitAbsenceBtn'); btn.disabled = true;
+            const msg = document.getElementById('absenceMsg'); msg.textContent = "Envoi..."; msg.className = "text-sm text-center mt-2 text-gray-500";
+            
+            try {
+                const childId = document.getElementById('absChild').value;
+                const eventId = document.getElementById('absEvent').value;
+                const reason = document.getElementById('absReason').value;
 
-            if (error) {
-                msg.textContent = "Erreur : " + error.message;
-                msg.className = "mt-2 text-sm font-medium text-red-600";
-            } else {
-                msg.textContent = "Mot de passe mis à jour !";
-                msg.className = "mt-2 text-sm font-medium text-scout-green";
-                document.getElementById('newPassword').value = "";
+                if (!childId || !eventId) throw new Error("Veuillez sélectionner un enfant et un événement.");
+
+                const { error } = await supabaseClient.from('absences').insert([{ child_id: childId, event_id: eventId, reason: reason }]);
+                
+                if (error) {
+                    if (error.code === '23505') throw new Error("Cette absence est déjà signalée."); // Code SQL unique
+                    throw error;
+                }
+
+                msg.textContent = "Absence signalée avec succès aux chefs !"; msg.className = "text-sm text-center mt-2 text-scout-green font-bold";
+                document.getElementById('absReason').value = "";
+            } catch (error) {
+                msg.textContent = error.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold";
+            } finally {
+                btn.disabled = false;
             }
-            btn.disabled = false; btn.textContent = "Mettre à jour";
         });
 
-        // --- INITIALISATION DU CALENDRIER PARENT ---
+
+        // --- CALENDRIER PARENT ---
         function initParentCalendar() {
-            // Si le calendrier existe déjà, on le détruit pour éviter les doublons d'affichage
-            if (parentCalendarInstance) {
-                parentCalendarInstance.destroy();
-            }
-            
+            if (parentCalendarInstance) parentCalendarInstance.destroy();
             var calendarEl = document.getElementById('parentCalendar');
             parentCalendarInstance = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'fr',
-                firstDay: 1, // Lundi
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,listMonth' // Vue liste très pratique sur mobile
-                },
-                buttonText: { today: "Aujourd'hui", month: 'Mois', list: 'Planning' },
-                
-                // Fetch des données depuis Supabase (identique à l'admin)
+                initialView: 'dayGridMonth', locale: 'fr', firstDay: 1,
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
+                buttonText: { today: "Aujourd'hui", month: 'Mois', week: 'Semaine', list: 'Planning' },
                 events: async function(info, successCallback, failureCallback) {
                     const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', 1);
-                    if (error) {
-                        console.error("Erreur calendrier", error);
-                        failureCallback(error);
-                    } else {
-                        const mappedEvents = data.map(e => ({
-                            id: e.id,
-                            title: e.title,
-                            start: e.start_time,
-                            end: e.end_time,
-                            extendedProps: { description: e.description },
-                            backgroundColor: '#2E7D32',
-                            borderColor: '#1B5E20'
-                        }));
-                        successCallback(mappedEvents);
+                    if (error) failureCallback(error);
+                    else {
+                        successCallback(data.map(e => ({
+                            id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time),
+                            extendedProps: { description: e.description, location: e.location },
+                            backgroundColor: '#2E7D32', borderColor: '#1B5E20'
+                        })));
                     }
                 },
-                
-                // Affichage des infos de la réunion en cliquant dessus (Lecture seule)
                 eventClick: function(info) {
-                    const desc = info.event.extendedProps.description || "Aucune description fournie.";
-                    alert(`Événement : ${info.event.title}\n\nDétails : ${desc}`);
+                    const desc = info.event.extendedProps.description || "Aucune description.";
+                    const loc = info.event.extendedProps.location || "Non précisé.";
+                    alert(`Événement : ${info.event.title}\nLieu : ${loc}\n\nDétails : ${desc}`);
                 }
             });
-            
             parentCalendarInstance.render();
         }
 
-        // --- GESTION DE L'AFFICHAGE ---
-        async function showDashboard() {
-            ui.auth.classList.add('hidden');
-            ui.dash.classList.remove('hidden');
-            ui.userMenu.classList.remove('hidden');
-            
+        // --- GESTION NEWSLETTER (inchangée) ---
+        async function checkSubscriptionStatus() {
             const activeEmail = await getActiveEmail();
-            ui.userEmailDisplay.textContent = activeEmail;
-            
-            // Initialisation du calendrier une fois le dashboard visible
+            if (!activeEmail) return;
+            const { data, error } = await supabaseClient.from('newsletter_subscribers').select('*').eq('email', activeEmail).eq('section_id', 1);
+            if (data && data.length > 0) isSubscribed = data[0].is_subscribed;
+            else {
+                await supabaseClient.from('newsletter_subscribers').insert([{ section_id: 1, email: activeEmail, is_subscribed: true }]);
+                isSubscribed = true;
+            }
+            updateSubButton();
+        }
+        document.getElementById('toggleSubBtn').addEventListener('click', async () => {
+            const activeEmail = await getActiveEmail();
+            const newStatus = !isSubscribed;
+            await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', 1);
+            isSubscribed = newStatus; updateSubButton();
+        });
+        function updateSubButton() {
+            ui.subBtn.textContent = isSubscribed ? "Se désabonner" : "S'abonner";
+            ui.subBtn.className = isSubscribed ? "px-6 py-2 rounded-lg font-medium text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg font-medium text-sm bg-scout-green text-white";
+        }
+
+        // --- INITIALISATION GLOBALE ---
+        async function showDashboard() {
+            ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
+            ui.userEmailDisplay.textContent = await getActiveEmail();
+            await loadChildren();
+            await loadUpcomingEvents();
             setTimeout(() => { initParentCalendar(); }, 100);
         }
 
-        function showLogin() {
-            ui.auth.classList.remove('hidden');
-            ui.dash.classList.add('hidden');
-            ui.userMenu.classList.add('hidden');
-            
-            ui.emailInput.value = "";
-            ui.passwordInput.value = "";
-            ui.msg.textContent = "";
-            ui.subMsg.textContent = "";
-            document.getElementById('updatePasswordMsg').textContent = "";
-            document.getElementById('newPassword').value = "";
-            
-            if (parentCalendarInstance) parentCalendarInstance.destroy();
-        }
-
-        // Vérification de la session au démarrage
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                showDashboard();
-                checkSubscriptionStatus();
-            } else {
-                showLogin();
-            }
+            if (session) { showDashboard(); checkSubscriptionStatus(); } 
+            else { ui.auth.classList.remove('hidden'); }
         });
     </script>
 </body>

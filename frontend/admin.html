@@ -35,26 +35,33 @@
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto mt-10 p-6 space-y-8">
+    <main class="max-w-6xl mx-auto mt-10 p-6 space-y-8">
         
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Rédiger une Newsletter</h2>
-            <form id="massMailForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Sujet de l'e-mail</label>
-                    <input type="text" id="subject" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                    <textarea id="message" rows="8" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none resize-y"></textarea>
-                </div>
-                <div class="pt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Rédiger une Newsletter</h2>
+                <form id="massMailForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
+                        <input type="text" id="subject" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea id="message" rows="5" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none resize-y"></textarea>
+                    </div>
                     <button type="submit" id="submitBtn" class="w-full bg-scout-green hover:bg-scout-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
                         Envoyer à la section
                     </button>
                     <p id="statusMessage" class="mt-2 text-sm font-medium text-center"></p>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Absences signalées</h2>
+                <div id="absencesList" class="space-y-4 overflow-y-auto flex-1 max-h-[350px] pr-2">
+                    <p class="text-gray-500 text-sm text-center italic mt-10">Chargement des absences...</p>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -75,8 +82,12 @@
                     <input type="text" id="eventTitle" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description (Lieu, matériel...)</label>
-                    <textarea id="eventDesc" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lieu / Adresse</label>
+                    <input type="text" id="eventLocation" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none" placeholder="Ex: Au local">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description (Matériel...)</label>
+                    <textarea id="eventDesc" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -100,18 +111,55 @@
     </div>
 
     <script>
-        // --- CONFIGURATION SUPABASE ---
         const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // --- GESTION DE LA NEWSLETTER ---
+        // --- CHARGEMENT DES ABSENCES ---
+        async function fetchAbsences() {
+            const list = document.getElementById('absencesList');
+            // On joint les tables pour avoir les noms des enfants et les titres des événements !
+            const { data, error } = await supabaseClient
+                .from('absences')
+                .select(`
+                    reason,
+                    created_at,
+                    events (title, start_time),
+                    children (first_name, last_name)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                list.innerHTML = `<p class="text-red-500 text-sm">Erreur: ${error.message}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                list.innerHTML = `<p class="text-gray-500 text-sm text-center mt-10">Aucune absence signalée.</p>`;
+                return;
+            }
+
+            list.innerHTML = data.map(abs => {
+                const eventDate = new Date(abs.events.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: 'long'});
+                return `
+                <div class="p-4 border border-gray-100 rounded-lg bg-red-50 border-l-4 border-l-red-500">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-gray-900">${abs.children.first_name} ${abs.children.last_name}</h4>
+                        <span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">Absent(e)</span>
+                    </div>
+                    <p class="text-sm font-medium text-gray-800 mb-1">🏕️ ${abs.events.title} (${eventDate})</p>
+                    <p class="text-sm text-gray-600 italic">Motif : ${abs.reason || 'Non précisé'}</p>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- GESTION NEWSLETTER ---
         document.getElementById('massMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const statusText = document.getElementById('statusMessage');
-            btn.disabled = true; btn.textContent = 'Envoi en cours...'; statusText.textContent = '';
-
+            btn.disabled = true; btn.textContent = 'Envoi...'; statusText.textContent = '';
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/v1/send-mass-newsletter', {
                     method: 'POST',
@@ -136,24 +184,22 @@
             }
         });
 
-        // --- OUTIL POUR LES DATES ---
-        // Cette fonction convertit une vraie Date JS en format "YYYY-MM-DDTHH:mm" pour l'input HTML
+        // --- CALENDRIER ---
         function toDatetimeLocal(date) {
             if (!date) return "";
             const d = new Date(date);
-            // On compense le fuseau horaire local pour que l'affichage HTML soit parfait
             d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
             return d.toISOString().slice(0, 16);
         }
 
-        // --- GESTION DU CALENDRIER FULLCALENDAR ---
         let calendar;
         const eventModal = document.getElementById('eventModal');
-        let currentEventId = null; // Mémoire : null = Création, Chiffre = Modification
+        let currentEventId = null; 
 
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+            fetchAbsences(); // Charger les absences au démarrage
             
+            var calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'fr',
@@ -164,126 +210,81 @@
                     right: 'dayGridMonth,timeGridWeek,listMonth'
                 },
                 buttonText: { today: "Aujourd'hui", month: 'Mois', week: 'Semaine', list: 'Planning' },
-                
                 events: async function(info, successCallback, failureCallback) {
                     const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', 1);
-                    if (error) {
-                        failureCallback(error);
-                    } else {
+                    if (error) failureCallback(error);
+                    else {
                         const mappedEvents = data.map(e => ({
-                            id: e.id,
-                            title: e.title,
-                            // CORRECTION : On crée un vrai objet Date JS pour régler le bug des vues Semaine/Planning
-                            start: new Date(e.start_time), 
-                            end: new Date(e.end_time),
-                            extendedProps: { description: e.description },
-                            backgroundColor: '#2E7D32',
-                            borderColor: '#1B5E20'
+                            id: e.id, title: e.title,
+                            start: new Date(e.start_time), end: new Date(e.end_time),
+                            extendedProps: { description: e.description, location: e.location },
+                            backgroundColor: '#2E7D32', borderColor: '#1B5E20'
                         }));
                         successCallback(mappedEvents);
                     }
                 },
-
-                // CRÉER UN ÉVÉNEMENT
                 dateClick: function(info) {
-                    currentEventId = null; // C'est une création
+                    currentEventId = null;
                     document.getElementById('eventForm').reset();
                     document.getElementById('modalTitle').textContent = "Ajouter un événement";
-                    document.getElementById('deleteEventBtn').classList.add('hidden'); // On cache le bouton supprimer
-                    
+                    document.getElementById('deleteEventBtn').classList.add('hidden');
                     const dateStr = info.dateStr;
                     document.getElementById('eventStart').value = `${dateStr}T14:00`;
                     document.getElementById('eventEnd').value = `${dateStr}T17:00`;
-                    
                     document.getElementById('eventError').classList.add('hidden');
                     eventModal.classList.remove('hidden');
                 },
-
-                // MODIFIER UN ÉVÉNEMENT
                 eventClick: function(info) {
-                    currentEventId = info.event.id; // On retient quel événement modifier
+                    currentEventId = info.event.id;
                     document.getElementById('modalTitle').textContent = "Modifier l'événement";
-                    
                     document.getElementById('eventTitle').value = info.event.title;
                     document.getElementById('eventDesc').value = info.event.extendedProps.description || "";
+                    document.getElementById('eventLocation').value = info.event.extendedProps.location || "";
                     document.getElementById('eventStart').value = toDatetimeLocal(info.event.start);
                     document.getElementById('eventEnd').value = toDatetimeLocal(info.event.end || info.event.start);
-                    
-                    document.getElementById('deleteEventBtn').classList.remove('hidden'); // On affiche le bouton supprimer
+                    document.getElementById('deleteEventBtn').classList.remove('hidden');
                     document.getElementById('eventError').classList.add('hidden');
                     eventModal.classList.remove('hidden');
                 }
             });
-            
             calendar.render();
         });
 
-        // Fermer la modale
-        document.getElementById('closeModalBtn').addEventListener('click', () => {
-            eventModal.classList.add('hidden');
-        });
+        document.getElementById('closeModalBtn').addEventListener('click', () => { eventModal.classList.add('hidden'); });
 
-        // --- SAUVEGARDER (INSERT OU UPDATE) ---
         document.getElementById('eventForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('saveEventBtn');
             const errorMsg = document.getElementById('eventError');
             btn.disabled = true; btn.textContent = "Sauvegarde..."; errorMsg.classList.add('hidden');
 
-            // CORRECTION DES FUSEAUX HORAIRES : on convertit l'heure locale en format Universel strict (ISO)
-            const startIso = new Date(document.getElementById('eventStart').value).toISOString();
-            const endIso = new Date(document.getElementById('eventEnd').value).toISOString();
-
             const eventData = {
                 section_id: 1,
                 title: document.getElementById('eventTitle').value,
                 description: document.getElementById('eventDesc').value,
-                start_time: startIso,
-                end_time: endIso
+                location: document.getElementById('eventLocation').value,
+                start_time: new Date(document.getElementById('eventStart').value).toISOString(),
+                end_time: new Date(document.getElementById('eventEnd').value).toISOString()
             };
 
-            let res;
-            if (currentEventId) {
-                // Modification
-                res = await supabaseClient.from('events').update(eventData).eq('id', currentEventId);
-            } else {
-                // Création
-                res = await supabaseClient.from('events').insert([eventData]);
-            }
-
+            let res = currentEventId ? await supabaseClient.from('events').update(eventData).eq('id', currentEventId) : await supabaseClient.from('events').insert([eventData]);
+            
             if (res.error) {
-                errorMsg.textContent = "Erreur : " + res.error.message;
-                errorMsg.classList.remove('hidden');
-                btn.disabled = false; btn.textContent = "Enregistrer";
+                errorMsg.textContent = res.error.message; errorMsg.classList.remove('hidden');
             } else {
-                eventModal.classList.add('hidden');
-                calendar.refetchEvents(); // Met à jour le calendrier visuellement
-                btn.disabled = false; btn.textContent = "Enregistrer";
+                eventModal.classList.add('hidden'); calendar.refetchEvents();
             }
+            btn.disabled = false; btn.textContent = "Enregistrer";
         });
 
-        // --- SUPPRIMER ---
         document.getElementById('deleteEventBtn').addEventListener('click', async () => {
-            if (!currentEventId) return;
-            
-            // Sécurité : demander confirmation
-            if (!confirm("Voulez-vous vraiment supprimer définitivement cet événement ?")) return;
-
+            if (!currentEventId || !confirm("Supprimer définitivement cet événement ?")) return;
             const btn = document.getElementById('deleteEventBtn');
             btn.disabled = true; btn.textContent = "...";
-
             const { error } = await supabaseClient.from('events').delete().eq('id', currentEventId);
-
-            if (error) {
-                const errorMsg = document.getElementById('eventError');
-                errorMsg.textContent = "Erreur suppression : " + error.message;
-                errorMsg.classList.remove('hidden');
-                btn.disabled = false; btn.textContent = "Supprimer";
-            } else {
-                eventModal.classList.add('hidden');
-                calendar.refetchEvents();
-                btn.disabled = false; btn.textContent = "Supprimer";
-            }
+            if (error) { alert("Erreur: " + error.message); } 
+            else { eventModal.classList.add('hidden'); calendar.refetchEvents(); }
+            btn.disabled = false; btn.textContent = "Supprimer";
         });
     </script>
 </body>

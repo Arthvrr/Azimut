@@ -56,3 +56,46 @@ CREATE TABLE events (
 );
 
 ALTER TABLE events ADD COLUMN location VARCHAR(255);
+
+-- 1. Création de la table des enfants
+CREATE TABLE children (
+    id SERIAL PRIMARY KEY,
+    parent_email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    medical_file_url TEXT,
+    allergies TEXT,
+    care_instructions TEXT,
+    parent1_name VARCHAR(255),
+    parent1_phone VARCHAR(255),
+    parent2_name VARCHAR(255),
+    parent2_phone VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Création de la table des absences
+CREATE TABLE absences (
+    id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(id) ON DELETE CASCADE,
+    child_id INT REFERENCES children(id) ON DELETE CASCADE,
+    reason TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(event_id, child_id) -- Empêche de signaler deux fois la même absence
+);
+
+-- 1. Autoriser la lecture publique des PDF (Nécessaire car le bucket est public)
+CREATE POLICY "Lecture publique" 
+ON storage.objects FOR SELECT 
+USING ( bucket_id = 'medical_files' );
+
+-- 2. Autoriser les parents connectés à uploader un fichier
+CREATE POLICY "Upload pour parents" 
+ON storage.objects FOR INSERT 
+TO authenticated 
+WITH CHECK ( bucket_id = 'medical_files' );
+
+-- 3. Autoriser les parents connectés à modifier/remplacer un fichier existant
+CREATE POLICY "Update pour parents" 
+ON storage.objects FOR UPDATE 
+TO authenticated 
+USING ( bucket_id = 'medical_files' );
