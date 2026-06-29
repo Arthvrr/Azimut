@@ -186,28 +186,29 @@ def send_direct_email(payload: DirectEmailRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur d'envoi : {str(e)}")
 
-class SuperAdminSectionEmailRequest(BaseModel):
+class UnitEmailRequest(BaseModel):
     subject: str
     message: str
-    section_id: int
     unite_id: int
 
-@app.post("/api/v1/send-superadmin-section-newsletter")
-def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
-    """Route SuperAdmin pour envoyer un e-mail au staff ET aux parents d'une section spécifique"""
+@app.post("/api/v1/send-unit-newsletter")
+def send_unit_newsletter(payload: UnitEmailRequest):
+    """Route SuperAdmin pour envoyer un e-mail à TOUS les parents et TOUS les staffs d'une unité"""
     try:
-        # 1. Vérifier que la section appartient bien à l'unité du Chef d'Unité (Sécurité)
-        sec_check = supabase.table("sections").select("id").eq("id", payload.section_id).eq("unite_id", payload.unite_id).execute()
-        if not sec_check.data:
-            raise HTTPException(status_code=403, detail="Cette section n'appartient pas à votre unité.")
-
-        # 2. Récupérer les parents (via les abonnements newsletter)
-        parents_res = supabase.table("newsletter_subscribers").select("email, unsubscribe_token").eq("section_id", payload.section_id).eq("is_subscribed", True).execute()
+        # 1. Trouver toutes les sections de l'unité
+        sections_res = supabase.table("sections").select("id").eq("unite_id", payload.unite_id).execute()
+        section_ids = [s["id"] for s in sections_res.data]
         
-        # 3. Récupérer les chefs (via la table admins)
-        chefs_res = supabase.table("admins").select("email").eq("section_id", payload.section_id).execute()
+        if not section_ids:
+            raise HTTPException(status_code=404, detail="Aucune section trouvée pour cette unité.")
 
-        # Combiner intelligemment les e-mails (Pour éviter d'envoyer 2 fois si un chef est aussi parent)
+        # 2. Récupérer tous les parents abonnés de ces sections
+        parents_res = supabase.table("newsletter_subscribers").select("email, unsubscribe_token").in_("section_id", section_ids).eq("is_subscribed", True).execute()
+        
+        # 3. Récupérer tous les chefs de ces sections
+        chefs_res = supabase.table("admins").select("email").in_("section_id", section_ids).execute()
+
+        # 4. Fusionner sans doublons (si un chef est aussi un parent)
         all_emails = {}
         for p in parents_res.data:
             all_emails[p["email"]] = {"type": "parent", "token": p["unsubscribe_token"]}
@@ -216,32 +217,29 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
                 all_emails[c["email"]] = {"type": "chef", "token": None}
 
         if not all_emails:
-            raise HTTPException(status_code=404, detail="Aucun membre (parent ou chef) trouvé dans cette section.")
+            raise HTTPException(status_code=404, detail="Aucun membre trouvé dans cette unité.")
 
         succes_count = 0
         url = "https://api.brevo.com/v3/smtp/email"
         headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
-
-        # 4. Envoyer les e-mails
+        
         for email, info in all_emails.items():
             if info["type"] == "parent":
-                unsubscribe_link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
-                footer = f"""<br><br><hr style="border: none; border-top: 1px solid #eaeaea; margin-top: 30px;">
-                             <p style="font-size: 11px; color: gray; text-align: center;">Désinscription parent : <a href="{unsubscribe_link}" style="color: #1E3A8A;">cliquez ici</a>.</p>"""
+                link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
+                footer = f'<p style="font-size: 11px; color: gray; text-align: center;">Désinscription Parent : <a href="{link}" style="color: #1E3A8A;">cliquez ici</a>.</p>'
             else:
-                footer = f"""<br><br><hr style="border: none; border-top: 1px solid #eaeaea; margin-top: 30px;">
-                             <p style="font-size: 11px; color: gray; text-align: center;">Vous recevez cet e-mail en tant que membre du Staff de la section.</p>"""
+                footer = f'<p style="font-size: 11px; color: gray; text-align: center;">Vous recevez ceci en tant que Staff de l\'Unité.</p>'
 
             html_content = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h3 style="color: #1E3A8A;">Message de la Direction d'Unité</h3>
+                <h3 style="color: #1E3A8A;">Communiqué de la Direction d'Unité</h3>
                 <div style="white-space: pre-wrap; font-size: 16px; color: #333;">{payload.message}</div>
-                {footer}
+                <br><br><hr style="border: none; border-top: 1px solid #eaeaea; margin-top: 30px;">{footer}
             </div>
             """
             
             brevo_payload = {
-                "sender": {"name": "L'Unité Scoute", "email": "arthurlouette12@gmail.com"},
+                "sender": {"name": "Direction d'Unité", "email": "arthurlouette12@gmail.com"},
                 "to": [{"email": email}],
                 "subject": f"[UNITÉ] {payload.subject}",
                 "htmlContent": html_content
@@ -250,7 +248,7 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
             res = requests.post(url, json=brevo_payload, headers=headers)
             if res.status_code == 201: succes_count += 1
                 
-        return {"status": "success", "message": f"E-mail envoyé avec succès à {succes_count} personnes (Staff & Parents) !"}
+        return {"status": "success", "message": f"E-mail envoyé avec succès à {succes_count} membres (Staffs & Parents) !"}
     except Exception as e:
         if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=f"Erreur d'envoi : {str(e)}")
