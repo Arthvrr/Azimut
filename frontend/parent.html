@@ -8,12 +8,14 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { scout: { green: '#2E7D32', light: '#E8F5E9', dark: '#1B5E20' } } } } }
+        tailwind.config = { theme: { extend: { colors: { 
+            parent: { primary: '#800020', light: '#F8E7EB', dark: '#4d0013' } 
+        } } } }
     </script>
     <style>
         .fc .fc-toolbar-title { font-size: 1.1rem; font-weight: 700; color: #111827; text-transform: capitalize; }
-        .fc .fc-button-primary { background-color: #2E7D32 !important; border-color: #2E7D32 !important; }
-        .fc .fc-button-primary:hover { background-color: #1B5E20 !important; }
+        .fc .fc-button-primary { background-color: #800020 !important; border-color: #800020 !important; }
+        .fc .fc-button-primary:hover { background-color: #4d0013 !important; }
         .fc-event { cursor: pointer; } 
     </style>
 </head>
@@ -21,12 +23,12 @@
 
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
+            <div class="w-10 h-10 bg-parent-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
         <div id="userMenu" class="hidden flex items-center gap-4">
             <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
-                Connecté : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
+                Connecté : <span id="userEmailDisplay" class="font-bold text-parent-primary"></span>
             </span>
             <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
         </div>
@@ -36,57 +38,57 @@
         
         <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <div class="flex mb-6 border-b border-gray-200">
-                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green transition-colors">Connexion</button>
+                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-parent-primary border-b-2 border-parent-primary transition-colors">Connexion</button>
                 <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Rejoindre une section</button>
             </div>
             
             <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
             
             <form id="loginForm" class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary"></div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
                     <div class="relative">
-                        <input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary pr-10">
                         <button type="button" onclick="togglePassword('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="loginBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Se connecter</button>
-                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button></div>
+                <button type="submit" id="loginBtn" class="w-full bg-parent-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-parent-dark transition-colors">Se connecter</button>
+                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-parent-primary hover:underline">Mot de passe oublié ?</button></div>
             </form>
 
             <form id="registerForm" class="space-y-4 hidden">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Unité</label>
-                    <select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green bg-white"><option value="">Chargement...</option></select>
+                    <select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">Chargement...</option></select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Section</label>
-                    <select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green bg-white"><option value="">-- Choisir une unité d'abord --</option></select>
+                    <select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">-- Choisir une unité d'abord --</option></select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label>
                     <div class="relative">
-                        <input type="password" id="regCode" required placeholder="Ex: PARENTS-CODE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <input type="password" id="regCode" required placeholder="Ex: PARENTS-CODE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary pr-10">
                         <button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                         </button>
                     </div>
                 </div>
                 <hr class="my-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary"></div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe (min. 6 car.)</label>
                     <div class="relative">
-                        <input type="password" id="regPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green pr-10">
+                        <input type="password" id="regPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary pr-10">
                         <button type="button" onclick="togglePassword('regPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="registerBtn" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark transition-colors">Créer mon compte</button>
+                <button type="submit" id="registerBtn" class="w-full bg-parent-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-parent-dark transition-colors">Créer mon compte</button>
             </form>
         </div>
 
@@ -95,7 +97,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
                         <div><h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2><p class="text-sm text-gray-500">Gérez les fiches médicales.</p></div>
-                        <button id="openChildModalBtn" class="bg-scout-light text-scout-green hover:bg-scout-green hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">+ Ajouter</button>
+                        <button id="openChildModalBtn" class="bg-parent-light text-parent-primary hover:bg-parent-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">+ Ajouter</button>
                     </div>
                     <div id="childrenList" class="space-y-3 flex-1 overflow-y-auto max-h-[300px]"><p class="text-sm text-gray-500 text-center italic mt-4">Chargement...</p></div>
                 </div>
@@ -104,9 +106,9 @@
                     <h2 class="text-xl font-bold text-gray-900 mb-2">Signaler une absence</h2>
                     <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Prévenez les chefs en un clic.</p>
                     <form id="absenceForm" class="space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label><select id="absChild" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none"><option value="">Chargement...</option></select></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label><select id="absEvent" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none"><option value="">Chargement...</option></select></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label><input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border outline-none"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label><select id="absChild" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-parent-primary"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label><select id="absEvent" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-parent-primary"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label><input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary"></div>
                         <button type="submit" id="submitAbsenceBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Envoyer le signalement</button>
                         <p id="absenceMsg" class="text-sm text-center mt-2"></p>
                     </form>
@@ -122,12 +124,12 @@
                     <h3 class="text-lg font-bold text-gray-900 mb-2">Sécurité</h3>
                     <div class="space-y-4">
                         <div class="relative">
-                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full px-4 py-2 rounded-lg border outline-none text-sm pr-10">
+                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary text-sm pr-10">
                             <button type="button" onclick="togglePassword('newPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                             </button>
                         </div>
-                        <button type="button" id="updatePasswordBtn" class="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">Modifier</button>
+                        <button type="button" id="updatePasswordBtn" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg text-sm font-medium transition-colors">Modifier</button>
                         <p id="updatePasswordMsg" class="mt-2 text-xs font-medium text-center"></p>
                     </div>
                 </div>
@@ -141,7 +143,7 @@
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
 
-            <div class="text-center pt-4 pb-10"><button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium">Se déconnecter de l'Espace Parent</button></div>
+            <div class="text-center pt-4 pb-10"><button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium transition-colors">Se déconnecter de l'Espace Parent</button></div>
         </div>
     </main>
 
@@ -150,22 +152,22 @@
             <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
             <form id="childForm" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg"></div>
-                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
+                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
                 </div>
-                <div class="bg-scout-light p-4 rounded-lg">
-                    <label class="block text-sm font-bold">Fiche médicale (PDF)</label>
+                <div class="bg-parent-light p-4 rounded-lg">
+                    <label class="block text-sm font-bold text-parent-primary">Fiche médicale (PDF)</label>
                     <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm mt-1">
                 </div>
-                <div><label class="block text-sm font-medium">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea></div>
-                <div><label class="block text-sm font-medium">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea></div>
+                <div><label class="block text-sm font-medium">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
+                <div><label class="block text-sm font-medium">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
                 <div class="grid grid-cols-2 gap-4 border-t pt-4">
-                    <div><p class="font-bold text-sm mb-2">Parent 1</p><input type="text" id="cP1Name" placeholder="Nom" required class="w-full px-3 py-2 border rounded-lg mb-2 text-sm"><input type="tel" id="cP1Phone" placeholder="Tél" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
-                    <div><p class="font-bold text-sm mb-2">Parent 2 (Optionnel)</p><input type="text" id="cP2Name" placeholder="Nom" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm"><input type="tel" id="cP2Phone" placeholder="Tél" class="w-full px-3 py-2 border rounded-lg text-sm"></div>
+                    <div><p class="font-bold text-sm mb-2">Parent 1</p><input type="text" id="cP1Name" placeholder="Nom" required class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none"><input type="tel" id="cP1Phone" placeholder="Tél" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none"></div>
+                    <div><p class="font-bold text-sm mb-2">Parent 2 (Optionnel)</p><input type="text" id="cP2Name" placeholder="Nom" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none"><input type="tel" id="cP2Phone" placeholder="Tél" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none"></div>
                 </div>
                 <div class="flex gap-2 pt-4">
-                    <button type="button" id="closeChildModalBtn" class="flex-1 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-medium">Annuler</button>
-                    <button type="submit" id="saveChildBtn" class="flex-1 bg-scout-green text-white px-4 py-2 rounded-lg font-medium">Enregistrer</button>
+                    <button type="button" id="closeChildModalBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors">Annuler</button>
+                    <button type="submit" id="saveChildBtn" class="flex-1 bg-parent-primary hover:bg-parent-dark text-white px-4 py-2 rounded-lg font-medium transition-colors">Enregistrer</button>
                 </div>
                 <p id="childErrorMsg" class="text-sm text-red-500 text-center hidden"></p>
             </form>
@@ -193,7 +195,7 @@
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.innerHTML = `<svg class="w-5 h-5 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`;
+                btn.innerHTML = `<svg class="w-5 h-5 text-parent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`;
             } else {
                 input.type = 'password';
                 btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>`;
@@ -203,15 +205,15 @@
         // --- GESTION DES ONGLETS AUTHENTIFICATION ---
         ui.tabLogin.addEventListener('click', () => {
             ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
-            ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
-            ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-parent-primary border-b-2 border-parent-primary transition-colors";
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700";
             ui.msg.textContent = "";
         });
         ui.tabRegister.addEventListener('click', () => {
             ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden');
-            ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
-            ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
-            ui.msg.textContent = ""; loadUnites(); // Charger les unités
+            ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-parent-primary border-b-2 border-parent-primary transition-colors";
+            ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700";
+            ui.msg.textContent = ""; loadUnites();
         });
 
         // --- CHARGEMENT DYNAMIQUE UNITÉS & SECTIONS ---
@@ -282,7 +284,7 @@
             ui.msg.textContent = "Envoi du lien..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
             const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
             if (error) { ui.msg.textContent = error.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; }
-            else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-scout-green"; }
+            else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-parent-primary"; }
         });
 
         document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
@@ -291,7 +293,7 @@
             if (!newPassword || newPassword.length < 6) { msg.textContent = "Min. 6 caractères."; msg.className = "mt-2 text-sm font-medium text-red-600"; return; }
             const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
             if (error) { msg.textContent = error.message; msg.className = "mt-2 text-sm font-medium text-red-600"; } 
-            else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-scout-green"; document.getElementById('newPassword').value = ""; }
+            else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-parent-primary"; document.getElementById('newPassword').value = ""; }
         });
 
         // --- TABLEAU DE BORD DYNAMIQUE ---
@@ -305,7 +307,7 @@
                 absSelect.innerHTML = `<option value="">Ajoutez d'abord un enfant</option>`;
                 return;
             }
-            list.innerHTML = data.map(c => `<div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center"><div><p class="font-bold">${c.first_name} ${c.last_name}</p>${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}</div>${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded text-scout-green font-bold">📄 Voir PDF</a>` : ''}</div>`).join('');
+            list.innerHTML = data.map(c => `<div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center"><div><p class="font-bold">${c.first_name} ${c.last_name}</p>${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}</div>${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded text-parent-primary font-bold">📄 Voir PDF</a>` : ''}</div>`).join('');
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
@@ -351,7 +353,7 @@
                 if (!childId || !eventId) throw new Error("Sélection manquante.");
                 const { error } = await supabaseClient.from('absences').insert([{ child_id: childId, event_id: eventId, reason: reason }]);
                 if (error) throw error;
-                msg.textContent = "Absence signalée !"; msg.className = "text-sm text-center mt-2 text-scout-green font-bold"; document.getElementById('absReason').value = "";
+                msg.textContent = "Absence signalée !"; msg.className = "text-sm text-center mt-2 text-parent-primary font-bold"; document.getElementById('absReason').value = "";
             } catch (err) { msg.textContent = err.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold"; }
         });
 
@@ -364,7 +366,7 @@
                 events: async function(info, successCallback, failureCallback) {
                     const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', currentSectionId);
                     if (error) failureCallback(error);
-                    else successCallback(data.map(e => ({ id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#2E7D32', borderColor: '#1B5E20' })));
+                    else successCallback(data.map(e => ({ id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#800020', borderColor: '#4d0013' })));
                 },
                 eventClick: function(info) { alert(`Événement : ${info.event.title}\nLieu : ${info.event.extendedProps.location || "Non précisé"}\nDétails : ${info.event.extendedProps.description || "Aucun"}`); }
             });
@@ -383,7 +385,7 @@
             await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', currentSectionId);
             isSubscribed = newStatus; updateSubButton();
         });
-        function updateSubButton() { document.getElementById('toggleSubBtn').textContent = isSubscribed ? "Se désabonner" : "S'abonner"; document.getElementById('toggleSubBtn').className = isSubscribed ? "px-6 py-2 rounded-lg text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg text-sm bg-scout-green text-white"; }
+        function updateSubButton() { document.getElementById('toggleSubBtn').textContent = isSubscribed ? "Se désabonner" : "S'abonner"; document.getElementById('toggleSubBtn').className = isSubscribed ? "px-6 py-2 rounded-lg text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg text-sm bg-parent-primary text-white"; }
 
         // --- INITIALISATION GLOBALE ---
         async function showDashboard() {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azimut - Espace Chef d'Unité</title>
+    <title>Azimut - Chef d'Unité</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -44,6 +44,7 @@
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark">Se connecter</button>
+                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-unite-primary hover:underline">Mot de passe oublié ?</button></div>
             </form>
 
             <form id="registerForm" class="space-y-4 hidden">
@@ -65,7 +66,7 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark">Valider mon profil</button>
+                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark">Valider mon profil Chef d'Unité</button>
             </form>
         </div>
 
@@ -112,7 +113,7 @@
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let currentUniteId = null;
-        let allDirectoryData = []; // Stockage global pour la barre de recherche
+        let allDirectoryData = [];
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -134,13 +135,27 @@
 
         async function getActiveEmail() { const { data: { session } } = await supabaseClient.auth.getSession(); return session?.user?.email; }
 
-        ui.tabLogin.addEventListener('click', () => { ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden'); ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary"; ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700"; });
-        ui.tabRegister.addEventListener('click', () => { ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden'); ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary"; ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700"; loadUnites(); });
+        ui.tabLogin.addEventListener('click', () => { ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden'); ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary"; ui.tabRegister.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700"; ui.msg.textContent = ""; });
+        ui.tabRegister.addEventListener('click', () => { ui.registerForm.classList.remove('hidden'); ui.loginForm.classList.add('hidden'); ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary"; ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700"; ui.msg.textContent = ""; loadUnites(); });
 
         async function loadUnites() {
             const { data } = await supabaseClient.from('unites').select('id, nom_complet');
             if(data) document.getElementById('regUnite').innerHTML = '<option value="">-- Choisir l\'unité --</option>' + data.map(u => `<option value="${u.id}">${u.nom_complet}</option>`).join('');
         }
+
+        // --- MOT DE PASSE OUBLIÉ ---
+        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            if (!email) {
+                ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus.";
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                return;
+            }
+            ui.msg.textContent = "Envoi du lien..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            if (error) { ui.msg.textContent = error.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; }
+            else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-unite-primary"; }
+        });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -183,7 +198,6 @@
             const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
             if (!sections) return;
 
-            // Remplir le filtre des sections
             document.getElementById('filterSection').innerHTML = '<option value="all">Toutes sections</option>' + sections.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
 
             for (const sec of sections) {
@@ -225,7 +239,6 @@
             `).join('');
         }
 
-        // Ecouteurs pour la barre de recherche
         document.getElementById('searchDir').addEventListener('input', renderDirectory);
         document.getElementById('filterSection').addEventListener('change', renderDirectory);
         document.getElementById('filterType').addEventListener('change', renderDirectory);
