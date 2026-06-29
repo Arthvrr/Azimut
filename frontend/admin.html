@@ -51,7 +51,7 @@
                     <div class="relative">
                         <input type="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green pr-10">
                         <button type="button" onclick="togglePassword('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="relative">
                         <input type="password" id="regCode" required placeholder="Ex: STAFF-SECURE" class="w-full px-4 py-2 border rounded-lg outline-none border-red-200 focus:ring-2 focus:ring-red-400 pr-10">
                         <button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                     <div class="relative">
                         <input type="password" id="regPassword" required class="w-full px-4 py-2 border rounded-lg outline-none pr-10">
                         <button type="button" onclick="togglePassword('regPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -157,6 +157,33 @@
                 <div id="calendar" class="min-h-[600px]"></div>
             </div>
 
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 border-b border-gray-100 pb-4 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Annuaire de la Section</h2>
+                        <p class="text-sm text-gray-500">Vue d'ensemble des fiches animés</p>
+                    </div>
+                    <input type="text" id="searchChildTable" placeholder="Rechercher (Nom, Prénom)..." class="w-full md:w-1/3 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green text-sm bg-gray-50">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-600 border border-gray-100 rounded-lg overflow-hidden">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 font-bold">Animé</th>
+                                <th scope="col" class="px-4 py-3 font-bold">Documents PDF</th>
+                                <th scope="col" class="px-4 py-3 font-bold w-1/4">Allergies</th>
+                                <th scope="col" class="px-4 py-3 font-bold w-1/4">Soins / Remarques</th>
+                                <th scope="col" class="px-4 py-3 font-bold text-center">Absences</th>
+                            </tr>
+                        </thead>
+                        <tbody id="childrenTableBody" class="divide-y divide-gray-100">
+                            <tr><td colspan="5" class="text-center py-6 text-gray-500">Chargement de l'annuaire...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="text-center pt-4 pb-10">
                 <button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">
                     Se déconnecter de l'Espace Chef
@@ -192,6 +219,7 @@
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let currentSectionId = null;
+        let sectionChildrenData = []; // Données pour l'annuaire
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -200,7 +228,6 @@
             userMenu: document.getElementById('userMenu'), userEmailDisplay: document.getElementById('userEmailDisplay')
         };
 
-        // --- OUTIL DE CONVERSION POUR LES PIÈCES JOINTES ---
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -294,14 +321,73 @@
             if(data) select.innerHTML = '<option value="">-- Choisir un enfant --</option>' + data.map(c => `<option value="${c.parent_email}">${c.first_name} ${c.last_name} (Parent: ${c.parent_email})</option>`).join('');
         }
         
+        // --- NOUVEAU : ANNUAIRE DES ANIMÉS EN TABLEAU ---
+        async function fetchSectionChildren() {
+            const tbody = document.getElementById('childrenTableBody');
+            
+            // 1. Récupérer les enfants de la section
+            const { data: children, error: childErr } = await supabaseClient.from('children').select('*').eq('section_id', currentSectionId);
+            if (childErr || !children) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500">Erreur lors du chargement.</td></tr>`; return; }
+
+            const childIds = children.map(c => c.id);
+            let absenceCounts = {};
+
+            // 2. Récupérer les absences de ces enfants pour les compter
+            if (childIds.length > 0) {
+                const { data: absences } = await supabaseClient.from('absences').select('child_id').in('child_id', childIds);
+                if (absences) {
+                    absences.forEach(a => { absenceCounts[a.child_id] = (absenceCounts[a.child_id] || 0) + 1; });
+                }
+            }
+
+            // 3. Fusionner les données
+            sectionChildrenData = children.map(c => ({ ...c, absenceCount: absenceCounts[c.id] || 0 }));
+            
+            // 4. Afficher
+            renderChildrenTable();
+        }
+
+        function renderChildrenTable() {
+            const term = document.getElementById('searchChildTable').value.toLowerCase();
+            const tbody = document.getElementById('childrenTableBody');
+
+            const filtered = sectionChildrenData.filter(c => 
+                c.first_name.toLowerCase().includes(term) || c.last_name.toLowerCase().includes(term)
+            );
+
+            if (filtered.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500 italic">Aucun animé trouvé pour cette recherche.</td></tr>`; 
+                return; 
+            }
+
+            tbody.innerHTML = filtered.map(c => {
+                const docs = [];
+                if (c.medical_file_url) docs.push(`<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-scout-light text-scout-green px-2 py-1 rounded border border-scout-green/30 hover:bg-scout-green hover:text-white transition-colors">Médical</a>`);
+                if (c.parental_auth_url) docs.push(`<a href="${c.parental_auth_url}" target="_blank" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Autorisation</a>`);
+                if (c.insurance_file_url) docs.push(`<a href="${c.insurance_file_url}" target="_blank" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Assurance</a>`);
+
+                return `
+                <tr class="bg-white hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-4 font-bold text-gray-900">${c.first_name} ${c.last_name}</td>
+                    <td class="px-4 py-4"><div class="flex flex-wrap gap-1">${docs.length > 0 ? docs.join('') : '<span class="text-xs text-gray-400 italic">Aucun document</span>'}</div></td>
+                    <td class="px-4 py-4 text-red-600 text-xs font-medium">${c.allergies || '-'}</td>
+                    <td class="px-4 py-4 text-gray-600 text-xs">${c.care_instructions || '-'}</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${c.absenceCount > 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}">${c.absenceCount}</span>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        document.getElementById('searchChildTable').addEventListener('input', renderChildrenTable);
+
+        // --- ENVOI EMAILS ---
         document.getElementById('directMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitDmBtn'), statusText = document.getElementById('dmStatusMessage');
             btn.disabled = true; btn.textContent = 'Envoi...'; statusText.textContent = '';
             try {
                 const chefEmail = await getActiveEmail();
-                
-                // Préparation du payload (avec ou sans fichier)
                 const payload = {
                     parent_email: document.getElementById('dmChild').value,
                     subject: document.getElementById('dmSubject').value,
@@ -408,7 +494,9 @@
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
             ui.userEmailDisplay.textContent = await getActiveEmail();
-            fetchAbsences(); loadDmChildren();
+            fetchAbsences(); 
+            loadDmChildren();
+            fetchSectionChildren(); // Appel de la nouvelle fonction Annuaire
             setTimeout(() => { initAdminCalendar(); }, 100);
         }
 
