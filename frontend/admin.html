@@ -24,14 +24,14 @@
             <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Chef</span></h1>
         </div>
-        <button id="logoutBtn" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
+        <button id="logoutBtnNav" class="hidden text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
     </nav>
 
     <main class="max-w-6xl mx-auto mt-10 p-6 space-y-8">
         
         <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <div class="flex mb-6 border-b border-gray-200">
-                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green transition-colors">Connexion Chef</button>
+                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green transition-colors">Connexion</button>
                 <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Nouveau Chef</button>
             </div>
             <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
@@ -40,6 +40,7 @@
                 <div><label class="block text-sm font-medium">E-mail Scout</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
                 <div><label class="block text-sm font-medium">Mot de passe</label><input type="password" id="loginPassword" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-scout-green"></div>
                 <button type="submit" class="w-full bg-scout-green text-white px-4 py-3 rounded-lg font-bold hover:bg-scout-dark">Se connecter</button>
+                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-scout-green hover:underline">Mot de passe oublié ?</button></div>
             </form>
 
             <form id="registerForm" class="space-y-4 hidden">
@@ -61,32 +62,45 @@
         </div>
 
         <div id="dashboardSection" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Newsletter Générale</h2>
-                    <form id="massMailForm" class="space-y-4">
-                        <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="subject" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-medium">Message</label><textarea id="message" rows="5" required class="w-full px-4 py-2 border rounded-lg outline-none"></textarea></div>
-                        <button type="submit" id="submitBtn" class="w-full bg-scout-green text-white px-6 py-3 rounded-lg font-medium">Envoyer à la section</button>
-                        <p id="statusMessage" class="mt-2 text-sm font-medium text-center"></p>
-                    </form>
-                </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Newsletter Générale</h2>
+                <form id="massMailForm" class="space-y-4">
+                    <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="subject" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green"></div>
+                    <div><label class="block text-sm font-medium">Message (Supporte les sauts de ligne)</label><textarea id="message" rows="8" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green"></textarea></div>
+                    <button type="submit" id="submitBtn" class="w-full md:w-auto md:px-12 bg-scout-green hover:bg-scout-dark text-white py-3 rounded-lg font-medium transition-colors">Envoyer à toute la section</button>
+                    <p id="statusMessage" class="mt-2 text-sm font-medium"></p>
+                </form>
+            </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Contacter un parent</h2>
-                    <form id="directMailForm" class="space-y-4">
-                        <div><label class="block text-sm font-medium">Enfant concerné</label><select id="dmChild" required class="w-full px-4 py-2 border rounded-lg outline-none bg-white"><option value="">Chargement...</option></select></div>
-                        <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="dmSubject" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-medium">Message</label><textarea id="dmMessage" rows="3" required class="w-full px-4 py-2 border rounded-lg outline-none"></textarea></div>
-                        <button type="submit" id="submitDmBtn" class="w-full bg-gray-800 text-white px-6 py-3 rounded-lg font-medium">Envoyer l'e-mail</button>
-                        <p id="dmStatusMessage" class="mt-2 text-sm font-medium text-center"></p>
-                        <p class="text-xs text-gray-400 italic text-center">Nécessite la route API backend /send-single-email</p>
-                    </form>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Contacter un parent</h2>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">La réponse vous sera adressée</span>
                 </div>
+                <form id="directMailForm" class="space-y-4">
+                    <div><label class="block text-sm font-medium">Enfant concerné</label><select id="dmChild" required class="w-full px-4 py-3 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-scout-green"><option value="">Chargement...</option></select></div>
+                    <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="dmSubject" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green"></div>
+                    <div><label class="block text-sm font-medium">Message</label><textarea id="dmMessage" rows="6" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-scout-green"></textarea></div>
+                    <button type="submit" id="submitDmBtn" class="w-full md:w-auto md:px-12 bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-lg font-medium transition-colors">Envoyer l'e-mail</button>
+                    <p id="dmStatusMessage" class="mt-2 text-sm font-medium"></p>
+                </form>
+            </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:col-span-1 flex flex-col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Absences signalées</h2>
                     <div id="absencesList" class="space-y-4 overflow-y-auto flex-1 max-h-[350px] pr-2"><p class="text-gray-500 text-sm text-center mt-10">Chargement...</p></div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Sécurité du Chef</h2>
+                    <p class="text-sm text-gray-500 mb-4">Modifier votre mot de passe d'accès.</p>
+                    <div class="space-y-4">
+                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 6 car.)" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-scout-green outline-none">
+                        <button type="button" id="updatePasswordBtn" class="w-full bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-lg font-medium transition-colors">Mettre à jour</button>
+                        <p id="updatePasswordMsg" class="mt-2 text-sm font-medium text-center"></p>
+                    </div>
                 </div>
             </div>
 
@@ -96,6 +110,12 @@
                     <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Cliquez pour ajouter/modifier</span>
                 </div>
                 <div id="calendar" class="min-h-[600px]"></div>
+            </div>
+
+            <div class="text-center pt-4 pb-10">
+                <button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">
+                    Se déconnecter de l'Espace Chef
+                </button>
             </div>
         </div>
     </main>
@@ -134,6 +154,11 @@
             tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister')
         };
 
+        async function getActiveEmail() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            return session?.user?.email;
+        }
+
         // --- GESTION DES ONGLETS AUTHENTIFICATION ---
         ui.tabLogin.addEventListener('click', () => {
             ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
@@ -146,6 +171,20 @@
             ui.tabRegister.className = "flex-1 pb-3 text-center font-bold text-scout-green border-b-2 border-scout-green";
             ui.tabLogin.className = "flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700";
             ui.msg.textContent = ""; loadUnites();
+        });
+
+        // --- MOT DE PASSE OUBLIÉ ---
+        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            if (!email) {
+                ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus.";
+                ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600";
+                return;
+            }
+            ui.msg.textContent = "Envoi du lien..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            if (error) { ui.msg.textContent = error.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; }
+            else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-scout-green"; }
         });
 
         // --- CHARGEMENT DYNAMIQUE UNITÉS & SECTIONS ---
@@ -169,7 +208,6 @@
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                // Vérifier si l'utilisateur est bien dans la table admins
                 const { data: admin } = await supabaseClient.from('admins').select('section_id').eq('email', email).maybeSingle();
                 if(admin) { currentSectionId = admin.section_id; showDashboard(); }
                 else { await supabaseClient.auth.signOut(); throw new Error("Accès refusé. Vous n'êtes pas reconnu comme membre du Staff."); }
@@ -187,15 +225,12 @@
             ui.msg.textContent = "Création du profil chef..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600";
             
             try {
-                // 1. Validation du CODE SECRET CHEF
                 const { data: sec } = await supabaseClient.from('sections').select('code_chef').eq('id', sectionId).single();
                 if(!sec || sec.code_chef !== codeInput) throw new Error("Code secret staff invalide !");
 
-                // 2. Création Auth
                 const { error: authErr } = await supabaseClient.auth.signUp({ email, password });
                 if (authErr) throw authErr;
 
-                // 3. Insertion Admin
                 const { error: adminErr } = await supabaseClient.from('admins').insert([{ email: email, first_name: fname, last_name: lname, totem: totem, section_id: sectionId }]);
                 if (adminErr) throw adminErr;
                 
@@ -203,20 +238,39 @@
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
+        const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
+        document.getElementById('logoutBtnNav').addEventListener('click', logoutAction);
+        document.getElementById('logoutBtnMain').addEventListener('click', logoutAction);
 
-        // --- DASHBOARD (Isolé par currentSectionId) ---
+        // --- MISE A JOUR DU MOT DE PASSE (SECURITÉ) ---
+        document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPassword').value;
+            const msg = document.getElementById('updatePasswordMsg');
+            const btn = document.getElementById('updatePasswordBtn');
 
+            if (!newPassword || newPassword.length < 6) {
+                msg.textContent = "Le mot de passe doit faire au moins 6 caractères."; msg.className = "mt-2 text-sm font-medium text-red-600 text-center"; return;
+            }
+            btn.disabled = true; btn.textContent = "Mise à jour...";
+            const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+            if (error) {
+                msg.textContent = "Erreur : " + error.message; msg.className = "mt-2 text-sm font-medium text-red-600 text-center";
+            } else {
+                msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-scout-green text-center"; document.getElementById('newPassword').value = "";
+            }
+            btn.disabled = false; btn.textContent = "Mettre à jour";
+        });
+
+        // --- DASHBOARD ---
         // 1. Absences
         async function fetchAbsences() {
             const list = document.getElementById('absencesList');
-            // Grâce à currentSectionId, on ne voit QUE les absences de notre section !
             const { data, error } = await supabaseClient.from('absences').select(`reason, created_at, events!inner(title, start_time, section_id), children(first_name, last_name)`).eq('events.section_id', currentSectionId).order('created_at', { ascending: false });
             if (!data || data.length === 0) { list.innerHTML = `<p class="text-gray-500 text-sm text-center mt-10">Aucune absence.</p>`; return; }
             list.innerHTML = data.map(abs => `<div class="p-4 border border-gray-100 rounded-lg bg-red-50 border-l-4 border-l-red-500"><div class="flex justify-between items-start mb-1"><h4 class="font-bold text-gray-900">${abs.children.first_name} ${abs.children.last_name}</h4><span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">Absent(e)</span></div><p class="text-sm font-medium text-gray-800 mb-1">🏕️ ${abs.events.title} (${new Date(abs.events.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: 'long'})})</p><p class="text-sm text-gray-600 italic">Motif : ${abs.reason || 'Non précisé'}</p></div>`).join('');
         }
 
-        // 2. Messagerie Directe (Charge les enfants de la section)
+        // 2. Messagerie Directe
         async function loadDmChildren() {
             const { data } = await supabaseClient.from('children').select('parent_email, first_name, last_name').eq('section_id', currentSectionId);
             const select = document.getElementById('dmChild');
@@ -225,9 +279,30 @@
         
         document.getElementById('directMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            // TODO : Lier avec une nouvelle route FastAPI /api/v1/send-direct-email
-            document.getElementById('dmStatusMessage').textContent = "⚠️ Fonctionnalité en développement côté Backend.";
-            document.getElementById('dmStatusMessage').className = "mt-2 text-sm text-orange-600 font-bold text-center";
+            const btn = document.getElementById('submitDmBtn'); const statusText = document.getElementById('dmStatusMessage');
+            btn.disabled = true; btn.textContent = 'Envoi...'; statusText.textContent = '';
+            
+            try {
+                const chefEmail = await getActiveEmail();
+                const response = await fetch('http://127.0.0.1:8000/api/v1/send-direct-email', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        parent_email: document.getElementById('dmChild').value,
+                        subject: document.getElementById('dmSubject').value,
+                        message: document.getElementById('dmMessage').value,
+                        chef_email: chefEmail
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold text-center";
+                    document.getElementById('directMailForm').reset();
+                } else throw new Error(data.detail);
+            } catch (err) {
+                statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold text-center";
+            } finally {
+                btn.disabled = false; btn.textContent = "Envoyer l'e-mail";
+            }
         });
 
         // 3. Newsletter de masse
@@ -244,7 +319,7 @@
                 if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold"; document.getElementById('massMailForm').reset(); }
                 else throw new Error(data.detail);
             } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
-            finally { btn.disabled = false; btn.textContent = 'Envoyer à la section'; }
+            finally { btn.disabled = false; btn.textContent = 'Envoyer à toute la section'; }
         });
 
         // 4. Calendrier Admin
@@ -282,7 +357,7 @@
         document.getElementById('eventForm').addEventListener('submit', async (e) => {
             e.preventDefault(); const btn = document.getElementById('saveEventBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
             const eventData = {
-                section_id: currentSectionId, // LIÉ À LA SECTION DU CHEF !
+                section_id: currentSectionId,
                 title: document.getElementById('eventTitle').value, description: document.getElementById('eventDesc').value,
                 location: document.getElementById('eventLocation').value,
                 start_time: new Date(document.getElementById('eventStart').value).toISOString(), end_time: new Date(document.getElementById('eventEnd').value).toISOString()
@@ -300,12 +375,12 @@
 
         // --- AFFICHAGE ---
         function showDashboard() {
-            ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); document.getElementById('logoutBtn').classList.remove('hidden');
+            ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); document.getElementById('logoutBtnNav').classList.remove('hidden');
             fetchAbsences(); loadDmChildren();
             setTimeout(() => { initAdminCalendar(); }, 100);
         }
 
-        // Vérification de session au démarrage
+        // Vérification de session
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
                 const { data: admin } = await supabaseClient.from('admins').select('section_id').eq('email', session.user.email).maybeSingle();
