@@ -3,3 +3,4 @@
 3. faire bouton se désabonner/s'abonner newsletter client
 4. ajouter interface admin ajout réunion + évent à calendrier interactif
 5. faire form absence parents
+6. faire drive avec documents importants pour les chefs (autorisations parentales, ...)
