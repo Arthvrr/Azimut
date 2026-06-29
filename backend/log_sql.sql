@@ -341,3 +341,6 @@ WHERE code_nom = 'T4C';
 -- 7. LA COMMANDE MAGIQUE (Vide la mémoire cache de Supabase)
 -- ==========================================================
 NOTIFY pgrst, 'reload schema';
+
+ALTER TABLE children ADD COLUMN IF NOT EXISTS parental_auth_url TEXT;
+ALTER TABLE children ADD COLUMN IF NOT EXISTS insurance_file_url TEXT;

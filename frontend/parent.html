@@ -26,7 +26,7 @@
 
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-parent-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
+            <div class="w-10 h-10 bg-parent-primary rounded-lg flex items-center justify-center text-white font-bold text-xl"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
         <div id="userMenu" class="hidden flex items-center gap-4">
@@ -108,7 +108,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                        <div><h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2><p class="text-sm text-gray-500">Gérez les fiches médicales.</p></div>
+                        <div><h2 class="text-xl font-bold text-gray-900">Mes Enfants</h2><p class="text-sm text-gray-500">Cliquez sur un nom pour modifier.</p></div>
                         <button id="openChildModalBtn" class="bg-parent-light text-parent-primary hover:bg-parent-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">+ Ajouter</button>
                     </div>
                     <div id="childrenList" class="space-y-3 flex-1 overflow-y-auto max-h-[300px]"><p class="text-sm text-gray-500 text-center italic mt-4">Chargement...</p></div>
@@ -161,16 +161,29 @@
 
     <div id="childModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
             <form id="childForm" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
                     <div><label class="block text-sm font-medium">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
                 </div>
-                <div class="bg-parent-light p-4 rounded-lg">
-                    <label class="block text-sm font-bold text-parent-primary">Fiche médicale (PDF)</label>
-                    <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm mt-1">
+                
+                <div class="bg-parent-light p-4 rounded-lg space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-parent-primary">Fiche médicale (PDF)</label>
+                        <input type="file" id="cMedicalFile" accept=".pdf" class="w-full text-sm mt-1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-parent-primary">Autorisation parentale (PDF)</label>
+                        <input type="file" id="cAuthFile" accept=".pdf" class="w-full text-sm mt-1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-parent-primary">Attestation d'assurance (PDF)</label>
+                        <input type="file" id="cInsuranceFile" accept=".pdf" class="w-full text-sm mt-1">
+                    </div>
+                    <p class="text-xs text-gray-500 italic">Laissez vide pour conserver le fichier existant.</p>
                 </div>
+
                 <div><label class="block text-sm font-medium">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
                 <div><label class="block text-sm font-medium">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
                 <div class="grid grid-cols-2 gap-4 border-t pt-4">
@@ -194,6 +207,10 @@
         let isSubscribed = false;
         let parentCalendarInstance = null; 
         let currentSectionId = null;
+        
+        // Stockage des enfants pour l'édition
+        let childrenDataMap = {};
+        let currentEditChildId = null; 
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -250,7 +267,7 @@
                 if (error) throw error;
                 const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', email).maybeSingle();
                 if(sub) currentSectionId = sub.section_id;
-                else throw new Error("Votre compte n'est lié à aucune section. Veuillez vous réinscrire.");
+                else throw new Error("Votre compte n'est lié à aucune section.");
                 await showDashboard();
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
@@ -268,12 +285,9 @@
             try {
                 const { data: sec } = await supabaseClient.from('sections').select('code_parent').eq('id', sectionId).single();
                 if(!sec || sec.code_parent !== codeInput) throw new Error("Code secret parent invalide.");
-
                 const { error } = await supabaseClient.auth.signUp({ email, password });
                 if (error) throw error;
-
                 await supabaseClient.from('newsletter_subscribers').insert([{ section_id: sectionId, email: email, is_subscribed: true }]);
-                
                 currentSectionId = sectionId;
                 await showDashboard();
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
@@ -301,15 +315,11 @@
             else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-parent-primary"; document.getElementById('newPassword').value = ""; }
         });
 
-        // --- ENVOYER MAIL AU CHEF ---
         async function loadPmChefs() {
             const { data } = await supabaseClient.from('admins').select('email, first_name, last_name, totem').eq('section_id', currentSectionId);
             const select = document.getElementById('pmChef');
-            if(data && data.length > 0) {
-                select.innerHTML = '<option value="">-- Choisir un chef --</option>' + data.map(c => `<option value="${c.email}">${c.first_name} "${c.totem || ''}" ${c.last_name}</option>`).join('');
-            } else {
-                select.innerHTML = '<option value="">Aucun chef trouvé</option>';
-            }
+            if(data && data.length > 0) { select.innerHTML = '<option value="">-- Choisir un chef --</option>' + data.map(c => `<option value="${c.email}">${c.first_name} "${c.totem || ''}" ${c.last_name}</option>`).join(''); } 
+            else { select.innerHTML = '<option value="">Aucun chef trouvé</option>'; }
         }
 
         document.getElementById('parentToChefMailForm').addEventListener('submit', async (e) => {
@@ -320,12 +330,7 @@
                 const parentEmail = await getActiveEmail();
                 const response = await fetch('http://127.0.0.1:8000/api/v1/send-parent-to-chef-email', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        chef_email: document.getElementById('pmChef').value, 
-                        subject: document.getElementById('pmSubject').value, 
-                        message: document.getElementById('pmMessage').value, 
-                        parent_email: parentEmail 
-                    })
+                    body: JSON.stringify({ chef_email: document.getElementById('pmChef').value, subject: document.getElementById('pmSubject').value, message: document.getElementById('pmMessage').value, parent_email: parentEmail })
                 });
                 const data = await response.json();
                 if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-parent-primary font-bold"; document.getElementById('parentToChefMailForm').reset(); }
@@ -334,43 +339,125 @@
             finally { btn.disabled = false; btn.textContent = "Envoyer le message au chef"; }
         });
 
+        // --- GESTION DES ENFANTS ---
         async function loadChildren() {
             const email = await getActiveEmail();
             const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email).eq('section_id', currentSectionId);
             const list = document.getElementById('childrenList'), absSelect = document.getElementById('absChild');
+            
+            childrenDataMap = {}; // Reset map
             
             if (!data || data.length === 0) {
                 list.innerHTML = `<p class="text-sm text-gray-500 italic mt-2">Aucun enfant ajouté.</p>`;
                 absSelect.innerHTML = `<option value="">Ajoutez d'abord un enfant</option>`;
                 return;
             }
-            list.innerHTML = data.map(c => `<div class="p-3 border rounded-lg bg-gray-50 flex justify-between items-center"><div><p class="font-bold">${c.first_name} ${c.last_name}</p>${c.allergies ? `<p class="text-xs text-red-500">⚠️ ${c.allergies}</p>` : ''}</div>${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border px-2 py-1 rounded text-parent-primary font-bold">📄 Voir PDF</a>` : ''}</div>`).join('');
+            
+            list.innerHTML = data.map(c => {
+                childrenDataMap[c.id] = c; // Sauvegarde pour l'édition
+                return `
+                <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <button onclick="editChild(${c.id})" class="text-lg font-bold text-gray-900 hover:text-parent-primary hover:underline flex items-center gap-2">
+                                ${c.first_name} ${c.last_name}
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                            ${c.allergies ? `<p class="text-xs text-red-600 font-medium mt-1">⚠️ Allergies signalées</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" /></svg> Médical</a>` : ''}
+                        ${c.parental_auth_url ? `<a href="${c.parental_auth_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" /></svg> Autorisation</a>` : ''}
+                        ${c.insurance_file_url ? `<a href="${c.insurance_file_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" /></svg> Assurance</a>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
-        document.getElementById('openChildModalBtn').addEventListener('click', () => { document.getElementById('childForm').reset(); document.getElementById('childModal').classList.remove('hidden'); });
+        // Fonction pour ouvrir la modale en mode EDITION
+        window.editChild = function(id) {
+            currentEditChildId = id;
+            const c = childrenDataMap[id];
+            
+            document.getElementById('cFirstName').value = c.first_name;
+            document.getElementById('cLastName').value = c.last_name;
+            document.getElementById('cAllergies').value = c.allergies || '';
+            document.getElementById('cCare').value = c.care_instructions || '';
+            document.getElementById('cP1Name').value = c.parent1_name || '';
+            document.getElementById('cP1Phone').value = c.parent1_phone || '';
+            document.getElementById('cP2Name').value = c.parent2_name || '';
+            document.getElementById('cP2Phone').value = c.parent2_phone || '';
+
+            // Reset des champs fichiers
+            document.getElementById('cMedicalFile').value = '';
+            document.getElementById('cAuthFile').value = '';
+            document.getElementById('cInsuranceFile').value = '';
+
+            document.getElementById('modalTitle').textContent = "Modifier la fiche de " + c.first_name;
+            document.getElementById('childModal').classList.remove('hidden');
+        };
+
+        // Bouton + Ajouter un enfant
+        document.getElementById('openChildModalBtn').addEventListener('click', () => { 
+            currentEditChildId = null;
+            document.getElementById('childForm').reset(); 
+            document.getElementById('modalTitle').textContent = "Ajouter un enfant";
+            document.getElementById('childModal').classList.remove('hidden'); 
+        });
+
         document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
+
+        // Fonction utilitaire pour uploader un PDF
+        async function uploadPdf(fileInput, email) {
+            if (fileInput.files.length === 0) return null;
+            const file = fileInput.files[0];
+            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_'); // Sécurité nom de fichier
+            const fileName = `${email}_${Date.now()}_${safeName}`;
+            const { error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, file);
+            if (uploadErr) throw uploadErr;
+            return supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
+        }
 
         document.getElementById('childForm').addEventListener('submit', async (e) => {
             e.preventDefault(); const btn = document.getElementById('saveChildBtn'); btn.disabled = true; btn.textContent = "Sauvegarde...";
             try {
-                const email = await getActiveEmail(); let pdfUrl = null; const fileInput = document.getElementById('cMedicalFile');
-                if (fileInput.files.length > 0) {
-                    const fileName = `${email}_${Date.now()}_${fileInput.files[0].name}`;
-                    const { error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, fileInput.files[0]);
-                    if (uploadErr) throw uploadErr;
-                    pdfUrl = supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
-                }
+                const email = await getActiveEmail(); 
+                
+                // On récupère les anciennes URL si on est en mode édition
+                let medUrl = currentEditChildId ? childrenDataMap[currentEditChildId].medical_file_url : null;
+                let authUrl = currentEditChildId ? childrenDataMap[currentEditChildId].parental_auth_url : null;
+                let insUrl = currentEditChildId ? childrenDataMap[currentEditChildId].insurance_file_url : null;
+
+                // On upload les nouveaux fichiers si sélectionnés (et on remplace l'URL)
+                const newMed = await uploadPdf(document.getElementById('cMedicalFile'), email);
+                if (newMed) medUrl = newMed;
+                const newAuth = await uploadPdf(document.getElementById('cAuthFile'), email);
+                if (newAuth) authUrl = newAuth;
+                const newIns = await uploadPdf(document.getElementById('cInsuranceFile'), email);
+                if (newIns) insUrl = newIns;
+
                 const childData = {
                     parent_email: email, section_id: currentSectionId,
                     first_name: document.getElementById('cFirstName').value, last_name: document.getElementById('cLastName').value,
                     allergies: document.getElementById('cAllergies').value, care_instructions: document.getElementById('cCare').value,
                     parent1_name: document.getElementById('cP1Name').value, parent1_phone: document.getElementById('cP1Phone').value,
                     parent2_name: document.getElementById('cP2Name').value, parent2_phone: document.getElementById('cP2Phone').value,
-                    medical_file_url: pdfUrl
+                    medical_file_url: medUrl, parental_auth_url: authUrl, insurance_file_url: insUrl
                 };
-                const { error } = await supabaseClient.from('children').insert([childData]);
-                if (error) throw error;
+
+                if (currentEditChildId) {
+                    // Update
+                    const { error } = await supabaseClient.from('children').update(childData).eq('id', currentEditChildId);
+                    if (error) throw error;
+                } else {
+                    // Insert
+                    const { error } = await supabaseClient.from('children').insert([childData]);
+                    if (error) throw error;
+                }
+                
                 document.getElementById('childModal').classList.add('hidden'); await loadChildren();
             } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
         });
