@@ -1,12 +1,12 @@
 import os
 import requests
+from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-# Chargement des variables d'environnement du fichier .env
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -16,11 +16,9 @@ BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("Les variables d'environnement SUPABASE_URL ou SUPABASE_KEY sont manquantes.")
 
-# Initialisation de FastAPI et du client Supabase
 app = FastAPI(title="Azimut API", version="1.0")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Activation du CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,21 +27,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- FONCTION UTILITAIRE : RÉCUPÉRER NOMS DE SECTION ET UNITÉ ---
 def get_section_and_unit_names(section_id: int):
     res = supabase.table("sections").select("nom, unites(nom_complet)").eq("id", section_id).execute()
-    if not res.data:
-        return "Section", "Unité Scoute"
-    sec_nom = res.data[0]["nom"]
-    unite_nom = res.data[0]["unites"]["nom_complet"]
-    return sec_nom, unite_nom
+    if not res.data: return "Section", "Unité Scoute"
+    return res.data[0]["nom"], res.data[0]["unites"]["nom_complet"]
 
-# --- ENVOI MAIL DE BIENVENUE ---
 def send_welcome_email(to_email: str, token: str, section_id: int):
     sec_nom, unite_nom = get_section_and_unit_names(section_id)
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
-    
     unsubscribe_link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={token}"
     
     html_content = f"""
@@ -61,16 +53,14 @@ def send_welcome_email(to_email: str, token: str, section_id: int):
     </div>
     """
     
-    payload = {
-        "sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"}, 
-        "to": [{"email": to_email}],
-        "subject": f"Inscription confirmée - {sec_nom}",
-        "htmlContent": html_content
-    }
+    payload = {"sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"}, "to": [{"email": to_email}], "subject": f"Inscription confirmée - {sec_nom}", "htmlContent": html_content}
     requests.post(url, json=payload, headers=headers)
 
+# --- NOUVEAU : STRUCTURE DE PIÈCE JOINTE ---
+class Attachment(BaseModel):
+    name: str
+    content: str # Sera encodé en base64 par le front-end
 
-# --- MODÈLES DE DONNÉES ---
 class SubscriberRequest(BaseModel):
     email: EmailStr
     section_id: int
@@ -79,17 +69,20 @@ class MassEmailRequest(BaseModel):
     subject: str
     message: str
     section_id: int
+    attachment: Optional[Attachment] = None
 
 class DirectEmailRequest(BaseModel):
     parent_email: EmailStr
     subject: str
     message: str
-    chef_email: EmailStr  
+    chef_email: EmailStr
+    attachment: Optional[Attachment] = None
 
 class UnitEmailRequest(BaseModel):
     subject: str
     message: str
     unite_id: int
+    attachment: Optional[Attachment] = None
 
 class SuperAdminSectionEmailRequest(BaseModel):
     subject: str
@@ -97,8 +90,13 @@ class SuperAdminSectionEmailRequest(BaseModel):
     section_id: int
     unite_id: int
 
+class ParentToChefEmailRequest(BaseModel):
+    chef_email: EmailStr
+    subject: str
+    message: str
+    parent_email: EmailStr
 
-# --- ROUTES DE L'API ---
+# --- ROUTES ---
 
 @app.post("/api/v1/subscribe")
 def subscribe(payload: SubscriberRequest):
@@ -109,10 +107,10 @@ def subscribe(payload: SubscriberRequest):
         return {"status": "success", "message": "Inscription validée avec succès."}
     except Exception as e:
         if "duplicate key value" in str(e): raise HTTPException(status_code=400, detail="Cet adresse e-mail est déjà inscrite.")
-        raise HTTPException(status_code=500, detail=f"Erreur serveur : {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/unsubscribe")
-def unsubscribe(token: str = Query(..., description="Le token UUID de désinscription")):
+def unsubscribe(token: str = Query(...)):
     try:
         response = supabase.table("newsletter_subscribers").update({"is_subscribed": False}).eq("unsubscribe_token", token).execute()
         if not response.data: raise HTTPException(status_code=44, detail="Jeton invalide ou expiré.")
@@ -125,7 +123,6 @@ def unsubscribe(token: str = Query(..., description="Le token UUID de désinscri
 def send_mass_newsletter(payload: MassEmailRequest):
     try:
         sec_nom, unite_nom = get_section_and_unit_names(payload.section_id)
-        
         subscribers = supabase.table("newsletter_subscribers").select("email, unsubscribe_token").eq("section_id", payload.section_id).eq("is_subscribed", True).execute().data
         if not subscribers: raise HTTPException(status_code=404, detail="Aucun abonné actif trouvé.")
             
@@ -154,6 +151,8 @@ def send_mass_newsletter(payload: MassEmailRequest):
                 "subject": payload.subject,
                 "htmlContent": html_content
             }
+            if payload.attachment:
+                brevo_payload["attachment"] = [{"name": payload.attachment.name, "content": payload.attachment.content}]
             
             if requests.post(url, json=brevo_payload, headers=headers).status_code == 201: succes_count += 1
                 
@@ -165,13 +164,11 @@ def send_mass_newsletter(payload: MassEmailRequest):
 @app.post("/api/v1/send-direct-email")
 def send_direct_email(payload: DirectEmailRequest):
     try:
-        # On récupère le chef pour avoir son prénom/totem et sa section
         admin_res = supabase.table("admins").select("section_id, first_name, totem").eq("email", payload.chef_email).execute()
         if not admin_res.data: raise HTTPException(status_code=403, detail="Chef introuvable.")
         
         admin_info = admin_res.data[0]
         sec_nom, unite_nom = get_section_and_unit_names(admin_info["section_id"])
-        
         totem_str = f" \"{admin_info['totem']}\"" if admin_info['totem'] else ""
         chef_name = f"{admin_info['first_name']}{totem_str}"
 
@@ -198,6 +195,8 @@ def send_direct_email(payload: DirectEmailRequest):
             "subject": payload.subject,
             "htmlContent": html_content
         }
+        if payload.attachment:
+            brevo_payload["attachment"] = [{"name": payload.attachment.name, "content": payload.attachment.content}]
         
         res = requests.post(url, json=brevo_payload, headers=headers)
         if res.status_code == 201: return {"status": "success", "message": "E-mail envoyé avec succès au parent !"}
@@ -207,10 +206,44 @@ def send_direct_email(payload: DirectEmailRequest):
         if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/v1/send-parent-to-chef-email")
+def send_parent_to_chef_email(payload: ParentToChefEmailRequest):
+    try:
+        url = "https://api.brevo.com/v3/smtp/email"
+        headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
+        
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+            <h3 style="color: #800020; margin-top: 0;">Message d'un Parent</h3>
+            <div style="white-space: pre-wrap; font-size: 15px; color: #333; line-height: 1.5;">{payload.message}</div>
+            <br><br>
+            <hr style="border: none; border-top: 1px solid #eaeaea; margin-top: 20px; margin-bottom: 20px;">
+            <p style="font-size: 11px; color: gray; text-align: center; margin: 0;">
+                Envoyé par le parent : {payload.parent_email} via l'application Azimut.<br>
+                Vous pouvez cliquer sur "Répondre" pour le contacter directement.
+            </p>
+        </div>
+        """
+        
+        brevo_payload = {
+            "sender": {"name": "Portail Parent", "email": "arthurlouette12@gmail.com"},
+            "replyTo": {"email": payload.parent_email}, 
+            "to": [{"email": payload.chef_email}],
+            "subject": f"{payload.subject}",
+            "htmlContent": html_content
+        }
+        
+        res = requests.post(url, json=brevo_payload, headers=headers)
+        if res.status_code == 201: return {"status": "success", "message": "Votre message a bien été transmis au chef !"}
+        else: raise HTTPException(status_code=res.status_code, detail=res.text)
+            
+    except Exception as e:
+        if isinstance(e, HTTPException): raise e
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/v1/send-unit-newsletter")
 def send_unit_newsletter(payload: UnitEmailRequest):
     try:
-        # Récupération du nom de l'unité
         unit_res = supabase.table("unites").select("nom_complet").eq("id", payload.unite_id).execute()
         unite_nom = unit_res.data[0]["nom_complet"] if unit_res.data else "L'Unité Scoute"
 
@@ -237,7 +270,7 @@ def send_unit_newsletter(payload: UnitEmailRequest):
                 link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
                 footer = f'Désinscription (Espace Parent) : <a href="{link}" style="color: #1E3A8A;">cliquez ici</a>.'
             else:
-                footer = f"Vous recevez ceci de la part du Staff d'Unité."
+                footer = f'Vous recevez ceci en tant que Staff.'
 
             html_content = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
@@ -257,6 +290,8 @@ def send_unit_newsletter(payload: UnitEmailRequest):
                 "subject": f"{payload.subject}",
                 "htmlContent": html_content
             }
+            if payload.attachment:
+                brevo_payload["attachment"] = [{"name": payload.attachment.name, "content": payload.attachment.content}]
             
             if requests.post(url, json=brevo_payload, headers=headers).status_code == 201: succes_count += 1
                 
@@ -292,11 +327,11 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
                 link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
                 footer = f'Désinscription : <a href="{link}" style="color: #1E3A8A;">cliquez ici</a>.'
             else:
-                footer = f"Vous recevez ceci de la part du Staff de la {sec_nom}."
+                footer = f'Vous recevez ceci en tant que Staff de la {sec_nom}.'
 
             html_content = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                <h3 style="color: #1E3A8A; margin-top: 0;">Message du Staff d'Unité de ({sec_nom})</h3>
+                <h3 style="color: #1E3A8A; margin-top: 0;">Message du Staff d'Unité ({sec_nom})</h3>
                 <div style="white-space: pre-wrap; font-size: 15px; color: #333; line-height: 1.5;">{payload.message}</div>
                 <br><br>
                 <hr style="border: none; border-top: 1px solid #eaeaea; margin-top: 20px; margin-bottom: 20px;">
@@ -307,7 +342,7 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
             """
             
             brevo_payload = {
-                "sender": {"name": f"Staff d'Unité de {unite_nom}", "email": "arthurlouette12@gmail.com"},
+                "sender": {"name": f"Staff d'Unité {unite_nom}", "email": "arthurlouette12@gmail.com"},
                 "to": [{"email": email}],
                 "subject": f"[{sec_nom}] {payload.subject}",
                 "htmlContent": html_content

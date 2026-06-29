@@ -30,16 +30,16 @@
             <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
                 Connecté : <span id="userEmailDisplay" class="font-bold text-parent-primary"></span>
             </span>
-            <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium">Se déconnecter</button>
+            <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium transition-colors">Se déconnecter</button>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto mt-10 p-6">
+    <main class="max-w-6xl mx-auto mt-10 p-6 space-y-6">
         
         <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <div class="flex mb-6 border-b border-gray-200">
                 <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-parent-primary border-b-2 border-parent-primary transition-colors">Connexion</button>
-                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Rejoindre une section</button>
+                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Rejoindre</button>
             </div>
             
             <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
@@ -60,14 +60,8 @@
             </form>
 
             <form id="registerForm" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Unité</label>
-                    <select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">Chargement...</option></select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Section</label>
-                    <select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">-- Choisir une unité d'abord --</option></select>
-                </div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Unité</label><select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">Chargement...</option></select></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Section</label><select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">-- Choisir une unité d'abord --</option></select></div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label>
                     <div class="relative">
@@ -93,6 +87,21 @@
         </div>
 
         <div id="dashboardSection" class="hidden space-y-6">
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full border-t-4 border-t-parent-primary">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Contacter le Staff</h2>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Message privé</span>
+                </div>
+                <form id="parentToChefMailForm" class="space-y-4">
+                    <div><label class="block text-sm font-medium">Chef concerné</label><select id="pmChef" required class="w-full px-4 py-3 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-parent-primary"><option value="">Chargement...</option></select></div>
+                    <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="pmSubject" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-parent-primary"></div>
+                    <div><label class="block text-sm font-medium">Message</label><textarea id="pmMessage" rows="5" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-parent-primary"></textarea></div>
+                    <button type="submit" id="submitPmBtn" class="w-full md:w-auto md:px-12 bg-parent-primary hover:bg-parent-dark text-white py-3 rounded-lg font-medium transition-colors">Envoyer le message au chef</button>
+                    <p id="pmStatusMessage" class="mt-2 text-sm font-medium"></p>
+                </form>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
@@ -190,7 +199,6 @@
             userMenu: document.getElementById('userMenu'), userEmailDisplay: document.getElementById('userEmailDisplay')
         };
 
-        // --- FONCTION MAGIQUE : AFFICHER/MASQUER LE MOT DE PASSE ---
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -202,7 +210,6 @@
             }
         }
 
-        // --- GESTION DES ONGLETS AUTHENTIFICATION ---
         ui.tabLogin.addEventListener('click', () => {
             ui.loginForm.classList.remove('hidden'); ui.registerForm.classList.add('hidden');
             ui.tabLogin.className = "flex-1 pb-3 text-center font-bold text-parent-primary border-b-2 border-parent-primary transition-colors";
@@ -216,7 +223,6 @@
             ui.msg.textContent = ""; loadUnites();
         });
 
-        // --- CHARGEMENT DYNAMIQUE UNITÉS & SECTIONS ---
         async function loadUnites() {
             const { data } = await supabaseClient.from('unites').select('id, nom_complet');
             const select = document.getElementById('regUnite');
@@ -232,7 +238,6 @@
 
         async function getActiveEmail() { const { data: { session } } = await supabaseClient.auth.getSession(); return session?.user?.email; }
 
-        // --- CONNEXION ---
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value;
@@ -247,7 +252,6 @@
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
 
-        // --- INSCRIPTION & VERIFICATION DU CODE ---
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sectionId = document.getElementById('regSection').value;
@@ -272,12 +276,10 @@
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
 
-        // Gestion de la Déconnexion
         const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
         document.getElementById('logoutBtnNav').addEventListener('click', logoutAction);
         document.getElementById('logoutBtnMain').addEventListener('click', logoutAction);
 
-        // --- MOT DE PASSE OUBLIÉ ET SÉCURITÉ ---
         document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value;
             if (!email) { ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus."; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; return; }
@@ -296,7 +298,39 @@
             else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-parent-primary"; document.getElementById('newPassword').value = ""; }
         });
 
-        // --- TABLEAU DE BORD DYNAMIQUE ---
+        // --- ENVOYER MAIL AU CHEF ---
+        async function loadPmChefs() {
+            const { data } = await supabaseClient.from('admins').select('email, first_name, last_name, totem').eq('section_id', currentSectionId);
+            const select = document.getElementById('pmChef');
+            if(data && data.length > 0) {
+                select.innerHTML = '<option value="">-- Choisir un chef --</option>' + data.map(c => `<option value="${c.email}">${c.first_name} "${c.totem || ''}" ${c.last_name}</option>`).join('');
+            } else {
+                select.innerHTML = '<option value="">Aucun chef trouvé</option>';
+            }
+        }
+
+        document.getElementById('parentToChefMailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitPmBtn'), statusText = document.getElementById('pmStatusMessage');
+            btn.disabled = true; btn.textContent = 'Envoi en cours...'; statusText.textContent = '';
+            try {
+                const parentEmail = await getActiveEmail();
+                const response = await fetch('http://127.0.0.1:8000/api/v1/send-parent-to-chef-email', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chef_email: document.getElementById('pmChef').value, 
+                        subject: document.getElementById('pmSubject').value, 
+                        message: document.getElementById('pmMessage').value, 
+                        parent_email: parentEmail 
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-parent-primary font-bold"; document.getElementById('parentToChefMailForm').reset(); }
+                else throw new Error(data.detail);
+            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
+            finally { btn.disabled = false; btn.textContent = "Envoyer le message au chef"; }
+        });
+
         async function loadChildren() {
             const email = await getActiveEmail();
             const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email).eq('section_id', currentSectionId);
@@ -311,7 +345,6 @@
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
-        // Modale Enfant
         document.getElementById('openChildModalBtn').addEventListener('click', () => { document.getElementById('childForm').reset(); document.getElementById('childModal').classList.remove('hidden'); });
         document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
 
@@ -339,7 +372,6 @@
             } catch (err) { alert(err.message); } finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
         });
 
-        // Absences
         async function loadUpcomingEvents() {
             const select = document.getElementById('absEvent');
             const { data } = await supabaseClient.from('events').select('id, title, start_time').eq('section_id', currentSectionId).gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
@@ -357,7 +389,6 @@
             } catch (err) { msg.textContent = err.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold"; }
         });
 
-        // Calendrier
         function initParentCalendar() {
             if (parentCalendarInstance) parentCalendarInstance.destroy();
             parentCalendarInstance = new FullCalendar.Calendar(document.getElementById('parentCalendar'), {
@@ -373,7 +404,6 @@
             parentCalendarInstance.render();
         }
 
-        // Newsletter
         async function checkSubscriptionStatus() {
             const activeEmail = await getActiveEmail();
             const { data } = await supabaseClient.from('newsletter_subscribers').select('is_subscribed').eq('email', activeEmail).eq('section_id', currentSectionId).maybeSingle();
@@ -387,11 +417,10 @@
         });
         function updateSubButton() { document.getElementById('toggleSubBtn').textContent = isSubscribed ? "Se désabonner" : "S'abonner"; document.getElementById('toggleSubBtn').className = isSubscribed ? "px-6 py-2 rounded-lg text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg text-sm bg-parent-primary text-white"; }
 
-        // --- INITIALISATION GLOBALE ---
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
             ui.userEmailDisplay.textContent = await getActiveEmail();
-            await loadChildren(); await loadUpcomingEvents(); await checkSubscriptionStatus();
+            await loadChildren(); await loadUpcomingEvents(); await checkSubscriptionStatus(); loadPmChefs();
             setTimeout(() => { initParentCalendar(); }, 100);
         }
 
