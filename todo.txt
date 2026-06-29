@@ -1,6 +1,7 @@
-1. faire mass mail avec interface propre pour admin (envoi d'emails à tout les emails de la newsletters abonnés)
-2. faire interface client (connexion + mdp + mdp oublié etc) pour voir calendrier d'éphéméride et derniers mails envoyés
-3. faire bouton se désabonner/s'abonner newsletter client
-4. ajouter interface admin ajout réunion + évent à calendrier interactif
-5. faire form absence parents
-6. faire drive avec documents importants pour les chefs (autorisations parentales, ...)
+- abonnement/désabonnement newsletter email OK
+- connexion/inscription à portail parent OK
+- calendrier interactif avec réunions lieux des réunions etc OK
+- ajout signaler absence sur un event enfant
+- gestion fiches médicales, contacts d'urgences etc...
+- covoiturage ?
+- avoir graphes portail admin avec enfants absents etc...
