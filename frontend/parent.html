@@ -20,6 +20,11 @@
     </style>
 
     <link rel="icon" type="image/x-icon" href="../logo/logo.ico">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#111827">
+    <link rel="apple-touch-icon" href="../logo/logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
@@ -638,5 +643,16 @@
             } else { ui.auth.classList.remove('hidden'); }
         });
     </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('PWA activée sur le portail !'))
+                    .catch(err => console.log('Erreur PWA :', err));
+            });
+        }
+    </script>
+
 </body>
 </html>

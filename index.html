@@ -6,6 +6,11 @@
     <title>Azimut - La boussole de votre Unité Scoute</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="logo/logo.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#111827">
+    <link rel="apple-touch-icon" href="logo/logo.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
         tailwind.config = { 
             theme: { 
@@ -390,6 +395,16 @@
             <p class="text-sm text-gray-400">© 2026 Azimut. Tous droits réservés.</p>
         </div>
     </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA activée à la racine !'))
+                    .catch(err => console.log('Erreur PWA :', err));
+            });
+        }
+    </script>
 
 </body>
 </html>
