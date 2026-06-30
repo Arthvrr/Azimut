@@ -7,18 +7,19 @@
 - ajout chefs d'u (email à tout les parents d'une même unité) OK
 - possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent et email chefs d'unités) ex : carnet de camp OK
 - avoir graphes portail admin avec enfants absents etc... OK
+- faire réduire la taille maximale d'un pdf de parent à ...kb pour pouvoir en stocker le maximum OK
 
 - covoiturage ?
 - listing gouter
 - qr code paiement du camp
+- présence des scouts à chaque réunion
 - rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
 - listes de TODO à faire pour chaque parent
-- message de redirection qualitative
-- présence des scouts à chaque réunion
-- installer site web directement sur écran d'accueil du smartphone (PWA)
-- ajouter graphiques pour chefs et chefs d'unités (chartJS)
 
-- faire réduire la taille maximale d'un pdf de parent à 1kb pour pouvoir en stocker le maximum
-- faire vidéos de présentations (et les intégrer à site web)
-- parent peut suivre ≠ sections d'une même unité en même temps
+3. message de redirection qualitative
+2. installer site web directement sur écran d'accueil du smartphone (PWA)
+4. faire vidéos de présentations (et les intégrer à site web)
+1. parent peut suivre ≠ sections d'une même unité en même temps
+5. nouvelle année reset les db des sections et unités
+
 - effectuer des tests
