@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azimut - La boussole de votre Unité Scoute</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="../logo/logo.ico">
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        scout: { green: '#2E7D32', dark: '#1B5E20', light: '#E8F5E9' },
+                        parent: { primary: '#800020' },
+                        unite: { primary: '#1E3A8A' }
+                    } 
+                } 
+            } 
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                <img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg">
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Azimut</h1>
+        </div>
+
+        <div class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
+            <a href="#fonctionnalites" class="hover:text-scout-green transition-colors">Fonctionnalités</a>
+            <a href="#rgpd" class="hover:text-scout-green transition-colors">RGPD & Sécurité</a>
+            <a href="#utiliser-azimut" class="hover:text-scout-green transition-colors">Déployer Azimut</a>
+        </div>
+
+        <div class="relative group">
+            <button class="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
+                Se connecter
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            
+            <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
+                <a href="frontend/parent.html" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition-colors">
+                    <div class="w-3 h-3 rounded-full bg-parent-primary"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900">Espace Parent</p>
+                        <p class="text-xs text-gray-500">Inscriptions, médical, absences</p>
+                    </div>
+                </a>
+                <a href="frontend/admin.html" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition-colors">
+                    <div class="w-3 h-3 rounded-full bg-scout-green"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900">Espace Chef</p>
+                        <p class="text-xs text-gray-500">Gestion de section, newsletter</p>
+                    </div>
+                </a>
+                <a href="frontend/superadmin.html" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-3 h-3 rounded-full bg-unite-primary"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900">Espace Chef d'Unité</p>
+                        <p class="text-xs text-gray-500">Annuaire et communication globale</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white py-20 lg:py-32 border-b border-gray-100">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <span class="text-scout-green font-bold tracking-wider uppercase text-sm mb-4 block">La nouvelle ère du scoutisme</span>
+            <h2 class="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                Toute votre unité scoute,<br>réunie au même endroit.
+            </h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Azimut centralise les fiches médicales, automatise les communications et simplifie la gestion de votre unité scoute. Une plateforme sécurisée, pensée par des animateurs, pour les parents et les staffs.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#fonctionnalites" class="bg-scout-green hover:bg-scout-dark text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors shadow-md w-full sm:w-auto">
+                    Découvrir la plateforme
+                </a>
+                <a href="#utiliser-azimut" class="bg-white border-2 border-gray-200 text-gray-800 hover:border-gray-300 px-8 py-4 rounded-lg font-bold text-lg transition-colors w-full sm:w-auto">
+                    Équiper mon unité
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="fonctionnalites" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-bold text-gray-900">Pensé pour chaque membre de l'unité</h3>
+                <p class="text-gray-500 mt-4">Fini les groupes WhatsApp illisibles et les feuilles volantes perdues en forêt.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-parent-primary/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-parent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-3">Dossier Administratif</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">Les parents téléchargent les fiches médicales, autorisations et assurances en PDF sur un portail sécurisé. Les staffs y accèdent en un clic.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-scout-light rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-3">Communication Ciblée</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">Messagerie professionnelle intégrée. Envoyez des newsletters élégantes par section, ou du Staff d'Unité vers toute l'unité, sans gérer de listes d'adresses.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-unite-primary/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-unite-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 mb-3">Agenda & Absences</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">Éphéméride centralisé. Les parents peuvent signaler une absence en un clic, et les chefs gardent le compte via leur tableau de bord.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-scout-green font-bold tracking-wider uppercase text-sm mb-4 block">Comment ça marche ?</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Une architecture calquée sur votre mouvement</h3>
+                <p class="text-gray-600 text-lg leading-relaxed">
+                    Azimut respecte la hiérarchie naturelle du scoutisme. Chaque donnée est cloisonnée à son juste niveau pour garantir une organisation fluide et une confidentialité absolue.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+                <div class="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gray-100 -translate-x-1/2 z-0"></div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative z-10 border-t-4 border-t-unite-primary">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-unite-light rounded-xl flex items-center justify-center text-unite-primary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900">Le Staff d'Unité</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        Le sommet de la pyramide. Le Chef d'Unité n'est rattaché à aucune section en particulier, mais supervise l'ensemble. 
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Il dispose d'un accès global lui permettant de visualiser l'annuaire complet et d'envoyer des communiqués de masse à tous les membres de toutes les sections confondues.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative z-10 border-t-4 border-t-gray-800">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-800">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900">Les Sections</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        Une unité est composée de multiples sections (Louveteaux, Baladins, Guides...). Dans Azimut, chaque section est un environnement <strong>strictement cloisonné</strong>.
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Les données ne se croisent jamais : chaque section possède sa propre base de données isolée, son propre éphéméride, et sa propre newsletter indépendante.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative z-10 border-t-4 border-t-scout-green">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-scout-light rounded-xl flex items-center justify-center text-scout-green">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900">Le Staff (Chefs)</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        Les maîtres de leur espace. Une section est administrée conjointement par plusieurs animateurs.
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Ils ont un contrôle total sur leur propre section : organisation du calendrier, gestion des fiches médicales, suivi des absences et envoi d'e-mails ciblés à leurs propres parents.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative z-10 border-t-4 border-t-parent-primary">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-parent-light rounded-xl flex items-center justify-center text-parent-primary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900">Les Familles (Parents)</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        Une gestion simplifiée à l'extrême pour les familles. Un parent crée <strong>un seul compte</strong> rattaché à son e-mail personnel.
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Depuis cet espace, il peut gérer les fiches de plusieurs enfants inscrits dans la section, justifier les absences en un clic, et envoyer un message privé à un chef spécifique.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="temoignages" class="py-24 bg-gray-50 border-t border-gray-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-scout-green font-bold tracking-wider uppercase text-sm mb-4 block">Ils utilisent Azimut</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Ce que disent nos unités</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                    <svg class="w-10 h-10 text-unite-primary/20 absolute top-6 right-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="text-gray-600 leading-relaxed mb-6 relative z-10 pt-4">
+                        "Avant Azimut, gérer les communications globales de l'unité était un cauchemar de listes Excel. Aujourd'hui, je peux contacter les 250 familles de notre unité en un clic, tout en laissant les sections gérer leur propre vie."
+                    </p>
+                    <div class="flex items-center gap-4 border-t border-gray-100 pt-4">
+                        <div class="w-10 h-10 rounded-full bg-unite-light flex items-center justify-center text-unite-primary font-bold">M</div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Maxime "Ocelot"</p>
+                            <p class="text-xs text-unite-primary font-medium">Animateur d'Unité</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                    <svg class="w-10 h-10 text-scout-green/20 absolute top-6 right-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="text-gray-600 leading-relaxed mb-6 relative z-10 pt-4">
+                        "L'annuaire automatique et la centralisation des fiches médicales PDF nous font gagner des heures de travail administratif. En camp, on imprime le tout en une fois. C'est un outil indispensable pour le staff."
+                    </p>
+                    <div class="flex items-center gap-4 border-t border-gray-100 pt-4">
+                        <div class="w-10 h-10 rounded-full bg-scout-light flex items-center justify-center text-scout-green font-bold">J</div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Julie "Panda"</p>
+                            <p class="text-xs text-scout-green font-medium">Chef de Troupe</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                    <svg class="w-10 h-10 text-parent-primary/20 absolute top-6 right-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <p class="text-gray-600 leading-relaxed mb-6 relative z-10 pt-4">
+                        "J'ai 3 enfants dans 3 sections différentes. Avant je devais remplir des dizaines de papiers. Maintenant, avec un seul compte parent sur Azimut, je gère leurs inscriptions, documents et absences en deux clics !"
+                    </p>
+                    <div class="flex items-center gap-4 border-t border-gray-100 pt-4">
+                        <div class="w-10 h-10 rounded-full bg-parent-light flex items-center justify-center text-parent-primary font-bold">S</div>
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Sophie Dubois</p>
+                            <p class="text-xs text-parent-primary font-medium">Maman de 3 animés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-bold text-gray-900 mb-4">Questions fréquentes</h3>
+                <p class="text-gray-600">Tout ce que vous devez savoir sur le déploiement d'Azimut.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        Un parent peut-il gérer plusieurs enfants avec le même compte ?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        Oui, c'est l'un des grands avantages d'Azimut. Un parent se connecte avec son adresse e-mail unique et peut ajouter ses différents enfants, même s'ils sont dans des sections distinctes (ex: un enfant aux Louveteaux et un à la Troupe). Tout est centralisé sur son Espace Parent.
+                    </p>
+                </details>
+
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        Comment les données médicales sont-elles protégées ?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        L'architecture en bases de données cloisonnées garantit que seuls les membres du Staff de la section de votre enfant peuvent consulter sa fiche. Le Chef d'Unité ou les animateurs des autres sections n'y ont techniquement pas accès. Toutes les données sont hébergées sur des serveurs Cloud sécurisés.
+                    </p>
+                </details>
+
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        L'application est-elle payante pour les unités ?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        L'utilisation pour les parents et les chefs est totalement gratuite. Pour l'unité, le déploiement d'une instance privée Azimut fait l'objet d'un devis sur-mesure (couvrant les frais de serveurs, d'envois d'e-mails professionnels et la maintenance), calculé spécifiquement pour s'adapter aux budgets associatifs des mouvements de jeunesse.
+                    </p>
+                </details>
+
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        Que se passe-t-il si un chef oublie son mot de passe ?
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        Chaque utilisateur (Parent, Chef, Direction) gère son propre compte de manière autonome. Un bouton "Mot de passe oublié" permet de recevoir un lien de réinitialisation sécurisé directement sur son adresse e-mail personnelle, sans nécessiter l'intervention d'un administrateur.
+                    </p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section id="rgpd" class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-200">
+                        <svg class="w-16 h-16 text-gray-900 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        <h4 class="text-2xl font-bold text-gray-900 mb-4">Vos données sont privées. Point.</h4>
+                        <ul class="space-y-3 text-sm text-gray-600 font-medium">
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Hébergement cloud ultra-sécurisé</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Accès restreint par codes secrets</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Purge annuelle des données médicales</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Conformité stricte RGPD européenne</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">Confidentialité & RGPD</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Parce que nous traitons des données concernant des mineurs (fiches médicales, autorisations), <strong>la sécurité est le socle fondateur d'Azimut.</strong>
+                    </p>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        Chaque unité fonctionne en vase clos. Un parent ne peut voir que les données de ses propres enfants. Un animateur n'a accès qu'aux informations de sa propre section.
+                    </p>
+                    <a href="mailto:arthurlouette12@gmail.com" class="text-scout-green font-bold hover:underline">Poser une question sur la sécurité &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="utiliser-azimut" class="py-20 bg-gray-900 text-white">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h3 class="text-3xl font-bold mb-6">Prêt à équiper votre Unité ?</h3>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-12">
+                Azimut n'est pas un logiciel grand public anonyme. C'est un outil puissant déployé sur-mesure pour votre unité scoute, avec un accompagnement personnalisé de bout en bout.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-left">
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <span class="text-scout-green font-bold text-xl mb-2 block">01.</span>
+                    <h5 class="font-bold mb-2">Prise de contact</h5>
+                    <p class="text-sm text-gray-400">Échangez avec le développeur pour analyser l'organigramme de votre unité et vos besoins spécifiques.</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <span class="text-scout-green font-bold text-xl mb-2 block">02.</span>
+                    <h5 class="font-bold mb-2">Déploiement</h5>
+                    <p class="text-sm text-gray-400">Nous créons votre instance privée dans notre base de données et générons vos codes secrets (Staff d'Unité, Staffs, Parents).</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <span class="text-scout-green font-bold text-xl mb-2 block">03.</span>
+                    <h5 class="font-bold mb-2">Adoption</h5>
+                    <p class="text-sm text-gray-400">Transmettez simplement l'URL du site et vos codes secrets aux parents en début d'année. Tout est automatisé.</p>
+                </div>
+            </div>
+
+            <a href="mailto:arthurlouette12@gmail.com" class="inline-block bg-white text-gray-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+                Contacter le développeur
+            </a>
+            <p class="mt-4 text-xs text-gray-500">Intégration, tarification serveur et support technique sur devis.</p>
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-gray-200 py-12 mt-auto">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gray-900 rounded flex items-center justify-center">
+                    <img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded">
+                </div>
+                <span class="font-bold text-gray-900 text-lg">Azimut</span>
+            </div>
+            
+            <div class="flex gap-6 text-sm text-gray-500 font-medium">
+                <a href="#rgpd" class="hover:text-scout-green">Mentions Légales & RGPD</a>
+                <a href="mailto:arthurlouette12@gmail.com" class="hover:text-scout-green">Support Technique</a>
+                <a href="https://github.com/arthvrr" target="_blank" class="hover:text-scout-green">Arthur Louette - Développeur</a>
+            </div>
+
+            <p class="text-sm text-gray-400">© 2026 Azimut. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -13,13 +13,12 @@
 - qr code paiement du camp
 - rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
 - listes de TODO à faire pour chaque parent
-- message de redirection qualis
+- message de redirection qualitative
 - présence des scouts à chaque réunion
+- installer site web directement sur écran d'accueil du smartphone (PWA)
+- ajouter graphiques pour chefs et chefs d'unités (chartJS)
 
-
+- faire réduire la taille maximale d'un pdf de parent à 1kb pour pouvoir en stocker le maximum
+- faire vidéos de présentations (et les intégrer à site web)
 - parent peut suivre ≠ sections d'une même unité en même temps
 - effectuer des tests
-
-
-- faire index.html de présentation du site (vitrine, pub, page consentement, page "utiliser pour sa section/unité")
-- faire vidéos de présentations
