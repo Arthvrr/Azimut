@@ -21,7 +21,6 @@
 - rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
 - listes de TODO à faire pour chaque parent
 
-3. message de redirection qualitative
 4. faire vidéos de présentations (et les intégrer à site web)
 
 - créer README propre

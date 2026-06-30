@@ -3,6 +3,7 @@ import requests
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, EmailStr
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -110,14 +111,43 @@ def subscribe(payload: SubscriberRequest):
         if "duplicate key value" in str(e): raise HTTPException(status_code=400, detail="Cet adresse e-mail est déjà inscrite.")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/v1/unsubscribe")
+@app.get("/api/v1/unsubscribe", response_class=HTMLResponse)
 def unsubscribe(token: str = Query(...)):
     try:
         response = supabase.table("newsletter_subscribers").update({"is_subscribed": False}).eq("unsubscribe_token", token).execute()
-        if not response.data: raise HTTPException(status_code=44, detail="Jeton invalide ou expiré.")
-        return {"status": "success", "message": "Vous avez été désabonné de la newsletter avec succès."}
+        
+        if not response.data:
+            # Page en cas d'erreur (token invalide)
+            return """
+            <html>
+                <head><script src="https://cdn.tailwindcss.com"></script></head>
+                <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-red-100 text-center max-w-sm">
+                        <h1 class="text-2xl font-bold text-red-600 mb-2">Erreur</h1>
+                        <p class="text-gray-600">Le lien de désinscription est invalide ou a déjà été utilisé.</p>
+                        <a href="/" class="mt-6 block text-blue-600 font-bold hover:underline">Retour à l'accueil</a>
+                    </div>
+                </body>
+            </html>
+            """
+        
+        # Page de succès "Pro"
+        return """
+        <html>
+            <head><script src="https://cdn.tailwindcss.com"></script></head>
+            <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-green-100 text-center max-w-sm">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Désinscription réussie</h1>
+                    <p class="text-gray-600 mb-6">Vous ne recevrez plus de newsletters pour cette section.</p>
+                    <a href="/" class="block bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black transition-colors">Retour à l'accueil</a>
+                </div>
+            </body>
+        </html>
+        """
     except Exception as e:
-        if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-mass-newsletter")
