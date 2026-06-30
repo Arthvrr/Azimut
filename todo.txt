@@ -10,6 +10,9 @@
 - faire réduire la taille maximale d'un pdf de parent à ...kb pour pouvoir en stocker le maximum OK
 - parent peut suivre ≠ sections d'une même unité en même temps OK
 - installer site web directement sur écran d'accueil du smartphone (PWA) OK
+- nouvelle année reset les db des sections et unités OK
+
+
 
 - covoiturage ?
 - listing gouter
@@ -20,6 +23,6 @@
 
 3. message de redirection qualitative
 4. faire vidéos de présentations (et les intégrer à site web)
-5. nouvelle année reset les db des sections et unités
 
+- créer README propre
 - effectuer des tests

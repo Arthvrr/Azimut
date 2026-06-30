@@ -286,11 +286,30 @@
             try {
                 const { data: sec } = await supabaseClient.from('sections').select('code_chef').eq('id', sectionId).single();
                 if(!sec || sec.code_chef !== codeInput) throw new Error("Code staff invalide !");
-                const { error: authErr } = await supabaseClient.auth.signUp({ email, password });
-                if (authErr) throw authErr;
-                await supabaseClient.from('admins').insert([{ email, first_name: fname, last_name: lname, totem, section_id: sectionId }]);
+                
+                ui.msg.textContent = "Configuration du profil..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600 font-bold";
+                
+                // 1. On tente de créer le compte
+                let { error: authErr } = await supabaseClient.auth.signUp({ email, password });
+                
+                // 2. Si le compte existe déjà, on le connecte avec le mot de passe fourni
+                if (authErr && authErr.message.includes('already registered')) {
+                    const { error: loginErr } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (loginErr) throw new Error("Ce compte existe déjà. Si c'est le vôtre, le mot de passe est incorrect (utilisez 'Mot de passe oublié').");
+                } else if (authErr) {
+                    throw authErr;
+                }
+
+                // 3. On ré-attribue les droits de Chef (Mise à jour si le profil est resté, Création si purgé)
+                const { data: existingAdmin } = await supabaseClient.from('admins').select('email').eq('email', email).maybeSingle();
+                if (existingAdmin) {
+                    await supabaseClient.from('admins').update({ first_name: fname, last_name: lname, totem, section_id: sectionId }).eq('email', email);
+                } else {
+                    await supabaseClient.from('admins').insert([{ email, first_name: fname, last_name: lname, totem, section_id: sectionId }]);
+                }
+
                 currentSectionId = sectionId; showDashboard();
-            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600 font-bold"; }
         });
 
         const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };

@@ -123,6 +123,19 @@
                 </div>
             </div>
 
+            <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-8 w-full border-t-4 border-t-red-600">
+                <h2 class="text-xl font-bold text-red-600 mb-2 flex items-center gap-2">
+                    ⚠️ Zone de danger : Gestion de la Rentrée
+                </h2>
+                <p class="text-sm text-gray-600 mb-6">
+                    Cette action prépare l'unité pour la nouvelle année (septembre). Elle supprime l'intégralité des calendriers, efface l'historique des absences, réinitialise les abonnements newsletters et révoque les accès de tous les anciens chefs de section. <strong>Les profils parents, enfants et les fichiers PDF restent intacts.</strong>
+                </p>
+                <button id="resetYearBtn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold text-sm transition-colors shadow-sm">
+                    Clôturer l'année scoute (Purge estivale)
+                </button>
+                <p id="resetYearStatus" class="mt-3 text-sm font-bold"></p>
+            </div>
+
             <div class="text-center pt-4 pb-10">
                 <button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">Se déconnecter de l'Unité</button>
             </div>
@@ -143,7 +156,6 @@
             tabLogin: document.getElementById('tabLogin'), tabRegister: document.getElementById('tabRegister')
         };
 
-        // --- OUTIL DE CONVERSION POUR LES PIÈCES JOINTES ---
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -151,7 +163,6 @@
             reader.onerror = error => reject(error);
         });
 
-        // Fonction pour afficher/masquer le mot de passe
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -173,7 +184,6 @@
             if(data) document.getElementById('regUnite').innerHTML = '<option value="">-- Choisir l\'unité --</option>' + data.map(u => `<option value="${u.id}">${u.nom_complet}</option>`).join('');
         }
 
-        // --- MOT DE PASSE OUBLIÉ ---
         document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value;
             if (!email) {
@@ -210,19 +220,35 @@
                 const { data: u } = await supabaseClient.from('unites').select('code_superadmin').eq('id', uniteId).single();
                 if(!u || u.code_superadmin !== codeInput) throw new Error("Code secret d'Unité invalide !");
 
-                const { error: authErr } = await supabaseClient.auth.signUp({ email, password });
-                if (authErr) throw authErr;
-                await supabaseClient.from('admins').insert([{ email: email, first_name: fname, last_name: lname, totem: totem, unite_id: uniteId, role: 'super_admin' }]);
+                ui.msg.textContent = "Configuration du profil..."; ui.msg.className = "mb-4 text-sm text-center text-gray-600 font-bold";
+
+                // 1. Tenter la création
+                let { error: authErr } = await supabaseClient.auth.signUp({ email, password });
+                
+                // 2. Repli sur la connexion si déjà existant
+                if (authErr && authErr.message.includes('already registered')) {
+                    const { error: loginErr } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (loginErr) throw new Error("Ce compte existe déjà. Si c'est le vôtre, le mot de passe est incorrect.");
+                } else if (authErr) {
+                    throw authErr;
+                }
+
+                // 3. Attribution du rôle SuperAdmin
+                const { data: existingAdmin } = await supabaseClient.from('admins').select('email').eq('email', email).maybeSingle();
+                if (existingAdmin) {
+                    await supabaseClient.from('admins').update({ first_name: fname, last_name: lname, totem, unite_id: uniteId, role: 'super_admin' }).eq('email', email);
+                } else {
+                    await supabaseClient.from('admins').insert([{ email, first_name: fname, last_name: lname, totem, unite_id: uniteId, role: 'super_admin' }]);
+                }
                 
                 currentUniteId = uniteId; showDashboard();
-            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
+            } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600 font-bold"; }
         });
 
         const logoutAction = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
         document.getElementById('logoutBtnNav').addEventListener('click', logoutAction);
         document.getElementById('logoutBtnMain').addEventListener('click', logoutAction);
 
-        // --- DASHBOARD : ANNUAIRE AVEC FILTRES ---
         async function fetchDirectory() {
             allDirectoryData = [];
             const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
@@ -273,7 +299,6 @@
         document.getElementById('filterSection').addEventListener('change', renderDirectory);
         document.getElementById('filterType').addEventListener('change', renderDirectory);
 
-        // --- ENVOI MAIL UNITÉ AVEC PIÈCE JOINTE ---
         document.getElementById('unitMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'), statusText = document.getElementById('statusMessage');
@@ -303,6 +328,27 @@
                 else throw new Error(data.detail);
             } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
             finally { btn.disabled = false; btn.textContent = 'Envoyer le message général'; }
+        });
+
+        // --- NOUVEAU LOGIQUE : EVENEMENT CLÔTURE DE L'ANNÉE ---
+        document.getElementById('resetYearBtn').addEventListener('click', async () => {
+            if (!currentUniteId) return;
+            if (!confirm("⚠️ ATTENTION DANGER ⚠️\nÊtes-vous sûr de vouloir clôturer l'année scoute ?\nCette action va purger tous les calendriers, les absences, réinitialiser les newsletters et supprimer les anciens staffs.")) return;
+            if (!confirm("CONFIRMATION FINALE :\nLes données supprimées ne pourront pas être récupérées. Confirmer le grand nettoyage estival ?")) return;
+
+            const btn = document.getElementById('resetYearBtn'); const statusText = document.getElementById('resetYearStatus');
+            btn.disabled = true; btn.textContent = 'Purge en cours...'; statusText.textContent = '';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/reset-year', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ unite_id: currentUniteId })
+                });
+                const data = await response.json();
+                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-3 text-sm text-green-600 font-bold"; fetchDirectory(); } 
+                else throw new Error(data.detail);
+            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-3 text-sm text-red-600 font-bold"; } 
+            finally { btn.disabled = false; btn.textContent = "Clôturer l'année scoute (Purge estivale)"; }
         });
 
         async function showDashboard() {

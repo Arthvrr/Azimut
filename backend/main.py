@@ -56,10 +56,9 @@ def send_welcome_email(to_email: str, token: str, section_id: int):
     payload = {"sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"}, "to": [{"email": to_email}], "subject": f"Inscription confirmée - {sec_nom}", "htmlContent": html_content}
     requests.post(url, json=payload, headers=headers)
 
-# --- NOUVEAU : STRUCTURE DE PIÈCE JOINTE ---
 class Attachment(BaseModel):
     name: str
-    content: str # Sera encodé en base64 par le front-end
+    content: str 
 
 class SubscriberRequest(BaseModel):
     email: EmailStr
@@ -96,7 +95,9 @@ class ParentToChefEmailRequest(BaseModel):
     message: str
     parent_email: EmailStr
 
-# --- ROUTES ---
+# NOUVEAU: Pour la route de purge
+class ResetYearRequest(BaseModel):
+    unite_id: int
 
 @app.post("/api/v1/subscribe")
 def subscribe(payload: SubscriberRequest):
@@ -354,3 +355,34 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
     except Exception as e:
         if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- ROUTE MAGIQUE DE RESET DE FIN D'ANNÉE SCOUTE ---
+@app.post("/api/v1/reset-year")
+def reset_year(payload: ResetYearRequest):
+    try:
+        # 1. Récupérer toutes les sections de l'unité concernée
+        sections_res = supabase.table("sections").select("id").eq("unite_id", payload.unite_id).execute()
+        section_ids = [s["id"] for s in sections_res.data]
+        
+        if not section_ids:
+            return {"status": "success", "message": "Aucune section à réinitialiser pour cette unité."}
+
+        # 2. Récupérer et purger toutes les absences et les événements liés à ces sections
+        events_res = supabase.table("events").select("id").in_("section_id", section_ids).execute()
+        event_ids = [e["id"] for e in events_res.data]
+        
+        if event_ids:
+            supabase.table("absences").delete().in_("event_id", event_ids).execute()
+            supabase.table("events").delete().in_("id", event_ids).execute()
+
+        # 3. Supprimer tous les chefs de section (on garde uniquement le Chef d'Unité 'super_admin')
+        supabase.table("admins").delete().in_("section_id", section_ids).neq("role", "super_admin").execute()
+
+        # 4. Désabonner tous les parents des newsletters de section (réinitialisation propre)
+        supabase.table("newsletter_subscribers").update({"is_subscribed": False}).in_("section_id", section_ids).execute()
+
+        # NOTE: Les profils enfants, parents et les liens PDF sont volontairement conservés.
+        
+        return {"status": "success", "message": "L'année scoute a été clôturée ! Les calendriers, absences et anciens staffs ont été purgés. Les enfants, parents et PDF sont conservés."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la réinitialisation de l'unité : {str(e)}")
