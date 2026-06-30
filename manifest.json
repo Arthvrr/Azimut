@@ -1,0 +1,21 @@
+{
+  "name": "Azimut App",
+  "short_name": "Azimut",
+  "description": "La boussole de votre Unité Scoute",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "logo/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

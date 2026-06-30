@@ -64,9 +64,9 @@
 
             <form id="registerForm" class="space-y-4 hidden">
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Unité</label><select id="regUnite" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">Chargement...</option></select></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Section</label><select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">-- Choisir une unité d'abord --</option></select></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Section (du premier enfant)</label><select id="regSection" required class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary bg-white"><option value="">-- Choisir une unité d'abord --</option></select></div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Code secret parent de la section</label>
                     <div class="relative">
                         <input type="password" id="regCode" required placeholder="Ex: PARENTS-CODE" class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary pr-10">
                         <button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
@@ -119,7 +119,7 @@
                     <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Prévenez les chefs en un clic.</p>
                     <form id="absenceForm" class="space-y-4">
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Enfant absent</label><select id="absChild" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-parent-primary"><option value="">Chargement...</option></select></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label><select id="absEvent" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-parent-primary"><option value="">Chargement...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Pour quel événement ?</label><select id="absEvent" required class="w-full px-4 py-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-parent-primary"><option value="">-- Choisir un enfant d'abord --</option></select></div>
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Raison (Optionnel)</label><input type="text" id="absReason" placeholder="Malade, repas de famille..." class="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2 focus:ring-parent-primary"></div>
                         <button type="submit" id="submitAbsenceBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Envoyer le signalement</button>
                         <p id="absenceMsg" class="text-sm text-center mt-2"></p>
@@ -128,10 +128,14 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
-                    <div><h3 class="text-lg font-bold text-gray-900">Newsletter</h3><p class="text-sm text-gray-500">Convocations et actus.</p><p id="subMessage" class="mt-1 text-xs font-medium"></p></div>
-                    <button id="toggleSubBtn" class="px-6 py-2 rounded-lg font-medium transition-colors text-sm">Chargement...</button>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Abonnements Newsletters</h3>
+                    <p class="text-sm text-gray-500 mb-4 border-b border-gray-100 pb-4">Gérez vos envois par section.</p>
+                    <div id="newsletterTogglesList" class="space-y-3 overflow-y-auto max-h-[150px] pr-2">
+                        <p class="text-sm text-gray-400 italic">Chargement...</p>
+                    </div>
                 </div>
+                
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-2">Sécurité</h3>
                     <div class="space-y-4">
@@ -149,8 +153,8 @@
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Éphéméride de la section</h2>
-                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Lecture seule</span>
+                    <h2 class="text-xl font-bold text-gray-900">Éphéméride Familial</h2>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Vue Multi-sections</span>
                 </div>
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
@@ -164,6 +168,14 @@
             <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Fiche Enfant</h3>
             
             <form id="childForm" class="space-y-4">
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1">Section de l'enfant</label>
+                    <select id="cSection" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none bg-white">
+                        <option value="">Chargement...</option>
+                    </select>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="cFirstName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
                     <div><label class="block text-sm font-medium">Nom</label><input type="text" id="cLastName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></div>
@@ -188,7 +200,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Taille max : 300 Ko par fichier.
                         </p>
-                        <p class="text-xs text-gray-500 mt-1">Si votre PDF est trop lourd, <a href="https://pdf.pi7.org/reduce-pdf-size" target="_blank" class="font-bold underline text-parent-primary">compressez-le ici gratuitement</a>.</p>
+                        <p class="text-xs text-gray-500 mt-1">Si votre PDF est trop lourd, <a href="https://pdf.pi7.org/reduce-pdf-size" target="_blank" class="font-bold underline text-parent-primary hover:text-parent-dark">compressez-le ici gratuitement</a>.</p>
                     </div>
                 </div>
 
@@ -214,9 +226,12 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         
-        let isSubscribed = false;
         let parentCalendarInstance = null; 
-        let currentSectionId = null;
+        
+        // --- NOUVELLES VARIABLES D'ARCHITECTURE MULTI-SECTIONS ---
+        let parentUniteId = null;
+        let allUniteSections = []; // Toutes les sections de l'unité (pour le dropdown)
+        let parentSections = []; // Liste des sections {section_id, is_subscribed, nom} où le parent est impliqué
         
         let childrenDataMap = {};
         let currentEditChildId = null; 
@@ -275,8 +290,7 @@
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', email).maybeSingle();
-                if(sub) currentSectionId = sub.section_id;
-                else throw new Error("Votre compte n'est lié à aucune section.");
+                if(!sub) throw new Error("Votre compte n'est lié à aucune section.");
                 await showDashboard();
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
@@ -297,7 +311,6 @@
                 const { error } = await supabaseClient.auth.signUp({ email, password });
                 if (error) throw error;
                 await supabaseClient.from('newsletter_subscribers').insert([{ section_id: sectionId, email: email, is_subscribed: true }]);
-                currentSectionId = sectionId;
                 await showDashboard();
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
@@ -324,10 +337,26 @@
             else { msg.textContent = "Mot de passe mis à jour !"; msg.className = "mt-2 text-sm font-medium text-parent-primary"; document.getElementById('newPassword').value = ""; }
         });
 
+        // --- GESTION DU MULTI-SECTIONS ---
+        
         async function loadPmChefs() {
-            const { data } = await supabaseClient.from('admins').select('email, first_name, last_name, totem').eq('section_id', currentSectionId);
+            // Ne charger que les chefs des sections où le parent est impliqué
+            const sectionIds = parentSections.map(s => s.section_id);
+            const { data } = await supabaseClient.from('admins').select('email, first_name, last_name, totem, section_id').in('section_id', sectionIds);
             const select = document.getElementById('pmChef');
-            if(data && data.length > 0) { select.innerHTML = '<option value="">-- Choisir un chef --</option>' + data.map(c => `<option value="${c.email}">${c.first_name} "${c.totem || ''}" ${c.last_name}</option>`).join(''); } 
+            
+            if(data && data.length > 0) { 
+                let optionsHtml = '<option value="">-- Choisir un chef --</option>';
+                allUniteSections.forEach(sec => {
+                    const chefsInSection = data.filter(c => c.section_id === sec.id);
+                    if(chefsInSection.length > 0) {
+                        optionsHtml += `<optgroup label="Staff ${sec.nom}">`;
+                        chefsInSection.forEach(c => { optionsHtml += `<option value="${c.email}">${c.first_name} "${c.totem || ''}" ${c.last_name}</option>`; });
+                        optionsHtml += `</optgroup>`;
+                    }
+                });
+                select.innerHTML = optionsHtml;
+            } 
             else { select.innerHTML = '<option value="">Aucun chef trouvé</option>'; }
         }
 
@@ -350,7 +379,8 @@
 
         async function loadChildren() {
             const email = await getActiveEmail();
-            const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email).eq('section_id', currentSectionId);
+            // On récupère tous les enfants peu importe la section
+            const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email);
             const list = document.getElementById('childrenList'), absSelect = document.getElementById('absChild');
             
             childrenDataMap = {};
@@ -363,6 +393,8 @@
             
             list.innerHTML = data.map(c => {
                 childrenDataMap[c.id] = c;
+                const sectionName = allUniteSections.find(s => s.id === c.section_id)?.nom || "Section";
+                
                 return `
                 <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex justify-between items-start">
@@ -371,6 +403,7 @@
                                 ${c.first_name} ${c.last_name}
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                             </button>
+                            <p class="text-xs font-bold text-parent-primary uppercase tracking-wider mt-1">${sectionName}</p>
                             ${c.allergies ? `<p class="text-xs text-red-600 font-medium mt-1">⚠️ Allergies signalées</p>` : ''}
                         </div>
                     </div>
@@ -389,6 +422,7 @@
             currentEditChildId = id;
             const c = childrenDataMap[id];
             
+            document.getElementById('cSection').value = c.section_id;
             document.getElementById('cFirstName').value = c.first_name;
             document.getElementById('cLastName').value = c.last_name;
             document.getElementById('cAllergies').value = c.allergies || '';
@@ -402,7 +436,7 @@
             document.getElementById('cAuthFile').value = '';
             document.getElementById('cInsuranceFile').value = '';
             
-            document.getElementById('childErrorMsg').classList.add('hidden'); // Cache les erreurs précédentes
+            document.getElementById('childErrorMsg').classList.add('hidden'); 
 
             document.getElementById('modalTitle').textContent = "Modifier la fiche de " + c.first_name;
             document.getElementById('childModal').classList.remove('hidden');
@@ -418,16 +452,16 @@
 
         document.getElementById('closeChildModalBtn').addEventListener('click', () => document.getElementById('childModal').classList.add('hidden'));
 
-        // --- UPLOAD AVEC VALIDATION DE TAILLE ---
+        // Upload Sécurisé avec Limite de 300 Ko
         async function uploadPdf(fileInput, email) {
             if (fileInput.files.length === 0) return null;
             const file = fileInput.files[0];
             
-            // Validation 300 Ko max
+            // Validation stricte 300 Ko max (300 * 1024 octets)
             const maxSizeInBytes = 300 * 1024;
             if (file.size > maxSizeInBytes) {
                 const sizeKo = (file.size / 1024).toFixed(0);
-                throw new Error(`Le fichier "${file.name}" est trop lourd (${sizeKo} Ko). La limite est fixée à 300 Ko pour préserver le serveur. Veuillez le compresser via le lien fourni.`);
+                throw new Error(`Le fichier "${file.name}" est trop lourd (${sizeKo} Ko). La limite est de 300 Ko pour préserver les serveurs associatifs. Veuillez le compresser via le lien fourni.`);
             }
 
             const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
@@ -443,10 +477,11 @@
             const errorMsgBlock = document.getElementById('childErrorMsg');
             
             btn.disabled = true; btn.textContent = "Sauvegarde...";
-            errorMsgBlock.classList.add('hidden'); // On cache l'erreur au début de l'envoi
+            errorMsgBlock.classList.add('hidden'); 
             
             try {
                 const email = await getActiveEmail(); 
+                const chosenSectionId = parseInt(document.getElementById('cSection').value);
                 
                 let medUrl = currentEditChildId ? childrenDataMap[currentEditChildId].medical_file_url : null;
                 let authUrl = currentEditChildId ? childrenDataMap[currentEditChildId].parental_auth_url : null;
@@ -460,7 +495,8 @@
                 if (newIns) insUrl = newIns;
 
                 const childData = {
-                    parent_email: email, section_id: currentSectionId,
+                    parent_email: email, 
+                    section_id: chosenSectionId,
                     first_name: document.getElementById('cFirstName').value, last_name: document.getElementById('cLastName').value,
                     allergies: document.getElementById('cAllergies').value, care_instructions: document.getElementById('cCare').value,
                     parent1_name: document.getElementById('cP1Name').value, parent1_phone: document.getElementById('cP1Phone').value,
@@ -474,12 +510,16 @@
                 } else {
                     const { error } = await supabaseClient.from('children').insert([childData]);
                     if (error) throw error;
+                    
+                    // NOUVEAU: Si c'est une nouvelle section pour le parent, on l'abonne automatiquement
+                    if(!parentSections.some(s => s.section_id === chosenSectionId)) {
+                        await supabaseClient.from('newsletter_subscribers').insert([{ section_id: chosenSectionId, email: email, is_subscribed: true }]);
+                    }
                 }
                 
                 document.getElementById('childModal').classList.add('hidden'); 
-                await loadChildren();
+                await showDashboard(); // Recharge TOUT (enfants, newsletter, chefs, calendrier)
             } catch (err) { 
-                // Affichage propre de l'erreur (pour la taille du fichier par ex)
                 errorMsgBlock.textContent = err.message;
                 errorMsgBlock.classList.remove('hidden');
             } finally { 
@@ -487,12 +527,18 @@
             }
         });
 
-        async function loadUpcomingEvents() {
-            const select = document.getElementById('absEvent');
-            const { data } = await supabaseClient.from('events').select('id, title, start_time').eq('section_id', currentSectionId).gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
-            if (!data || data.length === 0) { select.innerHTML = `<option value="">Aucun événement futur</option>`; return; }
-            select.innerHTML = `<option value="">-- Choisir --</option>` + data.map(e => `<option value="${e.id}">${e.title} (${new Date(e.start_time).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'})})</option>`).join('');
-        }
+        // Chargement dynamique des événements pour signaler une absence
+        document.getElementById('absChild').addEventListener('change', async (e) => {
+            const childId = e.target.value;
+            const selectEvent = document.getElementById('absEvent');
+            if(!childId) { selectEvent.innerHTML = '<option value="">-- Choisir un enfant d\'abord --</option>'; return; }
+            
+            const child = childrenDataMap[childId];
+            const { data } = await supabaseClient.from('events').select('id, title, start_time').eq('section_id', child.section_id).gte('start_time', new Date().toISOString()).order('start_time', {ascending: true});
+            if (!data || data.length === 0) { selectEvent.innerHTML = `<option value="">Aucun événement futur</option>`; return; }
+            selectEvent.innerHTML = `<option value="">-- Choisir --</option>` + data.map(e => `<option value="${e.id}">${e.title} (${new Date(e.start_time).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'})})</option>`).join('');
+        });
+
         document.getElementById('absenceForm').addEventListener('submit', async (e) => {
             e.preventDefault(); const msg = document.getElementById('absenceMsg'); msg.textContent = "Envoi...";
             try {
@@ -510,39 +556,85 @@
                 initialView: 'dayGridMonth', locale: 'fr', firstDay: 1,
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
                 events: async function(info, successCallback, failureCallback) {
-                    const { data, error } = await supabaseClient.from('events').select('*').eq('section_id', currentSectionId);
+                    const sectionIds = parentSections.map(s => s.section_id);
+                    if(sectionIds.length === 0) { successCallback([]); return; }
+                    
+                    const { data, error } = await supabaseClient.from('events').select('*, sections(nom)').in('section_id', sectionIds);
                     if (error) failureCallback(error);
-                    else successCallback(data.map(e => ({ id: e.id, title: e.title, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#800020', borderColor: '#4d0013' })));
+                    else successCallback(data.map(e => ({ 
+                        id: e.id, 
+                        title: `[${e.sections.nom}] ${e.title}`, 
+                        start: new Date(e.start_time), 
+                        end: new Date(e.end_time), 
+                        extendedProps: { description: e.description, location: e.location }, 
+                        backgroundColor: '#800020', 
+                        borderColor: '#4d0013' 
+                    })));
                 },
                 eventClick: function(info) { alert(`Événement : ${info.event.title}\nLieu : ${info.event.extendedProps.location || "Non précisé"}\nDétails : ${info.event.extendedProps.description || "Aucun"}`); }
             });
             parentCalendarInstance.render();
         }
 
-        async function checkSubscriptionStatus() {
-            const activeEmail = await getActiveEmail();
-            const { data } = await supabaseClient.from('newsletter_subscribers').select('is_subscribed').eq('email', activeEmail).eq('section_id', currentSectionId).maybeSingle();
-            isSubscribed = data ? data.is_subscribed : false;
-            updateSubButton();
+        // --- GESTION DES ABONNEMENTS MULTIPLES ---
+        function renderNewsletterToggles() {
+            const container = document.getElementById('newsletterTogglesList');
+            if(parentSections.length === 0) { container.innerHTML = '<p class="text-sm text-gray-500 italic">Aucune section.</p>'; return; }
+            
+            container.innerHTML = parentSections.map(sub => `
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <span class="text-sm font-bold text-gray-800">${sub.nom}</span>
+                    <button onclick="toggleSub(${sub.section_id}, ${sub.is_subscribed})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${sub.is_subscribed ? 'border-2 border-red-500 text-red-500 hover:bg-red-50' : 'bg-parent-primary text-white hover:bg-parent-dark'}">
+                        ${sub.is_subscribed ? 'Se désabonner' : "S'abonner"}
+                    </button>
+                </div>
+            `).join('');
         }
-        document.getElementById('toggleSubBtn').addEventListener('click', async () => {
-            const activeEmail = await getActiveEmail(); const newStatus = !isSubscribed;
-            await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: newStatus }).eq('email', activeEmail).eq('section_id', currentSectionId);
-            isSubscribed = newStatus; updateSubButton();
-        });
-        function updateSubButton() { document.getElementById('toggleSubBtn').textContent = isSubscribed ? "Se désabonner" : "S'abonner"; document.getElementById('toggleSubBtn').className = isSubscribed ? "px-6 py-2 rounded-lg text-sm border-2 border-red-500 text-red-500" : "px-6 py-2 rounded-lg text-sm bg-parent-primary text-white"; }
 
+        window.toggleSub = async function(sectionId, currentStatus) {
+            const activeEmail = await getActiveEmail();
+            await supabaseClient.from('newsletter_subscribers').update({ is_subscribed: !currentStatus }).eq('email', activeEmail).eq('section_id', sectionId);
+            const sub = parentSections.find(s => s.section_id === sectionId);
+            if(sub) sub.is_subscribed = !currentStatus;
+            renderNewsletterToggles();
+        };
+
+        // --- INITIALISATION GLOBALE DU DASHBOARD ---
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
-            ui.userEmailDisplay.textContent = await getActiveEmail();
-            await loadChildren(); await loadUpcomingEvents(); await checkSubscriptionStatus(); loadPmChefs();
+            const email = await getActiveEmail();
+            ui.userEmailDisplay.textContent = email;
+            
+            // 1. Déterminer l'Unité et les abonnements du Parent
+            const { data: subs } = await supabaseClient.from('newsletter_subscribers').select('section_id, is_subscribed, sections(unite_id, nom)').eq('email', email);
+            if(subs && subs.length > 0) {
+                parentUniteId = subs[0].sections.unite_id;
+                parentSections = subs.map(s => ({ section_id: s.section_id, is_subscribed: s.is_subscribed, nom: s.sections.nom }));
+                
+                // Charger toutes les sections de cette unité pour le menu déroulant
+                const { data: secData } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', parentUniteId);
+                allUniteSections = secData || [];
+                
+                const cSecSelect = document.getElementById('cSection');
+                cSecSelect.innerHTML = '<option value="">-- Choisir la section --</option>' + allUniteSections.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
+            }
+            
+            // Initialisation des encarts
+            renderNewsletterToggles();
+            await loadChildren(); 
+            await loadPmChefs();
+            
+            // Reset des absences
+            document.getElementById('absChild').value = "";
+            document.getElementById('absEvent').innerHTML = '<option value="">-- Choisir un enfant d\'abord --</option>';
+
             setTimeout(() => { initParentCalendar(); }, 100);
         }
 
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
                 const { data: sub } = await supabaseClient.from('newsletter_subscribers').select('section_id').eq('email', session.user.email).maybeSingle();
-                if(sub) { currentSectionId = sub.section_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
+                if(sub) { showDashboard(); } else { supabaseClient.auth.signOut(); }
             } else { ui.auth.classList.remove('hidden'); }
         });
     </script>

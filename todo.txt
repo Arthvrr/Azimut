@@ -8,6 +8,8 @@
 - possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent et email chefs d'unités) ex : carnet de camp OK
 - avoir graphes portail admin avec enfants absents etc... OK
 - faire réduire la taille maximale d'un pdf de parent à ...kb pour pouvoir en stocker le maximum OK
+- parent peut suivre ≠ sections d'une même unité en même temps OK
+- installer site web directement sur écran d'accueil du smartphone (PWA) OK
 
 - covoiturage ?
 - listing gouter
@@ -17,9 +19,7 @@
 - listes de TODO à faire pour chaque parent
 
 3. message de redirection qualitative
-2. installer site web directement sur écran d'accueil du smartphone (PWA)
 4. faire vidéos de présentations (et les intégrer à site web)
-1. parent peut suivre ≠ sections d'une même unité en même temps
 5. nouvelle année reset les db des sections et unités
 
 - effectuer des tests
