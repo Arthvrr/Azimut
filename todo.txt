@@ -11,6 +11,7 @@
 - parent peut suivre ≠ sections d'une même unité en même temps OK
 - installer site web directement sur écran d'accueil du smartphone (PWA) OK
 - nouvelle année reset les db des sections et unités OK
+- meilleure qualité des cliquages de désabonnement en bas des mails OK
 
 
 
@@ -23,5 +24,5 @@
 
 4. faire vidéos de présentations (et les intégrer à site web)
 
-- créer README propre
-- effectuer des tests
+- créer README propre OK
+- effectuer des tests OK
