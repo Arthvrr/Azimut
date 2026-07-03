@@ -340,10 +340,24 @@
             btn.disabled = true; btn.textContent = 'Purge en cours...'; statusText.textContent = '';
 
             try {
+                // const response = await fetch('http://127.0.0.1:8000/api/v1/reset-year', {
+                //     method: 'POST', headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ unite_id: currentUniteId })
+                // });
+
+
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session.access_token;
                 const response = await fetch('http://127.0.0.1:8000/api/v1/reset-year', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // 2. On insère le jeton dans les headers !
+                    },
                     body: JSON.stringify({ unite_id: currentUniteId })
                 });
+
+
                 const data = await response.json();
                 if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-3 text-sm text-green-600 font-bold"; fetchDirectory(); } 
                 else throw new Error(data.detail);

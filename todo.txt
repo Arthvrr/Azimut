@@ -13,7 +13,8 @@
 - nouvelle année reset les db des sections et unités OK
 - meilleure qualité des cliquages de désabonnement en bas des mails OK
 
-
+- ajouter heures à évents éphémérides
+- ≠ couleurs par sections dans calendrier
 
 - covoiturage ?
 - listing gouter

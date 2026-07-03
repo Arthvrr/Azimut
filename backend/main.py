@@ -4,6 +4,8 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi import Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -19,6 +21,18 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 app = FastAPI(title="Azimut API", version="1.0")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+security = HTTPBearer()
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    # Le backend demande à Supabase : "Ce passeport est-il authentique ?"
+    user_response = supabase.auth.get_user(token)
+    if not user_response or not user_response.user:
+        raise HTTPException(status_code=401, detail="Accès refusé : Token invalide ou expiré.")
+    
+    # Si oui, on laisse passer et on renvoie l'email de la personne
+    return user_response.user.email
 
 app.add_middleware(
     CORSMiddleware,
@@ -388,8 +402,14 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
 
 # --- ROUTE MAGIQUE DE RESET DE FIN D'ANNÉE SCOUTE ---
 @app.post("/api/v1/reset-year")
-def reset_year(payload: ResetYearRequest):
+def reset_year(payload: ResetYearRequest, current_email: str = Depends(get_current_user)):
     try:
+
+        admin_check = supabase.table("admins").select("role").eq("email", current_email).eq("unite_id", payload.unite_id).execute()
+        
+        if not admin_check.data or admin_check.data[0]["role"] != "super_admin":
+            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas Chef de cette Unité.")
+
         # 1. Récupérer toutes les sections de l'unité concernée
         sections_res = supabase.table("sections").select("id").eq("unite_id", payload.unite_id).execute()
         section_ids = [s["id"] for s in sections_res.data]

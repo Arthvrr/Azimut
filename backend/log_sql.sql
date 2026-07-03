@@ -344,3 +344,121 @@ NOTIFY pgrst, 'reload schema';
 
 ALTER TABLE children ADD COLUMN IF NOT EXISTS parental_auth_url TEXT;
 ALTER TABLE children ADD COLUMN IF NOT EXISTS insurance_file_url TEXT;
+
+-- ==========================================
+-- 1. ACTIVATION DU BOUCLIER SUR TOUTES LES TABLES
+-- ==========================================
+ALTER TABLE public.unites ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.children ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.absences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+
+
+-- ==========================================
+-- 2. POLITIQUES POUR 'UNITES' & 'SECTIONS'
+-- ==========================================
+-- Tout utilisateur connecté peut lire les unités et sections (nécessaire pour les menus déroulants d'inscription).
+-- Aucune règle d'INSERT/UPDATE/DELETE, ce qui veut dire que les parents ne pourront jamais les modifier ou les supprimer.
+CREATE POLICY "Lecture_Unites" ON public.unites FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Lecture_Sections" ON public.sections FOR SELECT TO authenticated USING (true);
+
+
+-- ==========================================
+-- 3. POLITIQUES POUR 'ADMINS' (Le Staff)
+-- ==========================================
+-- Tout le monde peut voir la liste des chefs (nécessaire pour la messagerie parent -> chef).
+CREATE POLICY "Lecture_Admins" ON public.admins FOR SELECT TO authenticated USING (true);
+
+-- Un chef ne peut modifier que son propre profil.
+CREATE POLICY "Modif_Admins" ON public.admins FOR ALL TO authenticated 
+USING (email = auth.jwt() ->> 'email') 
+WITH CHECK (email = auth.jwt() ->> 'email');
+
+
+-- ==========================================
+-- 4. POLITIQUES POUR 'CHILDREN' (Le Cœur du Réacteur)
+-- ==========================================
+-- RÈGLE OR : Un parent a les pleins pouvoirs (CRUD) uniquement sur les lignes où son email correspond.
+CREATE POLICY "Parents_Gerent_Leurs_Enfants" ON public.children FOR ALL TO authenticated 
+USING (parent_email = auth.jwt() ->> 'email') 
+WITH CHECK (parent_email = auth.jwt() ->> 'email');
+
+-- Les chefs de section peuvent LIRE les fiches des enfants inscrits dans leur section.
+CREATE POLICY "Chefs_Voient_Leurs_Enfants" ON public.children FOR SELECT TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.admins 
+    WHERE admins.email = auth.jwt() ->> 'email' 
+    AND admins.section_id = children.section_id
+));
+
+-- Le SuperAdmin (Chef d'Unité) peut LIRE toutes les fiches des enfants de son unité.
+CREATE POLICY "SuperAdmins_Voient_Tous_Enfants" ON public.children FOR SELECT TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.admins 
+    JOIN public.sections ON sections.id = children.section_id
+    WHERE admins.email = auth.jwt() ->> 'email' 
+    AND admins.unite_id = sections.unite_id
+));
+
+
+-- ==========================================
+-- 5. POLITIQUES POUR 'NEWSLETTER_SUBSCRIBERS'
+-- ==========================================
+-- Un parent ne peut s'abonner / se désabonner qu'avec sa propre adresse e-mail.
+CREATE POLICY "Parents_Gerent_Abonnements" ON public.newsletter_subscribers FOR ALL TO authenticated 
+USING (email = auth.jwt() ->> 'email') 
+WITH CHECK (email = auth.jwt() ->> 'email');
+
+-- Le staff (Chefs et SuperAdmins) a le droit de lire la liste des abonnés pour créer l'annuaire d'unité.
+CREATE POLICY "Staff_Voit_Abonnes" ON public.newsletter_subscribers FOR SELECT TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.admins 
+    WHERE admins.email = auth.jwt() ->> 'email'
+));
+
+
+-- ==========================================
+-- 6. POLITIQUES POUR 'EVENTS' (Éphémérides)
+-- ==========================================
+-- Les parents et membres peuvent voir les événements.
+CREATE POLICY "Lecture_Events" ON public.events FOR SELECT TO authenticated USING (true);
+
+-- Seuls les chefs peuvent créer, modifier ou supprimer un événement de leur propre section.
+CREATE POLICY "Chefs_Gerent_Events" ON public.events FOR ALL TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.admins 
+    WHERE admins.email = auth.jwt() ->> 'email' 
+    AND admins.section_id = events.section_id
+));
+
+
+-- ==========================================
+-- 7. POLITIQUES POUR 'ABSENCES'
+-- ==========================================
+-- Un parent ne peut justifier une absence que si l'enfant ciblé lui appartient.
+CREATE POLICY "Parents_Gerent_Absences" ON public.absences FOR ALL TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.children 
+    WHERE children.id = absences.child_id 
+    AND children.parent_email = auth.jwt() ->> 'email'
+));
+
+-- Les chefs ne voient que les absences liées aux événements de leur section.
+CREATE POLICY "Chefs_Voient_Absences" ON public.absences FOR SELECT TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.events 
+    JOIN public.admins ON admins.section_id = events.section_id
+    WHERE events.id = absences.event_id 
+    AND admins.email = auth.jwt() ->> 'email'
+));
+
+-- 1. On supprime les anciennes politiques trop strictes
+DROP POLICY IF EXISTS "Lecture_Unites" ON public.unites;
+DROP POLICY IF EXISTS "Lecture_Sections" ON public.sections;
+
+-- 2. On crée de nouvelles politiques ouvertes à tous (public)
+CREATE POLICY "Lecture_Unites_Publique" ON public.unites FOR SELECT TO public USING (true);
+CREATE POLICY "Lecture_Sections_Publique" ON public.sections FOR SELECT TO public USING (true);
