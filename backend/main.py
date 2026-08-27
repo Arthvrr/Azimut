@@ -42,6 +42,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"status": "online", "message": "L'API Azimut est en ligne et fonctionne parfaitement ! 🚀"}
+
 def get_section_and_unit_names(section_id: int):
     res = supabase.table("sections").select("nom, unites(nom_complet)").eq("id", section_id).execute()
     if not res.data: return "Section", "Unité Scoute"
