@@ -318,7 +318,7 @@
                     payload.attachment = { name: file.name, content: base64 };
                 }
 
-                const response = await fetch('http://127.0.0.1:8000/api/v1/send-unit-newsletter', {
+                const response = await fetch('https://azimut-api.onrender.com/api/v1/send-unit-newsletter', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
@@ -340,15 +340,10 @@
             btn.disabled = true; btn.textContent = 'Purge en cours...'; statusText.textContent = '';
 
             try {
-                // const response = await fetch('http://127.0.0.1:8000/api/v1/reset-year', {
-                //     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ unite_id: currentUniteId })
-                // });
-
 
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 const token = session.access_token;
-                const response = await fetch('http://127.0.0.1:8000/api/v1/reset-year', {
+                const response = await fetch('https://azimut-api.onrender.com/api/v1/reset-year', {
                     method: 'POST', 
                     headers: { 
                         'Content-Type': 'application/json',

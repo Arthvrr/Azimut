@@ -426,7 +426,7 @@
                     payload.attachment = { name: file.name, content: base64 };
                 }
 
-                const response = await fetch('http://127.0.0.1:8000/api/v1/send-direct-email', {
+                const response = await fetch('https://azimut-api.onrender.com/api/v1/send-direct-email', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 const data = await response.json();
@@ -454,7 +454,7 @@
                     payload.attachment = { name: file.name, content: base64 };
                 }
 
-                const response = await fetch('http://127.0.0.1:8000/api/v1/send-mass-newsletter', {
+                const response = await fetch('https://azimut-api.onrender.com/api/v1/send-mass-newsletter', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 const data = await response.json();

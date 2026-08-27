@@ -51,7 +51,7 @@ def send_welcome_email(to_email: str, token: str, section_id: int):
     sec_nom, unite_nom = get_section_and_unit_names(section_id)
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
-    unsubscribe_link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={token}"
+    unsubscribe_link = f"https://azimut-api.onrender.com/api/v1/unsubscribe?token={token}"
     
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
@@ -176,7 +176,7 @@ def send_mass_newsletter(payload: MassEmailRequest):
         headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
         
         for sub in subscribers:
-            unsubscribe_link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={sub['unsubscribe_token']}"
+            unsubscribe_link = f"https://azimut-api.onrender.com/api/v1/unsubscribe?token={sub['unsubscribe_token']}"
             html_content = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                 <h3 style="color: #2E7D32; margin-top: 0;">Newsletter {sec_nom}</h3>
@@ -312,7 +312,7 @@ def send_unit_newsletter(payload: UnitEmailRequest):
         
         for email, info in all_emails.items():
             if info["type"] == "parent":
-                link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
+                link = f"https://azimut-api.onrender.com/api/v1/unsubscribe?token={info['token']}"
                 footer = f'Désinscription (Espace Parent) : <a href="{link}" style="color: #1E3A8A;">cliquez ici</a>.'
             else:
                 footer = f'Vous recevez ceci en tant que Staff.'
@@ -369,7 +369,7 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
 
         for email, info in all_emails.items():
             if info["type"] == "parent":
-                link = f"http://127.0.0.1:8000/api/v1/unsubscribe?token={info['token']}"
+                link = f"https://azimut-api.onrender.com/api/v1/unsubscribe?token={info['token']}"
                 footer = f'Désinscription : <a href="{link}" style="color: #1E3A8A;">cliquez ici</a>.'
             else:
                 footer = f'Vous recevez ceci en tant que Staff de la {sec_nom}.'
