@@ -72,7 +72,7 @@ def send_welcome_email(to_email: str, token: str, section_id: int):
     </div>
     """
     
-    payload = {"sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"}, "to": [{"email": to_email}], "subject": f"Inscription confirmée - {sec_nom}", "htmlContent": html_content}
+    payload = {"sender": {"name": f"Staff {sec_nom}", "email": "communication@azimut-app.be"}, "to": [{"email": to_email}], "subject": f"Inscription confirmée - {sec_nom}", "htmlContent": html_content}
     requests.post(url, json=payload, headers=headers)
 
 class Attachment(BaseModel):
@@ -195,7 +195,7 @@ def send_mass_newsletter(payload: MassEmailRequest):
             """
             
             brevo_payload = {
-                "sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"},
+                "sender": {"name": f"Staff {sec_nom}", "email": "communication@azimut-app.be"},
                 "to": [{"email": sub["email"]}],
                 "subject": payload.subject,
                 "htmlContent": html_content
@@ -238,7 +238,7 @@ def send_direct_email(payload: DirectEmailRequest):
         """
         
         brevo_payload = {
-            "sender": {"name": f"Staff {sec_nom}", "email": "arthurlouette12@gmail.com"},
+            "sender": {"name": f"Staff {sec_nom}", "email": "communication@azimut-app.be"},
             "replyTo": {"email": payload.chef_email}, 
             "to": [{"email": payload.parent_email}],
             "subject": payload.subject,
@@ -275,7 +275,7 @@ def send_parent_to_chef_email(payload: ParentToChefEmailRequest):
         """
         
         brevo_payload = {
-            "sender": {"name": "Portail Parent", "email": "arthurlouette12@gmail.com"},
+            "sender": {"name": "Portail Parent", "email": "communication@azimut-app.be"},
             "replyTo": {"email": payload.parent_email}, 
             "to": [{"email": payload.chef_email}],
             "subject": f"{payload.subject}",
@@ -334,7 +334,7 @@ def send_unit_newsletter(payload: UnitEmailRequest):
             """
             
             brevo_payload = {
-                "sender": {"name": f"Staff d'Unité {unite_nom}", "email": "arthurlouette12@gmail.com"},
+                "sender": {"name": f"Staff d'Unité {unite_nom}", "email": "communication@azimut-app.be"},
                 "to": [{"email": email}],
                 "subject": f"{payload.subject}",
                 "htmlContent": html_content
@@ -391,7 +391,7 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
             """
             
             brevo_payload = {
-                "sender": {"name": f"Staff d'Unité {unite_nom}", "email": "arthurlouette12@gmail.com"},
+                "sender": {"name": f"Staff d'Unité {unite_nom}", "email": "communication@azimut-app.be"},
                 "to": [{"email": email}],
                 "subject": f"[{sec_nom}] {payload.subject}",
                 "htmlContent": html_content

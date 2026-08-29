@@ -1,6 +1,6 @@
 # Envoi Email : Brevo
 # Base de Données : SupaBase
 # Nom de Domaine : Hostinger
-# Emails : Zoho Mail
+# Emails : ImprovMX
 # Back-End : Render
 # Front-End : GitHub Pages
