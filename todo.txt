@@ -12,6 +12,8 @@
 - installer site web directement sur écran d'accueil du smartphone (PWA) OK
 - nouvelle année reset les db des sections et unités OK
 - meilleure qualité des cliquages de désabonnement en bas des mails OK
+- créer README propre OK
+- effectuer des tests OK
 
 - ajouter heures à évents éphémérides
 - ≠ couleurs par sections dans calendrier
@@ -24,8 +26,3 @@
 - présence des scouts à chaque réunion
 - rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
 - listes de TODO à faire pour chaque parent
-
-4. faire vidéos de présentations (et les intégrer à site web)
-
-- créer README propre OK
-- effectuer des tests OK
