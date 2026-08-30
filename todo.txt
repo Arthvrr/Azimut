@@ -14,11 +14,11 @@
 - meilleure qualité des cliquages de désabonnement en bas des mails OK
 - créer README propre OK
 - effectuer des tests OK
+- dark mode OK
 
 - ajouter heures à évents éphémérides
 - ≠ couleurs par sections dans calendrier
 - corriger 14-17h30 évent normal (≠ 17h !)
-- dark mode
 
 - covoiturage ?
 - listing gouter
