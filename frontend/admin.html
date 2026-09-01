@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,6 @@
     <link rel="apple-touch-icon" href="../logo/logo.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 
     <script>
         // Eviter le flash blanc au chargement
@@ -70,12 +69,12 @@
                 <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
             </button>
             <div id="userMenu" class="hidden flex items-center gap-4">
-            <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
-                Connecté : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
-            </span>
-            <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium transition-colors">Se déconnecter</button>
+                <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
+                    Connecté : <span id="userEmailDisplay" class="font-bold text-scout-green"></span>
+                </span>
+                <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium transition-colors">Se déconnecter</button>
+            </div>
         </div>
-    </div>
     </nav>
 
     <main class="max-w-6xl mx-auto mt-10 p-6 space-y-8">
@@ -193,9 +192,15 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Calendrier de la section</h2>
-                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Cliquez pour ajouter/modifier</span>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-100 pb-4 gap-4">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-bold text-gray-900">Calendrier de la section</h2>
+                        <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">Cliquez pour ajouter/modifier</span>
+                    </div>
+                    <button onclick="exportAdminCalendarICS()" class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                        <svg class="w-4 h-4 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Exporter (.ics)
+                    </button>
                 </div>
                 <div id="calendar" class="min-h-[600px]"></div>
             </div>
@@ -503,6 +508,46 @@
         });
 
         // --- INITIALISATION CALENDRIER ---
+        async function exportAdminCalendarICS() {
+            if (!currentSectionId) return;
+            
+            // Récupérer les événements
+            const { data, error } = await supabaseClient.from('events').select('*, sections(nom)').eq('section_id', currentSectionId);
+            if (error) { alert("Erreur lors de la récupération des événements."); return; }
+            if (!data || data.length === 0) { alert("Aucun événement à exporter pour le moment."); return; }
+
+            // Création de l'entête du fichier ICS
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Azimut App//FR\nCALSCALE:GREGORIAN\n";
+            
+            // Formatage de la date en format ICS (YYYYMMDDTHHMMSSZ)
+            const formatDate = (dateString) => {
+                const d = new Date(dateString);
+                return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            // Ajout de chaque événement
+            data.forEach(e => {
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `DTSTART:${formatDate(e.start_time)}\n`;
+                icsContent += `DTEND:${formatDate(e.end_time)}\n`;
+                icsContent += `SUMMARY:[${e.sections.nom}] ${e.title}\n`;
+                if(e.description) icsContent += `DESCRIPTION:${e.description.replace(/\n/g, '\\n')}\n`;
+                if(e.location) icsContent += `LOCATION:${e.location}\n`;
+                icsContent += "END:VEVENT\n";
+            });
+
+            icsContent += "END:VCALENDAR";
+
+            // Création et téléchargement du fichier
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `calendrier_${data[0].sections.nom.toLowerCase().replace(/ /g, '_')}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         let calendar; const eventModal = document.getElementById('eventModal'); let currentEventId = null; 
         function toDatetimeLocal(date) { if (!date) return ""; const d = new Date(date); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
 
@@ -518,7 +563,7 @@
                 dateClick: function(info) {
                     currentEventId = null; document.getElementById('eventForm').reset();
                     document.getElementById('modalTitle').textContent = "Ajouter un événement"; document.getElementById('deleteEventBtn').classList.add('hidden');
-                    document.getElementById('eventStart').value = `${info.dateStr}T14:00`; document.getElementById('eventEnd').value = `${info.dateStr}T17:00`;
+                    document.getElementById('eventStart').value = `${info.dateStr}T14:00`; document.getElementById('eventEnd').value = `${info.dateStr}T17:30`;
                     eventModal.classList.remove('hidden');
                 },
                 eventClick: function(info) {

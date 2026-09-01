@@ -1,0 +1,28 @@
+- abonnement/désabonnement newsletter email OK
+- connexion/inscription à portail parent OK
+- calendrier interactif avec réunions lieux des réunions etc OK
+- ajout signaler absence sur un event enfant OK
+- gestion fiches médicales, contacts d'urgences etc... OK
+- messagerie privée à un parent d'enfant OK
+- ajout chefs d'u (email à tout les parents d'une même unité) OK
+- possibilité d'intégrer des fichiers dans un email (newsletter et email précis parent et email chefs d'unités) ex : carnet de camp OK
+- avoir graphes portail admin avec enfants absents etc... OK
+- faire réduire la taille maximale d'un pdf de parent à ...kb pour pouvoir en stocker le maximum OK
+- parent peut suivre ≠ sections d'une même unité en même temps OK
+- installer site web directement sur écran d'accueil du smartphone (PWA) OK
+- nouvelle année reset les db des sections et unités OK
+- meilleure qualité des cliquages de désabonnement en bas des mails OK
+- créer README propre OK
+- effectuer des tests OK
+- dark mode OK
+- export calendrier (fichier .ical) OK
+- corriger 14-17h30 évent normal (≠ 17h !) OK
+- calendrier éphémérides dans chef d'unité OK
+- ≠ couleurs par sections dans calendrier OK
+
+- covoiturage ?
+- listing gouter
+- qr code paiement du camp
+- présence des scouts à chaque réunion
+- rappel automatique de réunion (si réunion samedi à 14h, rappel automatique jeudi à 18h30)
+- listes de TODO à faire pour chaque parent

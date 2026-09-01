@@ -208,9 +208,15 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Éphéméride Familial</h2>
-                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Vue Multi-sections</span>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-100 pb-4 gap-4">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-bold text-gray-900">Éphéméride Familial</h2>
+                        <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">Vue Multi-sections</span>
+                    </div>
+                    <button onclick="exportCalendarICS()" class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                        <svg class="w-4 h-4 text-parent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Exporter (.ics)
+                    </button>
                 </div>
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
@@ -597,6 +603,47 @@
                 msg.textContent = "Absence signalée !"; msg.className = "text-sm text-center mt-2 text-parent-primary font-bold"; document.getElementById('absReason').value = "";
             } catch (err) { msg.textContent = err.message; msg.className = "text-sm text-center mt-2 text-red-500 font-bold"; }
         });
+
+            async function exportCalendarICS() {
+            const sectionIds = parentSections.map(s => s.section_id);
+            if(sectionIds.length === 0) { alert("Vous n'êtes abonné à aucune section."); return; }
+            
+            // Récupérer les événements
+            const { data, error } = await supabaseClient.from('events').select('*, sections(nom)').in('section_id', sectionIds);
+            if (error) { alert("Erreur lors de la récupération des événements."); return; }
+            if (!data || data.length === 0) { alert("Aucun événement à exporter pour le moment."); return; }
+
+            // Création de l'entête du fichier ICS
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Azimut App//FR\nCALSCALE:GREGORIAN\n";
+            
+            // Formatage de la date en format ICS (YYYYMMDDTHHMMSSZ)
+            const formatDate = (dateString) => {
+                const d = new Date(dateString);
+                return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            // Ajout de chaque événement
+            data.forEach(e => {
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `DTSTART:${formatDate(e.start_time)}\n`;
+                icsContent += `DTEND:${formatDate(e.end_time)}\n`;
+                icsContent += `SUMMARY:[${e.sections.nom}] ${e.title}\n`;
+                if(e.description) icsContent += `DESCRIPTION:${e.description.replace(/\n/g, '\\n')}\n`;
+                if(e.location) icsContent += `LOCATION:${e.location}\n`;
+                icsContent += "END:VEVENT\n";
+            });
+
+            icsContent += "END:VCALENDAR";
+
+            // Création et téléchargement du fichier
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'azimut_calendrier.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         function initParentCalendar() {
             if (parentCalendarInstance) parentCalendarInstance.destroy();

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azimut - Chef d'Unité</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = { darkMode: 'class', theme: { extend: { colors: { unite: { primary: '#1E3A8A', light: '#EFF6FF', dark: '#1E40AF' }, scout: { green: '#2E7D32' } } } } }
@@ -159,6 +160,21 @@
                 <div id="directoryList" class="overflow-y-auto max-h-[500px] pr-2 space-y-2">
                     <p class="text-gray-500 text-sm text-center mt-10">Chargement de l'annuaire...</p>
                 </div>
+            </div>
+
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-100 pb-4 gap-4">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-bold text-gray-900">Éphéméride de l'Unité</h2>
+                        <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">Vue Globale</span>
+                    </div>
+                    <button onclick="exportSuperAdminCalendarICS()" class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                        <svg class="w-4 h-4 text-unite-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Exporter (.ics)
+                    </button>
+                </div>
+                <div id="unitCalendar" class="min-h-[600px]"></div>
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-8 w-full border-t-4 border-t-red-600">
@@ -392,16 +408,107 @@
 
 
                 const data = await response.json();
-                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-3 text-sm text-green-600 font-bold"; fetchDirectory(); } 
+                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-3 text-sm text-green-600 font-bold"; fetchDirectory();
+            setTimeout(() => { initUnitCalendar(); }, 100); } 
                 else throw new Error(data.detail);
             } catch (err) { statusText.textContent = err.message; statusText.className = "mt-3 text-sm text-red-600 font-bold"; } 
             finally { btn.disabled = false; btn.textContent = "Clôturer l'année scoute (Purge estivale)"; }
         });
 
+        
+        let unitCalendarInstance = null;
+
+        async function initUnitCalendar() {
+            if (unitCalendarInstance) unitCalendarInstance.destroy();
+            
+            // On a besoin de récupérer toutes les sections de l'unité pour ensuite récupérer leurs events
+            const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
+            if (!sections || sections.length === 0) return;
+            
+            const sectionIds = sections.map(s => s.id);
+            const sectionMap = {};
+            sections.forEach(s => sectionMap[s.id] = s.nom);
+
+            var calendarEl = document.getElementById('unitCalendar');
+            unitCalendarInstance = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth', locale: 'fr', firstDay: 1, 
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
+                events: async function(info, successCallback, failureCallback) {
+                    const { data, error } = await supabaseClient.from('events').select('*').in('section_id', sectionIds);
+                    if (error) failureCallback(error); 
+                    else {
+                        const colors = ['#1E3A8A', '#2E7D32', '#800020', '#D97706', '#7C3AED', '#059669'];
+                        
+                        successCallback(data.map(e => {
+                            const colorIndex = e.section_id % colors.length;
+                            const bgColor = colors[colorIndex];
+                            
+                            return { 
+                                id: e.id, 
+                                title: `[${sectionMap[e.section_id]}] ${e.title}`, 
+                                start: new Date(e.start_time), 
+                                end: new Date(e.end_time), 
+                                extendedProps: { description: e.description, location: e.location }, 
+                                backgroundColor: bgColor, 
+                                borderColor: bgColor 
+                            };
+                        }));
+                    }
+                },
+                eventClick: function(info) {
+                    alert(`Événement : ${info.event.title}\nLieu : ${info.event.extendedProps.location || "Non précisé"}\nDétails : ${info.event.extendedProps.description || "Aucun"}`);
+                }
+            });
+            unitCalendarInstance.render();
+        }
+
+        async function exportSuperAdminCalendarICS() {
+            if (!currentUniteId) return;
+            
+            const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
+            if (!sections || sections.length === 0) return;
+            
+            const sectionIds = sections.map(s => s.id);
+            const sectionMap = {};
+            sections.forEach(s => sectionMap[s.id] = s.nom);
+            
+            const { data, error } = await supabaseClient.from('events').select('*').in('section_id', sectionIds);
+            if (error) { alert("Erreur lors de la récupération des événements."); return; }
+            if (!data || data.length === 0) { alert("Aucun événement à exporter pour le moment."); return; }
+
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Azimut App//FR\nCALSCALE:GREGORIAN\n";
+            
+            const formatDate = (dateString) => {
+                const d = new Date(dateString);
+                return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            data.forEach(e => {
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `DTSTART:${formatDate(e.start_time)}\n`;
+                icsContent += `DTEND:${formatDate(e.end_time)}\n`;
+                icsContent += `SUMMARY:[${sectionMap[e.section_id]}] ${e.title}\n`;
+                if(e.description) icsContent += `DESCRIPTION:${e.description.replace(/\n/g, '\\n')}\n`;
+                if(e.location) icsContent += `LOCATION:${e.location}\n`;
+                icsContent += "END:VEVENT\n";
+            });
+
+            icsContent += "END:VCALENDAR";
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `calendrier_unite.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); document.getElementById('userMenu').classList.remove('hidden');
             document.getElementById('userEmailDisplay').textContent = await getActiveEmail();
             fetchDirectory();
+            setTimeout(() => { initUnitCalendar(); }, 100);
         }
 
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {

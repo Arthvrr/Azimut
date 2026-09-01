@@ -1,0 +1,7 @@
+* une unité comporte plusieurs sections (scoute, louveteaux, baladins, guides,... au moins 1)
+* une section possède plusieurs admins/chefs (au moins 1)
+* une section possède sa propre base de données de parents (lié à un email)
+* un parent peut avoir plusieurs enfants dans une section
+* une section d'une unité doit avoir son propre environnement (newsletter avec emails de parent unique, admins/chefs uniques,...)
+* un chef d'unité peut voir tout les emails de tout les mails liés à une section
+* un chef d'unité est lié à une unité, et pas de sections en particulier
