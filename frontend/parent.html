@@ -537,9 +537,16 @@
         });
 
         async function uploadPdf(fileInput, email) {
-            if (fileInput.files.length === 0) return null; const file = fileInput.files[0];
-            if (file.size > (300 * 1024)) throw new Error(`Le fichier "${file.name}" est trop lourd. Limite : 300 Ko.`);
-            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_'); const fileName = `${email}_${Date.now()}_${safeName}`;
+            if (fileInput.files.length === 0) return null; 
+            const file = fileInput.files[0];
+            
+            if (file.size > (300 * 1024)) {
+                // On envoie un code spécifique avec le nom du fichier
+                throw new Error(`FILE_TOO_LARGE|${file.name}`);
+            }
+            
+            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_'); 
+            const fileName = `${email}_${Date.now()}_${safeName}`;
             const { error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, file);
             if (uploadErr) throw uploadErr;
             return supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
@@ -580,8 +587,22 @@
                 }
                 
                 document.getElementById('childModal').classList.add('hidden'); await showDashboard();
-            } catch (err) { errorMsgBlock.textContent = err.message; errorMsgBlock.classList.remove('hidden'); } 
-            finally { btn.disabled = false; btn.textContent = "Enregistrer"; }
+            } catch (err) { 
+                errorMsgBlock.classList.remove('hidden'); 
+                errorMsgBlock.className = "bg-red-50 text-red-600 border border-red-200 rounded-lg p-3 text-sm font-medium text-center";
+                
+                // Si c'est notre erreur de fichier trop lourd, on utilise innerHTML pour rendre le lien cliquable
+                if (err.message.startsWith("FILE_TOO_LARGE")) {
+                    const fileName = err.message.split("|")[1];
+                    errorMsgBlock.innerHTML = `Le fichier <b>"${fileName}"</b> est trop lourd. <br> Compressez-le via <a href="https://pdf.pi7.org/compress-pdf-to-300kb" target="_blank" class="underline font-bold text-red-800">ce site gratuit (pi7.org)</a>, puis réessayez.`;
+                } else {
+                    // Pour toutes les autres erreurs, on affiche le texte normalement
+                    errorMsgBlock.textContent = err.message; 
+                }
+            } finally { 
+                btn.disabled = false; 
+                btn.textContent = "Enregistrer"; 
+            }
         });
 
         document.getElementById('absChild').addEventListener('change', async (e) => {
