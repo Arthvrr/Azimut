@@ -54,6 +54,7 @@
         html.dark .fc-theme-standard td, html.dark .fc-theme-standard th, html.dark .fc-theme-standard .fc-scrollgrid { border-color: #4b5563 !important; }
         html.dark .fc-day-today { background-color: #374151 !important; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
 
@@ -229,6 +230,33 @@
                             <tr><td colspan="5" class="text-center py-6 text-gray-500">Chargement de l'annuaire...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            
+            <!-- NOUVELLE SECTION : Graphiques d'Absences -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div class="mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Tableau de Bord Analytique</h2>
+                    <p class="text-sm text-gray-500">Aperçu statistique des absences de la section</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Graphique 1 : Absences par Animé -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <h3 class="text-sm font-bold text-gray-800 mb-4 text-center">Absences cumulées par Animé</h3>
+                        <div class="relative h-64 w-full">
+                            <canvas id="absencesByChildChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 2 : Absences par Événement -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <h3 class="text-sm font-bold text-gray-800 mb-4 text-center">Taux d'absence par Événement</h3>
+                        <div class="relative h-64 w-full">
+                            <canvas id="absencesByEventChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -448,6 +476,129 @@
 
         document.getElementById('searchChildTable').addEventListener('input', renderChildrenTable);
 
+        
+        // --- NOUVEAU : GRAPHIQUES D'ABSENCES ---
+        let absByChildChart = null;
+        let absByEventChart = null;
+
+        async function renderCharts() {
+            if (!currentSectionId) return;
+
+            // --- 1. Graphique : Absences par Animé ---
+            // On a déjà sectionChildrenData calculé dans fetchSectionChildren() !
+            // On va filtrer ceux qui ont au moins 1 absence pour ne pas surcharger le graphe
+            const childrenWithAbsences = sectionChildrenData.filter(c => c.absenceCount > 0);
+            
+            // Trier par nombre d'absences (décroissant)
+            childrenWithAbsences.sort((a, b) => b.absenceCount - a.absenceCount);
+
+            const labelsChild = childrenWithAbsences.map(c => `${c.first_name} ${c.last_name.substring(0,1)}.`);
+            const dataChild = childrenWithAbsences.map(c => c.absenceCount);
+
+            const ctxChild = document.getElementById('absencesByChildChart').getContext('2d');
+            
+            // Détruire l'ancien graphe s'il existe pour éviter les superpositions
+            if (absByChildChart) absByChildChart.destroy();
+            
+            absByChildChart = new Chart(ctxChild, {
+                type: 'bar',
+                data: {
+                    labels: labelsChild,
+                    datasets: [{
+                        label: "Nombre d'absences",
+                        data: dataChild,
+                        backgroundColor: '#ef4444', // red-500
+                        borderRadius: 4,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.raw + ' absence(s)'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+
+
+            // --- 2. Graphique : Absences par Événement ---
+            // Récupérer les événements passés ou proches de la section avec leurs absences
+            const { data: eventsData, error: evErr } = await supabaseClient
+                .from('events')
+                .select(`
+                    id, 
+                    title, 
+                    start_time,
+                    absences(count)
+                `)
+                .eq('section_id', currentSectionId)
+                .order('start_time', { ascending: true })
+                .limit(10); // Les 10 derniers événements pour que ce soit lisible
+
+            if (evErr) return;
+
+            const labelsEvent = [];
+            const dataEvent = [];
+
+            eventsData.forEach(ev => {
+                const date = new Date(ev.start_time).toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit'});
+                // Pour éviter des labels trop longs, on coupe le titre
+                const shortTitle = ev.title.length > 15 ? ev.title.substring(0, 15) + '...' : ev.title;
+                labelsEvent.push(`${shortTitle} (${date})`);
+                
+                // Supabase renvoie les relations count sous forme d'array [{count: X}]
+                const absCount = ev.absences && ev.absences[0] ? ev.absences[0].count : 0;
+                dataEvent.push(absCount);
+            });
+
+            const ctxEvent = document.getElementById('absencesByEventChart').getContext('2d');
+            
+            if (absByEventChart) absByEventChart.destroy();
+            
+            absByEventChart = new Chart(ctxEvent, {
+                type: 'line',
+                data: {
+                    labels: labelsEvent,
+                    datasets: [{
+                        label: "Nombre d'absents",
+                        data: dataEvent,
+                        borderColor: '#2E7D32', // scout-green
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#2E7D32',
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.3 // Courbe douce
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.raw + ' absent(s)'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { display: false } } // Cacher les labels X si trop chargés, mais on les garde dans le tooltip
+                    }
+                }
+            });
+        }
+
         // --- ENVOI EMAILS ---
         document.getElementById('directMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -603,7 +754,8 @@
             ui.userEmailDisplay.textContent = await getActiveEmail();
             fetchAbsences(); 
             loadDmChildren();
-            fetchSectionChildren(); // Appel de la nouvelle fonction Annuaire
+            await fetchSectionChildren(); // Appel de la nouvelle fonction Annuaire (avec await pour s'assurer que data est prêt)
+            renderCharts(); // Appel de la fonction graphique
             setTimeout(() => { initAdminCalendar(); }, 100);
         }
 
