@@ -300,86 +300,160 @@
         <div class="max-w-3xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">Questions fréquentes</h3>
-                <p class="text-gray-600">Tout ce que vous devez savoir sur le déploiement d'Azimut.</p>
+                <p class="text-gray-600">Tout ce que vous devez savoir sur le fonctionnement et le déploiement d'Azimut.</p>
             </div>
 
             <div class="space-y-4">
+                
+                <!-- Q1 : Multi-enfants -->
                 <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
                     <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
-                        Un parent peut-il gérer plusieurs enfants avec le même compte ?
-                        <span class="transition group-open:rotate-180">
+                        Un parent peut-il gérer plusieurs enfants inscrits dans des sections différentes ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
                         </span>
                     </summary>
                     <p class="text-gray-600 mt-4 leading-relaxed text-sm">
-                        Oui, c'est l'un des grands avantages d'Azimut. Un parent se connecte avec son adresse e-mail unique et peut ajouter ses différents enfants, même s'ils sont dans des sections distinctes (ex: un enfant aux Louveteaux et un à la Troupe). Tout est centralisé sur son Espace Parent.
+                        Oui ! C'est l'une des grandes forces d'Azimut. Avec une seule adresse e-mail, un parent crée un compte unique. Il peut ensuite y ajouter autant d'enfants qu'il le souhaite, même s'ils sont répartis entre les Baladins, les Louveteaux et la Troupe. L'accès à chaque section se débloque simplement en entrant le "Code parent" spécifique fourni par les animateurs.
                     </p>
                 </details>
 
+                <!-- Q2 : Sécurité médicale -->
                 <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
                     <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
-                        Comment les données médicales sont-elles protégées ?
-                        <span class="transition group-open:rotate-180">
+                        Comment la confidentialité des fiches médicales est-elle garantie ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
                         </span>
                     </summary>
                     <p class="text-gray-600 mt-4 leading-relaxed text-sm">
-                        L'architecture en bases de données cloisonnées garantit que seuls les membres du Staff de la section de votre enfant peuvent consulter sa fiche. Le Chef d'Unité ou les animateurs des autres sections n'y ont techniquement pas accès. Toutes les données sont hébergées sur des serveurs Cloud sécurisés.
+                        Le cloisonnement est strict. Les données médicales (allergies, soins) et les fichiers PDF d'un animé ne sont accessibles qu'aux animateurs de sa propre section. Le Chef d'Unité et les animateurs des autres sections n'y ont techniquement pas accès. De plus, toutes nos bases de données sont hébergées sur des serveurs Cloud (Supabase) hautement sécurisés.
                     </p>
                 </details>
 
+                <!-- Q3 : Application Mobile (PWA) -->
                 <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
                     <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
-                        L'application est-elle payante pour les unités ?
-                        <span class="transition group-open:rotate-180">
+                        Faut-il télécharger Azimut sur l'App Store ou Google Play ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
                         </span>
                     </summary>
                     <p class="text-gray-600 mt-4 leading-relaxed text-sm">
-                        L'utilisation pour les parents et les chefs est totalement gratuite. Pour l'unité, le déploiement d'une instance privée Azimut fait l'objet d'un devis sur-mesure (couvrant les frais de serveurs, d'envois d'e-mails professionnels et la maintenance), calculé spécifiquement pour s'adapter aux budgets associatifs des mouvements de jeunesse.
+                        Non, Azimut est conçue comme une <em>Progressive Web App</em> (PWA). Cela signifie qu'elle ne nécessite aucun téléchargement lourd depuis un magasin d'applications. Il suffit d'ouvrir le site sur le navigateur de votre smartphone (Safari ou Chrome) et d'utiliser la fonction "Ajouter à l'écran d'accueil". L'icône apparaîtra au milieu de vos autres applications, avec le même confort d'utilisation !
                     </p>
                 </details>
 
+                <!-- Q4 : Fin d'année / Purge -->
                 <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
                     <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
-                        Que se passe-t-il si un chef oublie son mot de passe ?
-                        <span class="transition group-open:rotate-180">
+                        Que se passe-t-il à la fin de l'année scoute (en septembre) ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
                         </span>
                     </summary>
                     <p class="text-gray-600 mt-4 leading-relaxed text-sm">
-                        Chaque utilisateur (Parent, Chef, Direction) gère son propre compte de manière autonome. Un bouton "Mot de passe oublié" permet de recevoir un lien de réinitialisation sécurisé directement sur son adresse e-mail personnelle, sans nécessiter l'intervention d'un administrateur.
+                        Azimut intègre un outil de "Clôture de l'année scoute" réservé au Staff d'Unité. En un clic, la plateforme se nettoie pour la rentrée : les éphémérides sont vidés, l'historique des absences est supprimé, et les droits d'accès des anciens animateurs sont révoqués. En revanche, les comptes parents et les fiches médicales sont conservés pour vous éviter de tout devoir réencoder chaque année.
                     </p>
                 </details>
+
+                <!-- Q5 : Spam et e-mails -->
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        Sommes-nous sûrs que les parents recevront bien les newsletters ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        Oui. Contrairement aux e-mails classiques envoyés en "copie cachée (CCI)" depuis une adresse Gmail (qui finissent très souvent dans les spams des parents), Azimut s'appuie sur une infrastructure de routage d'e-mails professionnelle (Brevo). Vos communiqués arriveront fiablement dans la boîte de réception des familles.
+                    </p>
+                </details>
+
+                <!-- Q6 : Mot de passe perdu -->
+                <details class="group bg-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer open:bg-white open:ring-2 open:ring-scout-green/20 transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 list-none">
+                        Que faire si un animateur ou un parent perd son accès ?
+                        <span class="transition group-open:rotate-180 text-scout-green">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-600 mt-4 leading-relaxed text-sm">
+                        La gestion des accès est 100% autonome. Qu'il s'agisse d'un parent, d'un chef de section ou d'un chef d'unité, toute personne ayant oublié son mot de passe peut cliquer sur "Mot de passe oublié ?" sur la page de connexion. Elle recevra immédiatement un lien sécurisé par e-mail pour en créer un nouveau, sans devoir solliciter l'aide d'un administrateur.
+                    </p>
+                </details>
+
             </div>
         </div>
     </section>
 
-    <section id="rgpd" class="py-20 bg-white border-t border-gray-100">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2">
-                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-200">
-                        <svg class="w-16 h-16 text-gray-900 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        <h4 class="text-2xl font-bold text-gray-900 mb-4">Vos données sont privées. Point.</h4>
-                        <ul class="space-y-3 text-sm text-gray-600 font-medium">
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Hébergement cloud ultra-sécurisé</li>
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Accès restreint par codes secrets</li>
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Purge annuelle des données médicales</li>
-                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-scout-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Conformité stricte RGPD européenne</li>
+    <!-- Section Sécurité & RGPD -->
+    <section id="rgpd" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                
+                <!-- Colonne de gauche : Boîte de réassurance -->
+                <div class="lg:w-5/12 w-full">
+                    <div class="bg-gray-50 p-8 md:p-10 rounded-3xl border border-gray-200 relative overflow-hidden shadow-sm">
+                        <!-- Décoration fond -->
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-scout-green/10 rounded-full blur-3xl"></div>
+                        
+                        <div class="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-2xl flex items-center justify-center mb-8 relative z-10">
+                            <svg class="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        </div>
+                        
+                        <h4 class="text-2xl font-bold text-gray-900 mb-6 relative z-10">Vos données sont privées. Point.</h4>
+                        
+                        <ul class="space-y-5 text-sm text-gray-600 font-medium relative z-10">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 
+                                <div><strong class="text-gray-900 block">Serveurs Cloud ultra-sécurisés</strong><span class="block mt-1">Hébergement des bases de données et stockage des PDF sur une infrastructure moderne (Supabase).</span></div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 
+                                <div><strong class="text-gray-900 block">Cloisonnement absolu</strong><span class="block mt-1">Chaque section est isolée. Un staff ne peut voir que les données de ses propres animés.</span></div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 
+                                <div><strong class="text-gray-900 block">Purge de rentrée</strong><span class="block mt-1">Fonctionnalité permettant au Chef d'Unité d'effacer les historiques à chaque rentrée scoute.</span></div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 
+                                <div><strong class="text-gray-900 block">Zéro usage commercial</strong><span class="block mt-1">Aucune publicité, aucune revente à des tiers, 100% conforme au RGPD européen.</span></div>
+                            </li>
                         </ul>
                     </div>
                 </div>
-                <div class="md:w-1/2">
-                    <h3 class="text-3xl font-bold text-gray-900 mb-6">Confidentialité & RGPD</h3>
-                    <p class="text-gray-600 mb-4 leading-relaxed">
-                        Parce que nous traitons des données concernant des mineurs (fiches médicales, autorisations), <strong>la sécurité est le socle fondateur d'Azimut.</strong>
-                    </p>
-                    <p class="text-gray-600 leading-relaxed mb-6">
-                        Chaque unité fonctionne en vase clos. Un parent ne peut voir que les données de ses propres enfants. Un animateur n'a accès qu'aux informations de sa propre section.
-                    </p>
-                    <a href="mailto:arthurlouette12@gmail.com" class="text-scout-green font-bold hover:underline">Poser une question sur la sécurité &rarr;</a>
+                
+                <!-- Colonne de droite : Explications -->
+                <div class="lg:w-7/12 w-full">
+                    <span class="text-scout-green font-bold tracking-wider uppercase text-sm mb-4 block">Confidentialité & Transparence</span>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">La sécurité des données n'est pas une option.</h3>
+                    
+                    <div class="space-y-5 text-gray-600 text-lg leading-relaxed mb-8">
+                        <p>
+                            Parce qu'Azimut centralise des informations concernant des mineurs d'âge (fiches médicales, autorisations parentales, allergies), <strong>la plateforme a été pensée dès le premier jour selon le principe du <i>"Privacy by Design"</i>.</strong>
+                        </p>
+                        <p>
+                            Chaque unité, chaque section et chaque famille évolue dans un environnement strictement séparé. Concrètement : un animateur Baladin ne peut pas ouvrir le profil d'un enfant inscrit à la Troupe. Mieux encore, si le Chef d'Unité dispose d'une vue d'ensemble sur l'annuaire, <strong>il n'a techniquement pas accès aux fiches PDF médicales</strong> qui restent la propriété exclusive des chefs de l'enfant.
+                        </p>
+                        <p>
+                            Enfin, parce que les enfants grandissent et quittent le mouvement, <strong>vous gardez le contrôle total</strong>. Un parent peut supprimer le profil de son enfant à tout moment, entraînant la destruction instantanée de ses PDF sur nos serveurs.
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t border-gray-100 pt-6">
+                        <a href="mailto:arthurlouette12@gmail.com" class="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-lg font-bold transition-colors text-sm w-full sm:w-auto">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            Question sur la sécurité ?
+                        </a>
+                        <span class="text-sm text-gray-500 font-medium flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            Réponse sous 24h
+                        </span>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -509,6 +583,74 @@
         </div>
     </section>
     <!-- Fin Section Tarification -->
+
+    <!-- Section Application Mobile PWA -->
+    <section id="mobile" class="py-24 bg-gray-50 border-t border-gray-100 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+            
+            <!-- Colonne Texte -->
+            <div class="md:w-1/2">
+                <span class="text-scout-green font-bold tracking-wider uppercase text-sm mb-4 block">Accessibilité maximale</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Dans la poche des parents.<br>Dans le sac à dos des chefs.</h3>
+                
+                <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                    Azimut a été développée comme une application web de dernière génération. Elle s'installe en deux clics directement sur l'écran d'accueil de n'importe quel smartphone, sans devoir passer par les processus contraignants de l'App Store ou de Google Play.
+                </p>
+                
+                <ul class="space-y-4 text-gray-600 font-medium mb-8">
+                    <li class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center flex-shrink-0 text-scout-green"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                        Interface 100% adaptée aux écrans mobiles.
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center flex-shrink-0 text-scout-green"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                        Icône personnalisée sur l'écran d'accueil.
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center flex-shrink-0 text-scout-green"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                        Un superbe Mode Sombre pour reposer les yeux.
+                    </li>
+                </ul>
+
+                <a href="tutorial.html" class="inline-flex items-center gap-2 text-scout-green font-bold hover:text-scout-dark transition-colors group">
+                    Voir les tutoriels d'installation iOS & Android
+                    <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+            </div>
+
+            <!-- Colonne Illustration (Mockup visuel CSS pur) -->
+            <div class="md:w-1/2 w-full flex justify-center">
+                <div class="relative w-64 h-[500px] bg-gray-900 rounded-[3rem] border-[8px] border-gray-900 shadow-2xl overflow-hidden flex flex-col">
+                    <!-- Dynamic Island / Notch -->
+                    <div class="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-3xl mx-auto w-1/3 z-20"></div>
+                    
+                    <!-- Faux écran d'accueil Azimut -->
+                    <div class="flex-1 bg-gray-50 relative z-10 flex flex-col">
+                        <div class="bg-white px-4 pt-10 pb-4 border-b border-gray-200 shadow-sm flex items-center gap-2">
+                            <div class="w-8 h-8 bg-parent-primary rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>
+                            <span class="font-bold text-gray-900">Espace Parent</span>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div class="h-24 bg-white rounded-xl border border-gray-200 shadow-sm p-3">
+                                <div class="h-4 w-1/2 bg-gray-200 rounded mb-3"></div>
+                                <div class="h-3 w-3/4 bg-gray-100 rounded mb-2"></div>
+                                <div class="h-3 w-1/4 bg-gray-100 rounded"></div>
+                            </div>
+                            <div class="h-32 bg-white rounded-xl border border-gray-200 shadow-sm p-3 border-t-4 border-t-parent-primary">
+                                <div class="h-4 w-1/3 bg-gray-200 rounded mb-4"></div>
+                                <div class="flex gap-2 mb-2">
+                                    <div class="h-8 w-8 bg-gray-100 rounded-full"></div>
+                                    <div class="flex-1 bg-gray-50 rounded-lg"></div>
+                                </div>
+                                <div class="h-8 bg-parent-primary/10 rounded-lg mt-2 w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
     <footer class="bg-white border-t border-gray-200 py-12 mt-auto">
         <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
