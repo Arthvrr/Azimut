@@ -62,7 +62,7 @@
 
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-parent-primary rounded-lg flex items-center justify-center text-white font-bold text-xl"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></div>
+            <div class="w-10 h-10 bg-parent-primary rounded-lg flex items-center justify-center text-white font-bold text-xl"><a href="../index.html"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></div></a>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Parent</span></h1>
         </div>
         <div class="flex items-center gap-2 md:gap-4">
@@ -204,6 +204,23 @@
                         <button type="button" id="updatePasswordBtn" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg text-sm font-medium transition-colors">Modifier</button>
                         <p id="updatePasswordMsg" class="mt-2 text-xs font-medium text-center"></p>
                     </div>
+                </div>
+            </div>
+
+            <!-- NOUVELLE SECTION : Planning des Goûters (Parents) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-4 mb-6 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Planning des Collations</h2>
+                        <p class="text-sm text-gray-500">Découvrez qui apporte les goûters pour les prochaines réunions.</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 flex-shrink-0 hidden sm:flex">
+                        <span class="text-2xl">🥨</span>
+                    </div>
+                </div>
+                
+                <div id="snackList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <p class="text-sm text-gray-500 italic col-span-full text-center py-4">Chargement du planning...</p>
                 </div>
             </div>
 
@@ -705,6 +722,106 @@
             renderNewsletterToggles();
         };
 
+        // --- NOUVEAU : CHARGEMENT DES GOÛTERS (Côté Parent) ---
+        async function loadSnackPlanning() {
+            const list = document.getElementById('snackList');
+            if (!list) return;
+
+            const sectionIds = parentSections.map(s => s.section_id);
+            if (sectionIds.length === 0) {
+                list.innerHTML = '<p class="text-sm text-gray-500 italic text-center col-span-full">Vous n\'êtes rattaché à aucune section.</p>';
+                return;
+            }
+
+            // 1. On récupère les événements à venir où au moins un enfant est assigné
+            const { data: events, error } = await supabaseClient
+                .from('events')
+                .select('id, title, start_time, section_id, food_child_id, drink_child_id, sections(nom)')
+                .in('section_id', sectionIds)
+                .gte('start_time', new Date().toISOString())
+                .or('food_child_id.not.is.null,drink_child_id.not.is.null')
+                .order('start_time', { ascending: true })
+                .limit(6);
+
+            if (error || !events || events.length === 0) {
+                list.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500 italic bg-gray-50 rounded-xl border border-gray-100">Aucune collation n\'est planifiée par les chefs pour le moment.</div>';
+                return;
+            }
+
+            // 2. On récupère tous les ID d'enfants concernés
+            const childIds = new Set();
+            events.forEach(ev => {
+                if (ev.food_child_id) childIds.add(ev.food_child_id);
+                if (ev.drink_child_id) childIds.add(ev.drink_child_id);
+            });
+
+            // 3. On va chercher leurs Prénoms/Noms dans la BDD
+            const { data: childrenData } = await supabaseClient
+                .from('children')
+                .select('id, first_name, last_name')
+                .in('id', Array.from(childIds));
+
+            const childrenMap = {};
+            if (childrenData) {
+                childrenData.forEach(c => childrenMap[c.id] = `${c.first_name} ${c.last_name}`);
+            }
+
+            // 4. On génère l'affichage HTML
+            let html = '';
+            events.forEach(ev => {
+                const dateObj = new Date(ev.start_time);
+                const dateStr = dateObj.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' });
+                
+                const foodName = ev.food_child_id ? (childrenMap[ev.food_child_id] || 'Inconnu') : '-';
+                const drinkName = ev.drink_child_id ? (childrenMap[ev.drink_child_id] || 'Inconnu') : '-';
+
+                // VERIFICATION MAGIQUE : Est-ce que cet enfant m'appartient ? 
+                const isMyFood = ev.food_child_id && childrenDataMap[ev.food_child_id];
+                const isMyDrink = ev.drink_child_id && childrenDataMap[ev.drink_child_id];
+
+                // Affichage personnalisé si c'est l'enfant du parent connecté
+                const foodDisplay = isMyFood 
+                    ? `<span class="text-parent-primary font-bold bg-parent-light px-2 py-0.5 rounded">${foodName} (C'est vous !)</span>`
+                    : `<span class="text-gray-700 font-medium">${foodName}</span>`;
+
+                const drinkDisplay = isMyDrink 
+                    ? `<span class="text-parent-primary font-bold bg-parent-light px-2 py-0.5 rounded">${drinkName} (C'est vous !)</span>`
+                    : `<span class="text-gray-700 font-medium">${drinkName}</span>`;
+
+                // La carte se colore si le parent doit amener quelque chose
+                const cardHighlightClass = (isMyFood || isMyDrink) 
+                    ? 'border-parent-primary bg-parent-light/20 shadow-md' 
+                    : 'border-gray-100 bg-gray-50';
+
+                html += `
+                <div class="border rounded-xl p-5 flex flex-col transition-colors ${cardHighlightClass}">
+                    <div class="mb-4 border-b border-gray-200 pb-3">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">${ev.sections?.nom || 'Section'}</span>
+                        <h4 class="font-bold text-gray-900 leading-tight mt-1">${ev.title}</h4>
+                        <p class="text-xs text-gray-500 capitalize mt-1">${dateStr}</p>
+                    </div>
+                    <div class="space-y-3 flex-1">
+                        <div class="flex items-start gap-3 text-sm">
+                            <span class="text-xl leading-none">🍕</span>
+                            <div>
+                                <span class="text-[10px] text-gray-500 uppercase font-bold block mb-0.5">Nourriture</span>
+                                ${foodDisplay}
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 text-sm">
+                            <span class="text-xl leading-none">🧃</span>
+                            <div>
+                                <span class="text-[10px] text-gray-500 uppercase font-bold block mb-0.5">Boissons</span>
+                                ${drinkDisplay}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            list.innerHTML = html;
+        }
+
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
             const email = await getActiveEmail();
@@ -741,6 +858,8 @@
             renderNewsletterToggles();
             await loadChildren(); 
             await loadPmChefs();
+
+            await loadSnackPlanning();
             
             document.getElementById('absChild').value = "";
             document.getElementById('absEvent').innerHTML = '<option value="">-- Choisir un enfant d\'abord --</option>';

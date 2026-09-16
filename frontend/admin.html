@@ -60,7 +60,7 @@
 
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></div>
+            <div class="w-10 h-10 bg-scout-green rounded-lg flex items-center justify-center text-white font-bold text-xl"><a href="../index.html"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></a></div>
             <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Chef</span></h1>
         </div>
         <div class="flex items-center gap-2 md:gap-4">
@@ -204,6 +204,29 @@
                     </button>
                 </div>
                 <div id="calendar" class="min-h-[600px]"></div>
+            </div>
+
+            <!-- NOUVELLE SECTION : Planning des Goûters -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-6">
+                <div class="mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Planning des Goûters</h2>
+                    <p class="text-sm text-gray-500">Attribuez les collations pour les prochaines réunions. Un enfant assigné disparaîtra des autres listes pour assurer une bonne rotation.</p>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-600 border border-gray-100 rounded-lg overflow-hidden">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 font-bold w-1/3">Événement</th>
+                                <th scope="col" class="px-4 py-3 font-bold w-1/3">🍕 Nourriture</th>
+                                <th scope="col" class="px-4 py-3 font-bold w-1/3">🧃 Boissons</th>
+                            </tr>
+                        </thead>
+                        <tbody id="snackTableBody" class="divide-y divide-gray-100">
+                            <tr><td colspan="3" class="text-center py-6 text-gray-500">Chargement du planning...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -739,15 +762,112 @@
                 start_time: new Date(document.getElementById('eventStart').value).toISOString(), end_time: new Date(document.getElementById('eventEnd').value).toISOString()
             };
             let res = currentEventId ? await supabaseClient.from('events').update(eventData).eq('id', currentEventId) : await supabaseClient.from('events').insert([eventData]);
-            if (res.error) alert(res.error.message); else { eventModal.classList.add('hidden'); calendar.refetchEvents(); }
+            
+            if (res.error) {
+                alert(res.error.message); 
+            } else { 
+                eventModal.classList.add('hidden'); 
+                calendar.refetchEvents(); 
+                initSnackPlanning();
+            }
+            
             btn.disabled = false; btn.textContent = "Enregistrer";
         });
 
         document.getElementById('deleteEventBtn').addEventListener('click', async () => {
             if (!currentEventId || !confirm("Supprimer définitivement ?")) return;
             await supabaseClient.from('events').delete().eq('id', currentEventId);
-            eventModal.classList.add('hidden'); calendar.refetchEvents();
+            
+            eventModal.classList.add('hidden'); 
+            calendar.refetchEvents();
+            initSnackPlanning();
         });
+
+        // --- NOUVEAU : GESTION DES GOÛTERS ---
+        async function initSnackPlanning() {
+            const tbody = document.getElementById('snackTableBody');
+            if (!tbody) return;
+
+            // 1. On récupère uniquement les événements futurs de la section
+            const { data: events, error } = await supabaseClient
+                .from('events')
+                .select('id, title, start_time, food_child_id, drink_child_id')
+                .eq('section_id', currentSectionId)
+                .gte('start_time', new Date().toISOString())
+                .order('start_time', { ascending: true });
+
+            if (error || !events || events.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-500 italic">Aucun événement futur à planifier.</td></tr>';
+                return;
+            }
+
+            // 2. On identifie tous les enfants DÉJÀ assignés dans TOUT le tableau
+            const assignedChildIds = new Set();
+            events.forEach(ev => {
+                if (ev.food_child_id) assignedChildIds.add(ev.food_child_id);
+                if (ev.drink_child_id) assignedChildIds.add(ev.drink_child_id);
+            });
+
+            // 3. On génère les lignes du tableau
+            let html = '';
+            events.forEach(ev => {
+                const dateObj = new Date(ev.start_time);
+                const dateStr = dateObj.toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short' });
+
+                let foodOptions = '<option value="">-- Libre --</option>';
+                let drinkOptions = '<option value="">-- Libre --</option>';
+
+                sectionChildrenData.forEach(child => {
+                    const isFoodSelected = (ev.food_child_id === child.id) ? 'selected' : '';
+                    const isDrinkSelected = (ev.drink_child_id === child.id) ? 'selected' : '';
+                    
+                    // L'enfant est grisé s'il est déjà assigné QUELQUE PART AILLEURS que dans la case en cours
+                    const isGloballyAssignedAndNotThisFood = assignedChildIds.has(child.id) && ev.food_child_id !== child.id;
+                    const isGloballyAssignedAndNotThisDrink = assignedChildIds.has(child.id) && ev.drink_child_id !== child.id;
+
+                    const disabledFood = isGloballyAssignedAndNotThisFood ? 'disabled' : '';
+                    const disabledDrink = isGloballyAssignedAndNotThisDrink ? 'disabled' : '';
+
+                    foodOptions += `<option value="${child.id}" ${isFoodSelected} ${disabledFood}>${child.first_name} ${child.last_name}</option>`;
+                    drinkOptions += `<option value="${child.id}" ${isDrinkSelected} ${disabledDrink}>${child.first_name} ${child.last_name}</option>`;
+                });
+
+                html += `
+                <tr class="bg-white hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-4">
+                        <p class="font-bold text-gray-900 text-sm">${ev.title}</p>
+                        <p class="text-xs text-gray-500 capitalize">${dateStr}</p>
+                    </td>
+                    <td class="px-2 py-3">
+                        <select onchange="updateSnack(${ev.id}, 'food_child_id', this.value)" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-scout-green bg-white text-gray-700">
+                            ${foodOptions}
+                        </select>
+                    </td>
+                    <td class="px-2 py-3">
+                        <select onchange="updateSnack(${ev.id}, 'drink_child_id', this.value)" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-scout-green bg-white text-gray-700">
+                            ${drinkOptions}
+                        </select>
+                    </td>
+                </tr>`;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // Sauvegarde instantanée à chaque changement
+        window.updateSnack = async function(eventId, column, childIdStr) {
+            const childId = childIdStr ? parseInt(childIdStr) : null;
+            
+            const { error } = await supabaseClient
+                .from('events')
+                .update({ [column]: childId })
+                .eq('id', eventId);
+                
+            if (error) alert("Erreur lors de la sauvegarde : " + error.message);
+            
+            // On rafraîchit le tableau pour mettre à jour les exclusions instantanément
+            initSnackPlanning();
+        };
 
         async function showDashboard() {
             ui.auth.classList.add('hidden'); ui.dash.classList.remove('hidden'); ui.userMenu.classList.remove('hidden');
@@ -755,6 +875,9 @@
             fetchAbsences(); 
             loadDmChildren();
             await fetchSectionChildren(); // Appel de la nouvelle fonction Annuaire (avec await pour s'assurer que data est prêt)
+
+            initSnackPlanning();
+            
             renderCharts(); // Appel de la fonction graphique
             setTimeout(() => { initAdminCalendar(); }, 100);
         }

@@ -462,3 +462,21 @@ DROP POLICY IF EXISTS "Lecture_Sections" ON public.sections;
 -- 2. On crée de nouvelles politiques ouvertes à tous (public)
 CREATE POLICY "Lecture_Unites_Publique" ON public.unites FOR SELECT TO public USING (true);
 CREATE POLICY "Lecture_Sections_Publique" ON public.sections FOR SELECT TO public USING (true);
+
+-- Ajout des colonnes pour le planning des goûters dans la table events
+ALTER TABLE public.events 
+ADD COLUMN food_child_id int4,
+ADD COLUMN drink_child_id int4;
+
+-- Création des liens (Foreign Keys) vers la table children
+ALTER TABLE public.events
+ADD CONSTRAINT fk_food_child
+  FOREIGN KEY (food_child_id) 
+  REFERENCES public.children(id) 
+  ON DELETE SET NULL;
+
+ALTER TABLE public.events
+ADD CONSTRAINT fk_drink_child
+  FOREIGN KEY (drink_child_id) 
+  REFERENCES public.children(id) 
+  ON DELETE SET NULL;
