@@ -69,7 +69,7 @@
             <div class="w-px h-4 bg-gray-300"></div>
             <a href="#tutoriel-parents" class="hover:text-parent-primary transition-colors">Parents</a>
             <a href="#tutoriel-chefs" class="hover:text-scout-green transition-colors">Chefs</a>
-            <a href="#tutoriel-unite" class="hover:text-unite-primary transition-colors">Unité</a>
+            <a href="#tutoriel-unite" class="hover:text-unite-primary transition-colors">Staff d'Unité</a>
             <div class="w-px h-4 bg-gray-300"></div>
             <a href="index.html" class="hover:text-gray-900 transition-colors">Retour à l'accueil</a>
         </div>
@@ -194,192 +194,301 @@
     </section>
 
     <!-- Section Parents -->
-    <section id="tutoriel-parents" class="py-20 bg-gray-50 scroll-mt-20">
+    <section id="tutoriel-parents" class="py-24 bg-gray-50 scroll-mt-20 border-t border-gray-100">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="mb-12 flex items-center gap-4">
-                <div class="w-16 h-16 bg-parent-primary/10 rounded-2xl flex items-center justify-center">
-                    <svg class="w-8 h-8 text-parent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <div class="mb-16 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="w-20 h-20 bg-parent-primary/10 rounded-3xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-10 h-10 text-parent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 </div>
                 <div>
-                    <h3 class="text-3xl font-bold text-gray-900">Guide détaillé pour les Parents</h3>
-                    <p class="text-gray-500 mt-2">De la création du compte à la gestion des absences de vos enfants.</p>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900">Guide de démarrage pour les Parents</h3>
+                    <p class="text-gray-600 mt-3 text-lg max-w-2xl">Une prise en main simple et rapide, étape par étape, pour ne plus jamais rater une information importante concernant vos animés.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Step 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-parent-primary hover:shadow-md transition-shadow">
-                    <span class="text-parent-primary font-bold text-5xl mb-4 block opacity-20">01</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Création du compte & Code Section</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Pour garantir la sécurité des données, l'accès à votre section est protégé :
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Sur la page de connexion, entrez votre adresse e-mail personnelle.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Lors de votre première connexion, le système vous demandera un <strong>Code de Section</strong>.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Ce code vous est transmis en début d'année par le staff (ex: <i>LOUV2026</i>). Il permet de vous rattacher automatiquement au bon groupe.</li>
-                    </ul>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-parent-primary hover:shadow-md transition-shadow">
-                    <span class="text-parent-primary font-bold text-5xl mb-4 block opacity-20">02</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Compléter le dossier de l'enfant</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Une fois connecté, cliquez sur <strong>+ Ajouter un enfant</strong>. Vous devrez fournir les informations essentielles pour l'année :
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> <strong>Détails médicaux :</strong> Renseignez précisément les éventuelles allergies (alimentaires ou autres), maladies chroniques, et traitements en cours.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> <strong>Attestations :</strong> Uploadez le PDF de la fiche santé officielle signée, ainsi que les attestations mutuelle si demandé.</li>
-                    </ul>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-parent-primary hover:shadow-md transition-shadow md:col-span-2">
-                    <span class="text-parent-primary font-bold text-5xl mb-4 block opacity-20">03</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Éphémérides et Absences en 1 clic</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        L'onglet <strong>Calendrier</strong> (ou Éphéméride) affiche toutes les dates importantes (réunions, hikes, grand camp) encodées par le staff.
-                    </p>
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Comment signaler une absence ?</h5>
-                            <p class="text-sm text-gray-600">Si votre enfant ne peut pas participer à une activité, cliquez simplement sur la date correspondante dans l'éphéméride, puis sur le bouton rouge <strong>Signaler une absence</strong>. Le staff est notifié immédiatement dans son tableau de bord.</p>
-                        </div>
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Contacter les chefs</h5>
-                            <p class="text-sm text-gray-600">Besoin de prévenir d'un retard ? Utilisez le bouton <strong>Contacter le Staff</strong>. Votre message sera envoyé sur l'adresse professionnelle de la section (ex: <i>communication@azimut-app.be</i>).</p>
-                        </div>
+            <div class="space-y-20">
+                
+                <!-- Étape 1 : Inscription -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-parent-primary/10 text-parent-primary font-bold rounded-full text-sm">Étape 1</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Rejoindre son unité</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Lors de votre toute première visite, rendez-vous sur l'onglet <strong>Rejoindre</strong>. Sélectionnez l'unité et la section de votre enfant. Le système vous demandera alors le <strong>Code secret parent</strong> (fourni par les animateurs en début d'année) pour garantir la sécurité du groupe. Entrez votre e-mail, choisissez un mot de passe, et le tour est joué !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/parent/inscription.png" alt="Page d'inscription Azimut" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
                     </div>
                 </div>
+
+                <!-- Étape 2 : Connexion -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-parent-primary/10 text-parent-primary font-bold rounded-full text-sm">Étape 2</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Se connecter au portail</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Pour vos visites suivantes, utilisez simplement l'onglet <strong>Connexion</strong>. Entrez votre e-mail et votre mot de passe pour accéder directement à votre espace personnel. Un trou de mémoire ? Le lien "Mot de passe oublié ?" vous permet de réinitialiser votre accès en toute autonomie via votre boîte mail.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/parent/connexion.png" alt="Page de connexion Azimut" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 3 : Dashboard & Enfants -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-parent-primary/10 text-parent-primary font-bold rounded-full text-sm">Étape 3</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Le tableau de bord : votre centre de contrôle</h4>
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            Bienvenue sur votre espace personnel ! C'est ici que tout se passe. L'interface est divisée en quatre outils simples pour vous faire gagner du temps :
+                        </p>
+                        
+                        <ul class="space-y-5 text-sm text-gray-600">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                <div><strong class="text-gray-900">Mes Enfants :</strong> Cliquez sur "Ajouter" pour créer la fiche de votre animé. Renseignez les numéros d'urgence, allergies, et uploadez <strong>une seule fois</strong> les documents PDF (fiche médicale, autorisation). Vous pourrez les modifier par la suite d'un simple clic sur son nom !</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <div><strong class="text-gray-900">Signaler une absence :</strong> En cas de pépin de dernière minute, sélectionnez l'enfant, l'événement concerné et ajoutez un motif éventuel. Un clic sur le bouton rouge et les chefs sont notifiés en direct sur leur propre application.</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                <div><strong class="text-gray-900">Mes Sections & Newsletters :</strong> Vous avez un autre enfant chez les Éclaireurs ? Entrez leur code secret parent ici pour débloquer leur section. C'est également ici que vous pouvez vous abonner (ou désabonner) aux e-mails du staff.</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-parent-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                <div><strong class="text-gray-900">Sécurité :</strong> Gardez le contrôle total sur votre espace en modifiant facilement votre mot de passe d'accès.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/parent/dashboard.png" alt="Tableau de bord parent" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 4 : Contact Chef -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-parent-primary/10 text-parent-primary font-bold rounded-full text-sm">Étape 4</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Contacter le staff facilement</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Fini de chercher le numéro d'un chef à la dernière minute. Utilisez le module <strong>Contacter le Staff</strong> : choisissez l'animateur concerné dans le menu déroulant, tapez votre message, et il sera envoyé directement sous forme d'e-mail officiel. Pratique pour les petites questions logistiques ou les retards !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/parent/contact-chef.png" alt="Module de contact chef" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 5 : Éphéméride -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-parent-primary/10 text-parent-primary font-bold rounded-full text-sm">Étape 5</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Éphéméride & Absences</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Le <strong>Calendrier</strong> affiche tous les événements à venir encodés par les chefs. Mieux encore : grâce au module <strong>Signaler une absence</strong>, vous sélectionnez votre enfant, l'événement concerné, un motif, et les staffs sont prévenus instantanément dans leur tableau de bord. N'oubliez pas le bouton <strong>Exporter (.ics)</strong> pour synchroniser toutes les dates avec l'agenda de votre téléphone !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/parent/ephemeride.png" alt="Éphéméride familial et absences" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- Section Chefs -->
-    <section id="tutoriel-chefs" class="py-20 bg-white scroll-mt-20 border-t border-gray-100">
+    <section id="tutoriel-chefs" class="py-24 bg-white scroll-mt-20 border-t border-gray-100">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="mb-12 flex items-center gap-4">
-                <div class="w-16 h-16 bg-scout-light rounded-2xl flex items-center justify-center">
-                    <svg class="w-8 h-8 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            <div class="mb-16 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="w-20 h-20 bg-scout-light rounded-3xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-10 h-10 text-scout-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 </div>
                 <div>
-                    <h3 class="text-3xl font-bold text-gray-900">Guide détaillé pour les Chefs</h3>
-                    <p class="text-gray-500 mt-2">La gestion de votre section centralisée sur un seul tableau de bord.</p>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900">Guide de démarrage pour les Chefs</h3>
+                    <p class="text-gray-600 mt-3 text-lg max-w-2xl">Découvrez comment Azimut va vous faire gagner des heures de préparation et simplifier la communication de votre section.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Step 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-scout-green hover:shadow-md transition-shadow">
-                    <span class="text-scout-green font-bold text-5xl mb-4 block opacity-20">01</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Accès au portail d'administration</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        En tant qu'animateur, vous possédez des droits d'administration sur votre section.
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Connectez-vous via le menu <strong>Espace Chef</strong>.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> L'interface s'ouvre directement sur le <strong>Tableau de Bord</strong> global de votre groupe (ex: La Troupe).</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> <i>Note : Le mot de passe administrateur vous est remis par votre chef d'unité. Ne le partagez jamais aux parents.</i></li>
-                    </ul>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-scout-green hover:shadow-md transition-shadow">
-                    <span class="text-scout-green font-bold text-5xl mb-4 block opacity-20">02</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Gestion du Calendrier (Éphéméride)</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        C'est à vous de maintenir le calendrier à jour pour informer les parents :
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Dans l'onglet Éphéméride, cliquez sur <strong>Créer un événement</strong>.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Renseignez la date, les heures de début/fin, le lieu, et une courte description (ex: <i>"Prendre des vêtements de pluie"</i>).</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-scout-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Dès l'enregistrement, l'événement apparaît sur les Espaces Parents de votre section.</li>
-                    </ul>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-scout-green hover:shadow-md transition-shadow md:col-span-2">
-                    <span class="text-scout-green font-bold text-5xl mb-4 block opacity-20">03</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Suivi des présences et de la santé</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Avant chaque réunion dominicale ou départ en camp, Azimut vous mâche le travail administratif.
-                    </p>
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Les Absences</h5>
-                            <p class="text-sm text-gray-600">Le widget principal de votre tableau de bord affiche "Absences pour la prochaine réunion". Vous voyez immédiatement qui a été excusé par ses parents, idéal pour ajuster les équipes de jeu à la dernière minute.</p>
-                        </div>
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Fiches Médicales</h5>
-                            <p class="text-sm text-gray-600">Dans l'annuaire de la section, les enfants ayant des allergies ou des maladies signalées ont une icône ⚠️ rouge. Cliquez sur le profil pour télécharger instantanément l'attestation médicale PDF fournie par les parents.</p>
-                        </div>
+            <div class="space-y-20">
+                
+                <!-- Étape 1 : Inscription -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 1</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Créer son profil d'animateur</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Rendez-vous dans l'onglet <strong>Nouveau Chef</strong>. Sélectionnez votre unité et votre section. Pour des raisons de sécurité, vous devrez entrer le <strong>Code secret staff</strong> (remis par votre chef d'unité ou l'admin d'Azimut !) pour prouver que vous faites bien partie du staff. Encodez ensuite votre prénom, nom, totem et e-mail pour finaliser la création.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/inscription.png" alt="Inscription Chef Azimut" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
                     </div>
                 </div>
+
+                <!-- Étape 2 : Connexion -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 2</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Se connecter au tableau de bord</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Une fois le compte créé, passez par l'onglet <strong>Connexion</strong>. Votre e-mail et votre mot de passe vous donneront un accès direct et sécurisé aux données de votre propre section. Les données des autres sections de l'unité restent strictement invisibles pour vous.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/connexion.png" alt="Connexion Chef Azimut" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 3 : Dashboard & Calendrier -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 3</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Éphéméride & Suivi des présences</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            C'est le centre de contrôle de votre section. En haut, visualisez immédiatement les <strong>absences signalées</strong> par les parents pour la prochaine réunion. En bas, le <strong>Calendrier</strong> vous permet d'ajouter les réunions, les hikes et les camps en un clic. Dès qu'un événement est ajouté, il apparaît instantanément sur l'espace de tous les parents !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/dashboard.png" alt="Tableau de bord et calendrier Chef" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 4 : Annuaire -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 4</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Annuaire, Fiches Médicales & Statistiques</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Fini les fiches papier perdues ! L'<strong>Annuaire</strong> liste tous vos animés. Vous voyez d'un coup d'œil les allergies, les soins requis, et pouvez ouvrir les autorisations parentales PDF. Juste en dessous, le <strong>Tableau de Bord Analytique</strong> génère des graphiques automatiques pour repérer facilement les animés souvent absents ou les réunions qui ont eu moins de succès.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/annuaire.png" alt="Annuaire et statistiques de la section" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 5 : Newsletter -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 5</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Communiquer avec la section</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Besoin d'envoyer la convocation pour le prochain grand camp ? Le module <strong>Newsletter Générale</strong> envoie un e-mail propre et professionnel à l'ensemble des parents abonnés à votre section. Vous pouvez même y glisser une pièce jointe. Fini de maintenir des listes d'adresses Excel à jour manuellement !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/newsletter.png" alt="Module newsletter chef" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 6 : Contact Parent -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-scout-green/10 text-scout-green font-bold rounded-full text-sm">Étape 6</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Message direct aux parents</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Un pull oublié au local ? Une question spécifique concernant un animé ? Le module <strong>Contacter un parent</strong> vous permet de sélectionner l'enfant concerné dans la liste déroulante et de rédiger un message privé. Le parent le recevra par e-mail et pourra y répondre directement.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/admin/contact-parent.png" alt="Message privé au parent" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- Section Chef d'Unité -->
-    <section id="tutoriel-unite" class="py-20 bg-gray-50 scroll-mt-20 border-t border-gray-100">
+    <section id="tutoriel-unite" class="py-24 bg-gray-50 scroll-mt-20 border-t border-gray-100">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="mb-12 flex items-center gap-4">
-                <div class="w-16 h-16 bg-unite-light rounded-2xl flex items-center justify-center">
-                    <svg class="w-8 h-8 text-unite-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            <div class="mb-16 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="w-20 h-20 bg-unite-light rounded-3xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-10 h-10 text-unite-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                 </div>
                 <div>
-                    <h3 class="text-3xl font-bold text-gray-900">Guide détaillé pour le Staff d'Unité</h3>
-                    <p class="text-gray-500 mt-2">La supervision complète et la communication transversale de l'association.</p>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900">Guide pour le Staff d'Unité</h3>
+                    <p class="text-gray-600 mt-3 text-lg max-w-2xl">La vue "hélicoptère" ultime pour gérer l'association, superviser les effectifs et communiquer d'une seule voix.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Step 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-unite-primary hover:shadow-md transition-shadow">
-                    <span class="text-unite-primary font-bold text-5xl mb-4 block opacity-20">01</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">L'Annuaire Global</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        L'Espace Chef d'Unité (ou Superadmin) offre une vue transversale sur toutes les sections :
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Accédez à l'annuaire complet centralisant tous les parents et enfants de l'unité.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Filtrez rapidement par section (Baladins, Louveteaux, etc.) pour retrouver un contact en cas d'urgence.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Ayez un suivi en temps réel des inscriptions pour anticiper les effectifs de l'année.</li>
-                    </ul>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-unite-primary hover:shadow-md transition-shadow">
-                    <span class="text-unite-primary font-bold text-5xl mb-4 block opacity-20">02</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Création et Accès des Sections</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Vous êtes le chef d'orchestre de la plateforme Azimut pour votre unité :
-                    </p>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> <strong>Codes de section :</strong> Générez et distribuez les codes d'accès uniques (ex: <i>LOUV2026</i>) aux parents en début d'année.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> <strong>Comptes Staff :</strong> Créez les accès administrateurs sécurisés pour les chefs de chaque section.</li>
-                        <li class="flex items-start gap-2"><svg class="w-5 h-5 text-unite-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Modifiez facilement les mots de passe et droits d'accès lors des passages d'animateurs en septembre.</li>
-                    </ul>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-unite-primary hover:shadow-md transition-shadow md:col-span-2">
-                    <span class="text-unite-primary font-bold text-5xl mb-4 block opacity-20">03</span>
-                    <h4 class="text-xl font-bold text-gray-900 mb-3">Communication Globale de l'Unité</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Terminé les chaînes d'e-mails interminables avec les adresses en copie cachée.
-                    </p>
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Newsletters Générales</h5>
-                            <p class="text-sm text-gray-600">Rédigez un communiqué (ex: invitation au souper d'unité ou à la fête de passage) et envoyez-le instantanément à l'<strong>ensemble des familles de l'unité</strong>. Azimut s'assure qu'aucun parent n'est oublié, quelle que soit la section de son enfant.</p>
-                        </div>
-                        <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h5 class="font-bold text-gray-900 mb-2">Expéditeur Professionnel</h5>
-                            <p class="text-sm text-gray-600">Vos communiqués partiront sous l'égide officielle de l'unité (ex: <i>communication@azimut-app.be</i>) avec un taux de délivrabilité maximal. L'image de votre mouvement reste professionnelle et unifiée.</p>
-                        </div>
+            <div class="space-y-20">
+                
+                <!-- Étape 1 : Inscription -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-unite-primary/10 text-unite-primary font-bold rounded-full text-sm">Étape 1</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Créer son accès Superadmin</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Pour accéder au sommet de la pyramide, rendez-vous sur l'onglet <strong>Nouveau Chef d'Unité</strong>. Renseignez votre unité et insérez le très précieux <strong>Code Secret d'Unité</strong> (le code maître généré lors du déploiement d'Azimut). Créez ensuite votre profil avec votre adresse e-mail personnelle pour obtenir vos droits globaux.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/superadmin/inscription.png" alt="Inscription Chef d'Unité" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
                     </div>
                 </div>
+
+                <!-- Étape 2 : Connexion -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-unite-primary/10 text-unite-primary font-bold rounded-full text-sm">Étape 2</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Se connecter à la vigie</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Une fois le profil créé, passez par l'onglet <strong>Connexion</strong> standard. Contrairement aux animateurs classiques qui sont restreints à leur propre section, le système reconnaîtra automatiquement vos droits "Superadmin" et vous redirigera vers le Tableau de Bord global de l'Unité.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/superadmin/connexion.png" alt="Connexion Superadmin" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 3 : Annuaire & Éphéméride -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-unite-primary/10 text-unite-primary font-bold rounded-full text-sm">Étape 3</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Vision globale de l'Association</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            L'outil idéal pour les réunions de staff d'unité ! L'<strong>Annuaire Global</strong> vous permet de retrouver n'importe quel parent ou chef, en filtrant par rôle ou par section. Juste en dessous, l'<strong>Éphéméride de l'Unité</strong> superpose les événements de toutes les sections avec un code couleur. En un coup d'œil, vous savez qui est en hike ou qui fait réunion au local ce week-end.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/superadmin/annuaire.png" alt="Annuaire et Calendrier de l'Unité" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 4 : Communiqué -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-unite-primary/10 text-unite-primary font-bold rounded-full text-sm">Étape 4</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Le Communiqué Général</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Une annonce pour la Fête d'Unité ? Une urgence logistique ? Le module <strong>Communiqué à l'Unité Entière</strong> est votre mégaphone. Rédigez votre message, ajoutez une pièce jointe, et cliquez sur envoyer. Azimut se charge de distribuer l'e-mail à absolument <strong>tous les parents</strong> et <strong>tous les chefs</strong> enregistrés sur la plateforme, sans que vous n'ayez à gérer la moindre liste d'adresses.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/superadmin/communiqué.png" alt="Envoi d'un communiqué général" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 5 : Purge estivale -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-red-100 text-red-600 font-bold rounded-full text-sm">Étape 5</span>
+                        <h4 class="text-2xl font-bold text-gray-900">La purge de rentrée (RGPD)</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Fin août, il est temps de préparer la nouvelle année. La <strong>Zone de Danger</strong> vous permet de déclencher la clôture de l'année scoute d'un seul clic. Cette action réinitialise les calendriers, vide les historiques d'absences, désabonne tout le monde des newsletters et révoque l'accès des anciens chefs. Les profils des enfants et les fichiers PDF, eux, restent intacts pour faciliter la réinscription !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/superadmin/gestion-rentrée.png" alt="Bouton de purge de rentrée" class="rounded-2xl shadow-xl border border-red-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
