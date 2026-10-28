@@ -480,3 +480,59 @@ ADD CONSTRAINT fk_drink_child
   FOREIGN KEY (drink_child_id) 
   REFERENCES public.children(id) 
   ON DELETE SET NULL;
+
+CREATE TABLE public.superadmins (
+    id serial PRIMARY KEY,
+    email varchar NOT NULL UNIQUE,
+    first_name varchar NOT NULL,
+    last_name varchar NOT NULL,
+    totem varchar,
+    unite_id int4 NOT NULL REFERENCES public.unites(id) ON DELETE CASCADE,
+    created_at timestamptz DEFAULT now()
+);
+
+-- 1. ON ACTIVE LA SÉCURITÉ SUR LA NOUVELLE TABLE
+ALTER TABLE public.superadmins ENABLE ROW LEVEL SECURITY;
+
+-- 2. POLITIQUES POUR 'SUPERADMINS'
+-- Tout le monde peut voir la liste des superadmins (utile pour l'annuaire)
+CREATE POLICY "Lecture_SuperAdmins" 
+ON public.superadmins FOR SELECT 
+TO authenticated 
+USING (true);
+
+-- Un superadmin ne peut modifier que son propre profil (via son token d'authentification JWT)
+CREATE POLICY "Modif_SuperAdmins" 
+ON public.superadmins FOR ALL 
+TO authenticated 
+USING (email = auth.jwt() ->> 'email') 
+WITH CHECK (email = auth.jwt() ->> 'email');
+
+-- =========================================================================
+-- 3. MISE À JOUR DES ANCIENNES RÈGLES (CRITIQUE)
+-- Puisque les superadmins ne sont plus dans la table "admins", 
+-- il faut leur redonner le droit de voir les enfants et les parents !
+-- =========================================================================
+
+-- A. On supprime l'ancienne règle obsolète des enfants
+DROP POLICY IF EXISTS "SuperAdmins_Voient_Tous_Enfants" ON public.children;
+
+-- B. On la recrée en ciblant la nouvelle table 'superadmins'
+CREATE POLICY "SuperAdmins_Voient_Tous_Enfants" 
+ON public.children FOR SELECT 
+TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.superadmins
+    JOIN public.sections ON sections.unite_id = superadmins.unite_id
+    WHERE superadmins.email = auth.jwt() ->> 'email'
+    AND sections.id = children.section_id
+));
+
+-- C. On ajoute une règle pour qu'ils puissent voir l'annuaire des parents
+CREATE POLICY "SuperAdmins_Voient_Abonnes" 
+ON public.newsletter_subscribers FOR SELECT 
+TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.superadmins 
+    WHERE superadmins.email = auth.jwt() ->> 'email'
+));

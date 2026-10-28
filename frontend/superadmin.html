@@ -258,9 +258,16 @@
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                const { data: admin } = await supabaseClient.from('admins').select('unite_id, role').eq('email', email).maybeSingle();
-                if(admin && admin.role === 'super_admin') { currentUniteId = admin.unite_id; showDashboard(); }
-                else { await supabaseClient.auth.signOut(); throw new Error("Accès refusé. Vous n'êtes pas Animateur d'Unité."); }
+                
+                // NOUVEAU : On cherche directement dans la table superadmins
+                const { data: superadmin } = await supabaseClient.from('superadmins').select('unite_id').eq('email', email).maybeSingle();
+                if(superadmin) { 
+                    currentUniteId = superadmin.unite_id; 
+                    showDashboard(); 
+                } else { 
+                    await supabaseClient.auth.signOut(); 
+                    throw new Error("Accès refusé. Vous n'êtes pas enregistré comme Staff d'Unité."); 
+                }
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600"; }
         });
 
@@ -287,15 +294,17 @@
                     throw authErr;
                 }
 
-                // 3. Attribution du rôle SuperAdmin
-                const { data: existingAdmin } = await supabaseClient.from('admins').select('email').eq('email', email).maybeSingle();
-                if (existingAdmin) {
-                    await supabaseClient.from('admins').update({ first_name: fname, last_name: lname, totem, unite_id: uniteId, role: 'super_admin' }).eq('email', email);
+                // 3. Attribution du profil dans la nouvelle table superadmins
+                const { data: existingSuperAdmin } = await supabaseClient.from('superadmins').select('email').eq('email', email).maybeSingle();
+                
+                if (existingSuperAdmin) {
+                    await supabaseClient.from('superadmins').update({ first_name: fname, last_name: lname, totem, unite_id: uniteId }).eq('email', email);
                 } else {
-                    await supabaseClient.from('admins').insert([{ email, first_name: fname, last_name: lname, totem, unite_id: uniteId, role: 'super_admin' }]);
+                    await supabaseClient.from('superadmins').insert([{ email, first_name: fname, last_name: lname, totem, unite_id: uniteId }]);
                 }
                 
-                currentUniteId = uniteId; showDashboard();
+                currentUniteId = uniteId; 
+                showDashboard();
             } catch (err) { ui.msg.textContent = err.message; ui.msg.className = "mb-4 text-sm text-center text-red-600 font-bold"; }
         });
 
@@ -513,9 +522,17 @@
 
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
-                const { data: admin } = await supabaseClient.from('admins').select('unite_id, role').eq('email', session.user.email).maybeSingle();
-                if(admin && admin.role === 'super_admin') { currentUniteId = admin.unite_id; showDashboard(); } else { supabaseClient.auth.signOut(); }
-            } else { ui.auth.classList.remove('hidden'); }
+                // NOUVEAU : On vérifie la session via la table superadmins
+                const { data: superadmin } = await supabaseClient.from('superadmins').select('unite_id').eq('email', session.user.email).maybeSingle();
+                if(superadmin) { 
+                    currentUniteId = superadmin.unite_id; 
+                    showDashboard(); 
+                } else { 
+                    supabaseClient.auth.signOut(); 
+                }
+            } else { 
+                ui.auth.classList.remove('hidden'); 
+            }
         });
     </script>
 
