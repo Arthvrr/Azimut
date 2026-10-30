@@ -36,7 +36,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://azimut-app.be", "https://www.azimut-app.be"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -169,8 +169,14 @@ def unsubscribe(token: str = Query(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-mass-newsletter")
-def send_mass_newsletter(payload: MassEmailRequest):
+def send_mass_newsletter(payload: MassEmailRequest, current_email: str = Depends(get_current_user)):
     try:
+
+        # VÉRIFICATION DE SÉCURITÉ : L'utilisateur est-il bien un chef de cette section ?
+        chef_check = supabase.table("admins").select("id").eq("email", current_email).eq("section_id", payload.section_id).execute()
+        if not chef_check.data:
+            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas chef de cette section.")
+
         sec_nom, unite_nom = get_section_and_unit_names(payload.section_id)
         subscribers = supabase.table("newsletter_subscribers").select("email, unsubscribe_token").eq("section_id", payload.section_id).eq("is_subscribed", True).execute().data
         if not subscribers: raise HTTPException(status_code=404, detail="Aucun abonné actif trouvé.")
@@ -211,8 +217,13 @@ def send_mass_newsletter(payload: MassEmailRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-direct-email")
-def send_direct_email(payload: DirectEmailRequest):
+def send_direct_email(payload: DirectEmailRequest, current_email: str = Depends(get_current_user)):
     try:
+
+        # VÉRIFICATION DE SÉCURITÉ : Forcer l'expéditeur à être celui qui est connecté, pas ce qui est envoyé dans le payload !
+        if current_email != payload.chef_email:
+            raise HTTPException(status_code=403, detail="Usurpation d'identité bloquée.")
+
         admin_res = supabase.table("admins").select("section_id, first_name, totem").eq("email", payload.chef_email).execute()
         if not admin_res.data: raise HTTPException(status_code=403, detail="Chef introuvable.")
         
@@ -256,8 +267,12 @@ def send_direct_email(payload: DirectEmailRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-parent-to-chef-email")
-def send_parent_to_chef_email(payload: ParentToChefEmailRequest):
+def send_parent_to_chef_email(payload: ParentToChefEmailRequest, current_email: str = Depends(get_current_user)):
     try:
+
+        if current_email != payload.parent_email:
+            raise HTTPException(status_code=403, detail="Usurpation d'identité bloquée.")
+
         url = "https://api.brevo.com/v3/smtp/email"
         headers = {"accept": "application/json", "api-key": BREVO_API_KEY, "content-type": "application/json"}
         
@@ -291,8 +306,13 @@ def send_parent_to_chef_email(payload: ParentToChefEmailRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-unit-newsletter")
-def send_unit_newsletter(payload: UnitEmailRequest):
+def send_unit_newsletter(payload: UnitEmailRequest, current_email: str = Depends(get_current_user)):
     try:
+
+        admin_check = supabase.table("superadmins").select("id").eq("email", current_email).eq("unite_id", payload.unite_id).execute()
+        if not admin_check.data:
+            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas Chef de cette Unité.")
+
         unit_res = supabase.table("unites").select("nom_complet").eq("id", payload.unite_id).execute()
         unite_nom = unit_res.data[0]["nom_complet"] if unit_res.data else "L'Unité Scoute"
 
@@ -350,8 +370,13 @@ def send_unit_newsletter(payload: UnitEmailRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/send-superadmin-section-newsletter")
-def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
+def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest, current_email: str = Depends(get_current_user)):
     try:
+        # VÉRIFICATION DE SÉCURITÉ : L'utilisateur est-il bien Chef d'Unité ?
+        admin_check = supabase.table("superadmins").select("id").eq("email", current_email).eq("unite_id", payload.unite_id).execute()
+        if not admin_check.data:
+            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas Chef de cette Unité.")
+
         sec_check = supabase.table("sections").select("id").eq("id", payload.section_id).eq("unite_id", payload.unite_id).execute()
         if not sec_check.data: raise HTTPException(status_code=403, detail="Section hors de votre unité.")
 
@@ -404,16 +429,16 @@ def send_superadmin_section_newsletter(payload: SuperAdminSectionEmailRequest):
         if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- ROUTE MAGIQUE DE RESET DE FIN D'ANNÉE SCOUTE ---
+
 @app.post("/api/v1/reset-year")
 def reset_year(payload: ResetYearRequest, current_email: str = Depends(get_current_user)):
     try:
-
-        admin_check = supabase.table("admins").select("role").eq("email", current_email).eq("unite_id", payload.unite_id).execute()
+        # CORRECTION : On vérifie uniquement l'existence de la ligne, la colonne 'role' n'existe plus
+        admin_check = supabase.table("superadmins").select("id").eq("email", current_email).eq("unite_id", payload.unite_id).execute()
         
-        if not admin_check.data or admin_check.data[0]["role"] != "super_admin":
-            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas Chef de cette Unité.")
-
+        if not admin_check.data:
+            raise HTTPException(status_code=403, detail="HACKING BLOQUÉ : Vous n'êtes pas Chef d'Unité de cette Unité.")
+            
         # 1. Récupérer toutes les sections de l'unité concernée
         sections_res = supabase.table("sections").select("id").eq("unite_id", payload.unite_id).execute()
         section_ids = [s["id"] for s in sections_res.data]
@@ -430,7 +455,7 @@ def reset_year(payload: ResetYearRequest, current_email: str = Depends(get_curre
             supabase.table("events").delete().in_("id", event_ids).execute()
 
         # 3. Supprimer tous les chefs de section (on garde uniquement le Chef d'Unité 'super_admin')
-        supabase.table("admins").delete().in_("section_id", section_ids).neq("role", "super_admin").execute()
+        supabase.table("admins").delete().in_("section_id", section_ids).execute()
 
         # 4. Désabonner tous les parents des newsletters de section (réinitialisation propre)
         supabase.table("newsletter_subscribers").update({"is_subscribed": False}).in_("section_id", section_ids).execute()

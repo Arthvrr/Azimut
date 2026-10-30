@@ -536,3 +536,40 @@ USING (EXISTS (
     SELECT 1 FROM public.superadmins 
     WHERE superadmins.email = auth.jwt() ->> 'email'
 ));
+
+-- 1. On supprime les anciennes règles qui autorisaient le public
+DROP POLICY IF EXISTS "Lecture publique" ON storage.objects;
+DROP POLICY IF EXISTS "Upload pour parents" ON storage.objects;
+DROP POLICY IF EXISTS "Update pour parents" ON storage.objects;
+
+-- 2. On recrée des règles STRIKTEMENT limitées aux utilisateurs connectés (authenticated)
+-- Règle pour l'Upload (Seuls les utilisateurs connectés peuvent envoyer un fichier)
+CREATE POLICY "Upload pour utilisateurs connectés" 
+ON storage.objects FOR INSERT 
+TO authenticated 
+WITH CHECK ( bucket_id = 'medical_files' );
+
+-- Règle pour l'Update (Seuls les utilisateurs connectés peuvent modifier un fichier)
+CREATE POLICY "Update pour utilisateurs connectés" 
+ON storage.objects FOR UPDATE 
+TO authenticated 
+USING ( bucket_id = 'medical_files' );
+
+-- Règle pour la LECTURE (CRITIQUE) :
+-- Uniquement les utilisateurs connectés peuvent télécharger un fichier.
+CREATE POLICY "Lecture pour utilisateurs connectés" 
+ON storage.objects FOR SELECT 
+TO authenticated 
+USING ( bucket_id = 'medical_files' );
+
+DROP POLICY IF EXISTS "Lecture pour utilisateurs connectés" ON storage.objects;
+
+CREATE POLICY "Lecture securisee des fichiers medicaux" ON storage.objects FOR SELECT TO authenticated USING (
+  bucket_id = 'medical_files' AND (
+    (auth.jwt()->>'email' = SPLIT_PART(name, '_', 1)) -- C'est le parent (le nom de fichier commence par son email)
+    OR 
+    EXISTS (SELECT 1 FROM admins WHERE admins.email = auth.jwt()->>'email') -- C'est un chef
+    OR 
+    EXISTS (SELECT 1 FROM superadmins WHERE superadmins.email = auth.jwt()->>'email') -- C'est un chef d'unité
+  )
+);

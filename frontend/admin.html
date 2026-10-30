@@ -480,9 +480,9 @@
 
             tbody.innerHTML = filtered.map(c => {
                 const docs = [];
-                if (c.medical_file_url) docs.push(`<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-scout-light text-scout-green px-2 py-1 rounded border border-scout-green/30 hover:bg-scout-green hover:text-white transition-colors">Médical</a>`);
-                if (c.parental_auth_url) docs.push(`<a href="${c.parental_auth_url}" target="_blank" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Autorisation</a>`);
-                if (c.insurance_file_url) docs.push(`<a href="${c.insurance_file_url}" target="_blank" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Assurance</a>`);
+                if (c.medical_file_url) docs.push(`<button onclick="openSecureDocument('${c.medical_file_url}')" class="text-xs bg-scout-light text-scout-green px-2 py-1 rounded border border-scout-green/30 hover:bg-scout-green hover:text-white transition-colors">Médical</button>`);
+                if (c.parental_auth_url) docs.push(`<button onclick="openSecureDocument('${c.parental_auth_url}')" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Autorisation</button>`);
+                if (c.insurance_file_url) docs.push(`<button onclick="openSecureDocument('${c.insurance_file_url}')" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded border border-gray-200 hover:bg-gray-200 transition-colors">Assurance</button>`);
 
                 return `
                 <tr class="bg-white hover:bg-gray-50 transition-colors">
@@ -621,6 +621,36 @@
                 }
             });
         }
+
+        // --- SÉCURITÉ : GÉNÉRATION DE LIENS TEMPORAIRES (60s) ---
+        async function getSecureFileUrl(publicUrlOrFilename) {
+            if (!publicUrlOrFilename) return null;
+            
+            let fileName = publicUrlOrFilename;
+            if (publicUrlOrFilename.includes('/storage/v1/object/public/medical_files/')) {
+                fileName = publicUrlOrFilename.split('/storage/v1/object/public/medical_files/')[1];
+            }
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from('medical_files')
+                .createSignedUrl(fileName, 60);
+
+            if (error) {
+                console.error("Erreur génération lien sécurisé:", error);
+                return "#";
+            }
+            return data.signedUrl;
+        }
+
+        window.openSecureDocument = async function(urlOrFilename) {
+            const secureUrl = await getSecureFileUrl(urlOrFilename);
+            if (secureUrl && secureUrl !== "#") {
+                window.open(secureUrl, '_blank');
+            } else {
+                alert("Impossible d'accéder au document sécurisé. Vérifiez que le fichier existe toujours.");
+            }
+        };
 
         // --- ENVOI EMAILS ---
         document.getElementById('directMailForm').addEventListener('submit', async (e) => {

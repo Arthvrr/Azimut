@@ -506,9 +506,9 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        ${c.medical_file_url ? `<a href="${c.medical_file_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Médical</a>` : ''}
-                        ${c.parental_auth_url ? `<a href="${c.parental_auth_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Autorisation</a>` : ''}
-                        ${c.insurance_file_url ? `<a href="${c.insurance_file_url}" target="_blank" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Assurance</a>` : ''}
+                        ${c.medical_file_url ? `<button onclick="openSecureDocument('${c.medical_file_url}')" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Médical</button>` : ''}
+                        ${c.parental_auth_url ? `<button onclick="openSecureDocument('${c.parental_auth_url}')" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Autorisation</button>` : ''}
+                        ${c.insurance_file_url ? `<button onclick="openSecureDocument('${c.insurance_file_url}')" class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-700 hover:border-parent-primary hover:text-parent-primary transition-colors flex items-center gap-1 font-medium">Assurance</button>` : ''}
                     </div>
                 </div>`;
             }).join('');
@@ -566,7 +566,7 @@
             const fileName = `${email}_${Date.now()}_${safeName}`;
             const { error: uploadErr } = await supabaseClient.storage.from('medical_files').upload(fileName, file);
             if (uploadErr) throw uploadErr;
-            return supabaseClient.storage.from('medical_files').getPublicUrl(fileName).data.publicUrl;
+            return fileName;
         }
 
         document.getElementById('childForm').addEventListener('submit', async (e) => {
@@ -720,6 +720,37 @@
             const sub = parentSections.find(s => s.section_id === sectionId);
             if(sub) sub.is_subscribed = !currentStatus;
             renderNewsletterToggles();
+        };
+
+        // --- SÉCURITÉ : GÉNÉRATION DE LIENS TEMPORAIRES (60s) ---
+        async function getSecureFileUrl(publicUrlOrFilename) {
+            if (!publicUrlOrFilename) return null;
+            
+            let fileName = publicUrlOrFilename;
+            // Extraction du nom de fichier si c'est une ancienne URL complète
+            if (publicUrlOrFilename.includes('/storage/v1/object/public/medical_files/')) {
+                fileName = publicUrlOrFilename.split('/storage/v1/object/public/medical_files/')[1];
+            }
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from('medical_files')
+                .createSignedUrl(fileName, 60); // Expire dans 60 secondes
+
+            if (error) {
+                console.error("Erreur génération lien sécurisé:", error);
+                return "#";
+            }
+            return data.signedUrl;
+        }
+
+        window.openSecureDocument = async function(urlOrFilename) {
+            const secureUrl = await getSecureFileUrl(urlOrFilename);
+            if (secureUrl && secureUrl !== "#") {
+                window.open(secureUrl, '_blank');
+            } else {
+                alert("Impossible d'accéder au document sécurisé. Vérifiez que le fichier existe toujours.");
+            }
         };
 
         // --- NOUVEAU : CHARGEMENT DES GOÛTERS (Côté Parent) ---
