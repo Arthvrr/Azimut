@@ -103,6 +103,9 @@
                 </div>
                 <button type="submit" id="loginBtn" class="w-full bg-parent-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-parent-dark transition-colors">Se connecter</button>
                 <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-parent-primary hover:underline">Mot de passe oublié ?</button></div>
+                <div class="text-center mt-2 text-xs text-gray-400">
+                    Besoin d'aide ? <a href="../tutorial.html#reset-password" class="underline hover:text-gray-600 transition-colors" target="_blank">Voir le tutoriel.</a>
+                </div>
             </form>
 
             <form id="registerForm" class="space-y-4 hidden">
@@ -392,7 +395,9 @@
             const email = document.getElementById('loginEmail').value;
             if (!email) { ui.msg.textContent = "Veuillez entrer votre e-mail dans le champ ci-dessus."; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; return; }
             ui.msg.textContent = "Envoi du lien..."; ui.msg.className = "mb-4 text-sm text-center font-medium text-gray-600";
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/reset_password.html'
+            });
             if (error) { ui.msg.textContent = error.message; ui.msg.className = "mb-4 text-sm text-center font-medium text-red-600"; }
             else { ui.msg.textContent = "E-mail envoyé (vérifiez vos spams)."; ui.msg.className = "mb-4 text-sm text-center font-medium text-parent-primary"; }
         });

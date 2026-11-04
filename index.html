@@ -715,42 +715,6 @@
             }
         });
         
-        const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // 2. Vérification au chargement de la page d'accueil
-        window.addEventListener('load', async () => {
-            // Est-ce qu'il y a un token "type=recovery" dans l'URL ?
-            const hash = window.location.hash;
-            if (hash && hash.includes('type=recovery')) {
-                
-                // Si oui, Supabase a déjà lu le hash et connecté l'utilisateur en local.
-                // On récupère donc sa session active.
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                
-                if (session && session.user) {
-                    const email = session.user.email;
-                    
-                    // On cherche d'abord s'il est Chef d'Unité (SuperAdmin)
-                    const { data: superadmin } = await supabaseClient.from('superadmins').select('id').eq('email', email).maybeSingle();
-                    if (superadmin) {
-                        window.location.replace('frontend/superadmin.html');
-                        return;
-                    }
-                    
-                    // S'il n'est pas SuperAdmin, on cherche s'il est Chef de section
-                    const { data: admin } = await supabaseClient.from('admins').select('id').eq('email', email).maybeSingle();
-                    if (admin) {
-                        window.location.replace('frontend/admin.html');
-                        return;
-                    }
-                    
-                    // Si on ne l'a pas trouvé dans les staffs, c'est forcément un Parent
-                    window.location.replace('frontend/parent.html');
-                }
-            }
-        });
     </script>
 </body>
 </html>

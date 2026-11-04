@@ -71,6 +71,8 @@
             <a href="#tutoriel-chefs" class="hover:text-scout-green transition-colors">Chefs</a>
             <a href="#tutoriel-unite" class="hover:text-unite-primary transition-colors">Staff d'Unité</a>
             <div class="w-px h-4 bg-gray-300"></div>
+            <a href="#reset-password" class="hover:text-unite-primary transition-colors">Mot de passe oublié ?</a>
+            <div class="w-px h-4 bg-gray-300"></div>
             <a href="index.html" class="hover:text-gray-900 transition-colors">Retour à l'accueil</a>
         </div>
 
@@ -492,6 +494,99 @@
             </div>
         </div>
     </section>
+
+    <!-- Section Mot de passe oublié -->
+
+    <section id="reset-password" class="py-24 bg-white dark:bg-gray-900 scroll-mt-20 border-t border-gray-100 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="mb-16 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-10 h-10 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Mot de passe oublié ?</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mt-3 text-lg max-w-2xl">Perdre son mot de passe arrive à tout le monde. Voici comment récupérer l'accès à votre compte de manière 100% autonome et sécurisée.</p>
+                </div>
+            </div>
+
+            <div class="space-y-20">
+                
+                <!-- Étape 1 : Erreur de connexion -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-bold rounded-full text-sm">Étape 1</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Le message d'erreur</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Si vous voyez le message <strong>"Invalid login credentials"</strong> en rouge lors de votre tentative de connexion, cela signifie que votre e-mail ou votre mot de passe est incorrect. Pas de panique ! Cliquez simplement sur le lien <strong>"Mot de passe oublié ?"</strong> situé tout en bas du formulaire.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/reset-password/1.png" alt="Erreur de mot de passe" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 2 : Envoi de l'e-mail -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-bold rounded-full text-sm">Étape 2</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Demander le lien de récupération</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Renseignez l'adresse e-mail associée à votre compte Azimut dans le champ prévu à cet effet, puis cliquez sur le lien. Un message de confirmation vert <strong>"E-mail envoyé."</strong> apparaîtra pour vous confirmer que le système a bien traité votre demande.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/reset-password/2.png" alt="Confirmation d'envoi de l'e-mail" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 3 : Boîte mail -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-bold rounded-full text-sm">Étape 3</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Vérifier sa boîte de réception</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Ouvrez votre boîte mail personnelle (pensez à vérifier vos courriers indésirables/spams au cas où !). Vous y trouverez un e-mail envoyé par notre système de sécurité intitulé <strong>"Reset your password"</strong>. Ouvrez-le et cliquez sur le lien de réinitialisation bleu à l'intérieur.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/reset-password/3.png" alt="E-mail de récupération" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 4 : Nouveau mot de passe -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-bold rounded-full text-sm">Étape 4</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Configurer le nouvel accès</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Le lien vous redirigera vers la page sécurisée de gestion de compte d'Azimut. Vous serez invité à choisir un <strong>Nouveau mot de passe</strong> (6 caractères minimum). Retapez-le dans le second champ pour confirmer qu'il n'y a pas de faute de frappe, puis cliquez sur "Enregistrer et me connecter".
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/reset-password/4.png" alt="Création du nouveau mot de passe" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 5 : Redirection -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-bold rounded-full text-sm">Étape 5</span>
+                        <h4 class="text-2xl font-bold text-gray-900">Retour au tableau de bord !</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            C'est fait ! La plateforme met à jour vos clés de sécurité et vous redirige instantanément vers votre espace personnel (Parent, Chef ou Staff d'Unité). Vous êtes de nouveau prêt à utiliser l'application.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/reset-password/5.png" alt="Redirection vers le tableau de bord" class="rounded-2xl shadow-xl border border-gray-200 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-12 mt-auto">
