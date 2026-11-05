@@ -765,16 +765,18 @@
         async function getSecureFileUrl(publicUrlOrFilename) {
             if (!publicUrlOrFilename) return null;
             
+            // Correction : On extrait toujours le nom brut du fichier, 
+            // peu importe le format (public, signed ou brut) de l'ancienne URL stockée
             let fileName = publicUrlOrFilename;
-            // Extraction du nom de fichier si c'est une ancienne URL complète
-            if (publicUrlOrFilename.includes('/storage/v1/object/public/medical_files/')) {
-                fileName = publicUrlOrFilename.split('/storage/v1/object/public/medical_files/')[1];
+            if (publicUrlOrFilename.includes('/')) {
+                const parts = publicUrlOrFilename.split('/');
+                fileName = parts[parts.length - 1];
             }
 
             const { data, error } = await supabaseClient
                 .storage
                 .from('medical_files')
-                .createSignedUrl(fileName, 60); // Expire dans 60 secondes
+                .createSignedUrl(fileName, 60);
 
             if (error) {
                 console.error("Erreur génération lien sécurisé:", error);
