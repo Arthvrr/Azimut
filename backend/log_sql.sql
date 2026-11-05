@@ -573,3 +573,10 @@ CREATE POLICY "Lecture securisee des fichiers medicaux" ON storage.objects FOR S
     EXISTS (SELECT 1 FROM superadmins WHERE superadmins.email = auth.jwt()->>'email') -- C'est un chef d'unité
   )
 );
+
+UPDATE sections SET nom = 'Meute Waingunga / Mowha' WHERE nom = 'Troupe Waingunga / Mowha';
+UPDATE sections SET nom = 'Troupe Scouts' WHERE nom = 'Toupe Scout';
+UPDATE sections SET nom = 'Pionniers' WHERE nom = 'Section Pionnier';
+
+UPDATE sections SET nom = 'Meute Waingunga' WHERE nom = 'Troupe Waingunga';
+UPDATE sections SET nom = 'Meute Mowha' WHERE nom = 'Troupe Mowha';

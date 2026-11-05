@@ -116,7 +116,7 @@
                     <div><label class="block text-sm font-medium">Nom</label><input type="text" id="regLName" required class="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-unite-primary"></div>
                 </div>
                 <div><label class="block text-sm font-medium">Totem</label><input type="text" id="regTotem" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
+                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Veuillez entrer une adresse e-mail valide sans caractères spéciaux" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Mot de passe</label>
                     <div class="relative">
@@ -385,9 +385,17 @@
                     const base64 = await toBase64(file);
                     payload.attachment = { name: file.name, content: base64 };
                 }
+                
+                // NOUVEAU : Récupérer le token de session
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session.access_token;
 
                 const response = await fetch('https://azimut-api.onrender.com/api/v1/send-unit-newsletter', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
                     body: JSON.stringify(payload)
                 });
                 

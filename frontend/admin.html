@@ -125,7 +125,7 @@
                     <div><label class="block text-sm font-medium">Nom</label><input type="text" id="regLName" required class="w-full px-3 py-2 border rounded outline-none"></div>
                 </div>
                 <div><label class="block text-sm font-medium">Totem</label><input type="text" id="regTotem" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
-                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Veuillez entrer une adresse e-mail valide sans caractères spéciaux" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Mot de passe</label>
                     <div class="relative">
@@ -677,9 +677,18 @@
                     const base64 = await toBase64(file);
                     payload.attachment = { name: file.name, content: base64 };
                 }
+                
+                // NOUVEAU : Récupérer le token de session
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session.access_token;
 
                 const response = await fetch('https://azimut-api.onrender.com/api/v1/send-direct-email', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }, 
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold text-center"; document.getElementById('directMailForm').reset(); }
@@ -705,9 +714,18 @@
                     const base64 = await toBase64(file);
                     payload.attachment = { name: file.name, content: base64 };
                 }
+                
+                // NOUVEAU : Récupérer le token de session
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const token = session.access_token;
 
                 const response = await fetch('https://azimut-api.onrender.com/api/v1/send-mass-newsletter', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }, 
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold"; document.getElementById('massMailForm').reset(); }
