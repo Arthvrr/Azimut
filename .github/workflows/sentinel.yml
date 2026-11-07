@@ -1,0 +1,15 @@
+name: Sentinel AI Code Review
+on: [push]
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: Arthvrr/Sentinel@master 
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          # C'est tout ! Plus d'APP_ID ni de PRIVATE_KEY.

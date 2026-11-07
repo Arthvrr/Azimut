@@ -580,3 +580,5 @@ UPDATE sections SET nom = 'Pionniers' WHERE nom = 'Section Pionnier';
 
 UPDATE sections SET nom = 'Meute Waingunga' WHERE nom = 'Troupe Waingunga';
 UPDATE sections SET nom = 'Meute Mowha' WHERE nom = 'Troupe Mowha';
+
+-- test Sentinel AI
