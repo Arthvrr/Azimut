@@ -582,3 +582,21 @@ UPDATE sections SET nom = 'Meute Waingunga' WHERE nom = 'Troupe Waingunga';
 UPDATE sections SET nom = 'Meute Mowha' WHERE nom = 'Troupe Mowha';
 
 -- test Sentinel AI
+
+-- 1. Ajout de la colonne pour le 2ème parent
+ALTER TABLE public.children ADD COLUMN IF NOT EXISTS co_parent_email VARCHAR(255);
+
+-- 2. Mise à jour de la sécurité pour la table Enfants
+DROP POLICY IF EXISTS "Parents_Gerent_Leurs_Enfants" ON public.children;
+CREATE POLICY "Parents_Gerent_Leurs_Enfants" ON public.children FOR ALL TO authenticated 
+USING (parent_email = auth.jwt() ->> 'email' OR co_parent_email = auth.jwt() ->> 'email') 
+WITH CHECK (parent_email = auth.jwt() ->> 'email' OR co_parent_email = auth.jwt() ->> 'email');
+
+-- 3. Mise à jour de la sécurité pour justifier les Absences
+DROP POLICY IF EXISTS "Parents_Gerent_Absences" ON public.absences;
+CREATE POLICY "Parents_Gerent_Absences" ON public.absences FOR ALL TO authenticated 
+USING (EXISTS (
+    SELECT 1 FROM public.children 
+    WHERE children.id = absences.child_id 
+    AND (children.parent_email = auth.jwt() ->> 'email' OR children.co_parent_email = auth.jwt() ->> 'email')
+));

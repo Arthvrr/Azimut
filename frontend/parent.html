@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- Test sentinel AI -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,9 +14,9 @@
     </script>
     <style>
         .fc .fc-toolbar-title { font-size: 1.1rem; font-weight: 700; color: #111827; text-transform: capitalize; }
-        .fc .fc-button-primary { background-color: #800020 !important; border-color: #800020 !important; }
-        .fc .fc-button-primary:hover { background-color: #4d0013 !important; }
-        .fc-event { cursor: pointer; } 
+        .fc-event { cursor: pointer; border: none !important; }
+        .fc-event-main { padding: 2px 4px; }
+        .fc-daygrid-event { border-radius: 4px; }
     </style>
 
     <link rel="icon" type="image/x-icon" href="../logo/logo.ico">
@@ -238,6 +237,8 @@
                         Exporter (.ics)
                     </button>
                 </div>
+                <!-- Légende des couleurs générée dynamiquement -->
+                <div id="calendarLegend" class="flex flex-wrap gap-4 mb-4 text-sm font-medium"></div>
                 <div id="parentCalendar" class="min-h-[500px]"></div>
             </div>
 
@@ -291,9 +292,19 @@
 
                 <div><label class="block text-sm font-medium">Allergies</label><textarea id="cAllergies" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
                 <div><label class="block text-sm font-medium">Soins particuliers</label><textarea id="cCare" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-parent-primary outline-none"></textarea></div>
-                <div class="grid grid-cols-2 gap-4 border-t pt-4">
-                    <div><p class="font-bold text-sm mb-2">Parent 1</p><input type="text" id="cP1Name" placeholder="Nom" required class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none"><input type="tel" id="cP1Phone" placeholder="Tél" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none"></div>
-                    <div><p class="font-bold text-sm mb-2">Parent 2 (Optionnel)</p><input type="text" id="cP2Name" placeholder="Nom" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none"><input type="tel" id="cP2Phone" placeholder="Tél" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+                    <div>
+                        <p class="font-bold text-sm mb-2">Parent 1</p>
+                        <input type="text" id="cP1Name" placeholder="Nom" required class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none">
+                        <input type="tel" id="cP1Phone" placeholder="Tél" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none">
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm mb-2">Parent 2 (Optionnel)</p>
+                        <input type="text" id="cP2Name" placeholder="Nom" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none">
+                        <input type="tel" id="cP2Phone" placeholder="Tél" class="w-full px-3 py-2 border rounded-lg mb-2 text-sm focus:ring-2 focus:ring-parent-primary outline-none">
+                        <input type="email" id="cCoParentEmail" placeholder="E-mail (pour lier le compte Azimut)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-parent-primary outline-none">
+                        <p class="text-[10px] text-gray-500 mt-1 leading-tight">Si renseigné, cet e-mail donnera accès à l'enfant sur le compte Azimut du 2ème parent.</p>
+                    </div>
                 </div>
                 
                 <div id="childErrorMsg" class="hidden bg-red-50 text-red-600 border border-red-200 rounded-lg p-3 text-sm font-medium text-center"></div>
@@ -323,6 +334,9 @@
         
         let childrenDataMap = {};
         let currentEditChildId = null; 
+
+        // Couleurs par défaut pour les sections du calendrier
+        const sectionColors = ['#800020', '#1E3A8A', '#2E7D32', '#D97706', '#7C3AED', '#059669'];
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -509,7 +523,10 @@
 
         async function loadChildren() {
             const email = await getActiveEmail();
-            const { data } = await supabaseClient.from('children').select('*').eq('parent_email', email);
+            
+            // NOUVEAU : On utilise .or() pour récupérer les enfants où le parent_email OU le co_parent_email correspond !
+            const { data } = await supabaseClient.from('children').select('*').or(`parent_email.eq.${email},co_parent_email.eq.${email}`);
+            
             const list = document.getElementById('childrenList'), absSelect = document.getElementById('absChild');
             childrenDataMap = {};
             
@@ -545,7 +562,7 @@
             absSelect.innerHTML = `<option value="">-- Choisir --</option>` + data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
         }
 
-        window.editChild = function(id) {
+        window.editChild = async function(id) {
             currentEditChildId = id; const c = childrenDataMap[id];
             
             document.getElementById('cSection').value = c.section_id;
@@ -553,9 +570,22 @@
             document.getElementById('cAllergies').value = c.allergies || ''; document.getElementById('cCare').value = c.care_instructions || '';
             document.getElementById('cP1Name').value = c.parent1_name || ''; document.getElementById('cP1Phone').value = c.parent1_phone || '';
             document.getElementById('cP2Name').value = c.parent2_name || ''; document.getElementById('cP2Phone').value = c.parent2_phone || '';
+            
+            // Gérer le champ co_parent_email
+            document.getElementById('cCoParentEmail').value = c.co_parent_email || '';
+
             document.getElementById('cMedicalFile').value = ''; document.getElementById('cAuthFile').value = ''; document.getElementById('cInsuranceFile').value = '';
             
-            document.getElementById('childErrorMsg').classList.add('hidden'); document.getElementById('deleteChildBtn').classList.remove('hidden');
+            document.getElementById('childErrorMsg').classList.add('hidden');
+            
+            // Sécurité visuelle : Seul le parent créateur peut supprimer l'enfant
+            const email = await getActiveEmail();
+            if (c.parent_email === email) {
+                document.getElementById('deleteChildBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('deleteChildBtn').classList.add('hidden');
+            }
+
             document.getElementById('modalTitle').textContent = "Modifier la fiche de " + c.first_name;
             document.getElementById('childModal').classList.remove('hidden');
         };
@@ -563,7 +593,7 @@
         document.getElementById('openChildModalBtn').addEventListener('click', () => { 
             currentEditChildId = null; document.getElementById('childForm').reset();
 
-            // NOUVEAU : Auto-complétion
+            // Auto-complétion
             const existingIds = Object.keys(childrenDataMap);
             if (existingIds.length > 0) {
                 const firstChild = childrenDataMap[existingIds[0]];
@@ -571,6 +601,7 @@
                 document.getElementById('cP1Phone').value = firstChild.parent1_phone || '';
                 document.getElementById('cP2Name').value = firstChild.parent2_name || '';
                 document.getElementById('cP2Phone').value = firstChild.parent2_phone || '';
+                document.getElementById('cCoParentEmail').value = firstChild.co_parent_email || '';
             }
 
             document.getElementById('childErrorMsg').classList.add('hidden'); document.getElementById('deleteChildBtn').classList.add('hidden');
@@ -615,7 +646,9 @@
             btn.disabled = true; btn.textContent = "Sauvegarde..."; errorMsgBlock.classList.add('hidden'); 
             
             try {
-                const email = await getActiveEmail(); const chosenSectionId = parseInt(document.getElementById('cSection').value);
+                const email = await getActiveEmail(); 
+                const chosenSectionId = parseInt(document.getElementById('cSection').value);
+                const coParentMail = document.getElementById('cCoParentEmail').value.trim() || null;
                 
                 let medUrl = currentEditChildId ? childrenDataMap[currentEditChildId].medical_file_url : null;
                 let authUrl = currentEditChildId ? childrenDataMap[currentEditChildId].parental_auth_url : null;
@@ -626,21 +659,30 @@
                 const newIns = await uploadPdf(document.getElementById('cInsuranceFile'), email); if (newIns) insUrl = newIns;
 
                 const childData = {
-                    parent_email: email, section_id: chosenSectionId,
-                    first_name: document.getElementById('cFirstName').value, last_name: document.getElementById('cLastName').value,
-                    allergies: document.getElementById('cAllergies').value, care_instructions: document.getElementById('cCare').value,
-                    parent1_name: document.getElementById('cP1Name').value, parent1_phone: document.getElementById('cP1Phone').value,
-                    parent2_name: document.getElementById('cP2Name').value, parent2_phone: document.getElementById('cP2Phone').value,
-                    medical_file_url: medUrl, parental_auth_url: authUrl, insurance_file_url: insUrl
+                    section_id: chosenSectionId,
+                    first_name: document.getElementById('cFirstName').value, 
+                    last_name: document.getElementById('cLastName').value,
+                    allergies: document.getElementById('cAllergies').value, 
+                    care_instructions: document.getElementById('cCare').value,
+                    parent1_name: document.getElementById('cP1Name').value, 
+                    parent1_phone: document.getElementById('cP1Phone').value,
+                    parent2_name: document.getElementById('cP2Name').value, 
+                    parent2_phone: document.getElementById('cP2Phone').value,
+                    co_parent_email: coParentMail, 
+                    medical_file_url: medUrl, 
+                    parental_auth_url: authUrl, 
+                    insurance_file_url: insUrl
                 };
 
                 if (currentEditChildId) {
+                    // Sécurité : On s'assure qu'un co_parent qui édite ne s'approprie pas l'enfant
                     const { error } = await supabaseClient.from('children').update(childData).eq('id', currentEditChildId);
                     if (error) throw error;
                 } else {
+                    // Création : on fixe l'email du parent créateur
+                    childData.parent_email = email;
                     const { error } = await supabaseClient.from('children').insert([childData]);
                     if (error) throw error;
-                    // Note: L'abonnement automatique a été supprimé ici, car le parent DOIT débloquer la section d'abord
                 }
                 
                 document.getElementById('childModal').classList.add('hidden'); await showDashboard();
@@ -651,10 +693,15 @@
                 // Si c'est notre erreur de fichier trop lourd, on utilise innerHTML pour rendre le lien cliquable
                 if (err.message.startsWith("FILE_TOO_LARGE")) {
                     const fileName = err.message.split("|")[1];
-                    errorMsgBlock.innerHTML = `Le fichier <b>"${fileName}"</b> est trop lourd. <br> Compressez-le via <a href="https://pdf.pi7.org/compress-pdf-to-300kb" target="_blank" class="underline font-bold text-red-800">ce site gratuit (pi7.org)</a>, puis réessayez.`;
+                    errorMsgBlock.innerHTML = `Le fichier <b>"${fileName}"</b> est trop lourd. <br> Compressez-le via <a href="https://pdf.pi7.org/compress-pdf-to-300kb" target="_blank" class="underline font-bold text-red-800">ce site gratuit (pi7.org)</a>, puis réessayez.
+                        <div class="text-center mt-2 text-xs text-gray-400">
+                            Besoin d'aide ? <a href="../tutorial.html#file-too-large" class="underline hover:text-gray-600 transition-colors" target="_blank">Voir le tutoriel.</a>
+                        </div>`;
                 } else {
-                    // Pour toutes les autres erreurs, on affiche le texte normalement
-                    errorMsgBlock.textContent = err.message; 
+                    errorMsgBlock.innerHTML = `${err.message}
+                        <div class="text-center mt-2 text-xs text-gray-400">
+                            Besoin d'aide ? <a href="../tutorial.html#file-too-large" class="underline hover:text-gray-600 transition-colors" target="_blank">Voir le tutoriel.</a>
+                        </div>`;
                 }
             } finally { 
                 btn.disabled = false; 
@@ -725,15 +772,43 @@
 
         function initParentCalendar() {
             if (parentCalendarInstance) parentCalendarInstance.destroy();
+            
+            const sectionIds = parentSections.map(s => s.section_id);
+            if(sectionIds.length === 0) {
+                document.getElementById('calendarLegend').innerHTML = '';
+                return;
+            }
+
+            // Génération de la légende dynamique
+            const legendContainer = document.getElementById('calendarLegend');
+            legendContainer.innerHTML = parentSections.map((sec, index) => {
+                const color = sectionColors[index % sectionColors.length];
+                return `<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background-color: ${color};"></div><span class="text-gray-600 dark:text-gray-300">${sec.nom}</span></div>`;
+            }).join('');
+
             parentCalendarInstance = new FullCalendar.Calendar(document.getElementById('parentCalendar'), {
                 initialView: 'dayGridMonth', locale: 'fr', firstDay: 1,
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
                 events: async function(info, successCallback, failureCallback) {
-                    const sectionIds = parentSections.map(s => s.section_id);
-                    if(sectionIds.length === 0) { successCallback([]); return; }
                     const { data, error } = await supabaseClient.from('events').select('*, sections(nom)').in('section_id', sectionIds);
                     if (error) failureCallback(error);
-                    else successCallback(data.map(e => ({ id: e.id, title: `[${e.sections.nom}] ${e.title}`, start: new Date(e.start_time), end: new Date(e.end_time), extendedProps: { description: e.description, location: e.location }, backgroundColor: '#800020', borderColor: '#4d0013' })));
+                    else {
+                        successCallback(data.map(e => {
+                            // On retrouve l'index de la section dans le tableau parentSections pour lui assigner la bonne couleur
+                            const secIndex = parentSections.findIndex(s => s.section_id === e.section_id);
+                            const bgColor = secIndex !== -1 ? sectionColors[secIndex % sectionColors.length] : '#800020';
+
+                            return { 
+                                id: e.id, 
+                                title: `[${e.sections.nom}] ${e.title}`, 
+                                start: new Date(e.start_time), 
+                                end: new Date(e.end_time), 
+                                extendedProps: { description: e.description, location: e.location }, 
+                                backgroundColor: bgColor, 
+                                borderColor: bgColor 
+                            };
+                        }));
+                    }
                 },
                 eventClick: function(info) { alert(`Événement : ${info.event.title}\nLieu : ${info.event.extendedProps.location || "Non précisé"}\nDétails : ${info.event.extendedProps.description || "Aucun"}`); }
             });

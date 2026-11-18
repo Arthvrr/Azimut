@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- Test sentinel AI -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Ajout de Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         tailwind.config = { darkMode: 'class', theme: { extend: { colors: { unite: { primary: '#1E3A8A', light: '#EFF6FF', dark: '#1E40AF' }, scout: { green: '#2E7D32' } } } } }
     </script>
@@ -18,7 +20,6 @@
     <link rel="apple-touch-icon" href="../logo/logo.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 
     <script>
         // Eviter le flash blanc au chargement
@@ -133,7 +134,61 @@
 
         <div id="dashboardSection" class="hidden space-y-6">
             
+            <!-- NOUVELLE SECTION : Tableau de Bord Analytique (1 par 1) -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full border-t-4 border-t-unite-primary">
+                <div class="mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Tableau de Bord Analytique de l'Unité</h2>
+                    <p class="text-sm text-gray-500">Vue globale sur les effectifs, l'activité et l'engagement de l'unité.</p>
+                </div>
+                
+                <!-- On passe d'une grille (grid-cols-3) à une pile verticale (flex-col) avec des marges -->
+                <div class="flex flex-col gap-8">
+                    
+                    <!-- Graphique 1 : Animés par section -->
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Répartition des Animés par Section</h3>
+                        <div class="relative w-full h-80 max-w-lg mx-auto flex justify-center">
+                            <canvas id="childrenBySectionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 2 : Staffs par section -->
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Encadrement (Staffs par Section)</h3>
+                        <div class="relative w-full h-80">
+                            <canvas id="staffBySectionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 3 : Événements par mois (NOUVEAU) -->
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dynamique de l'année (Événements par mois)</h3>
+                        <div class="relative w-full h-80">
+                            <canvas id="eventsPerMonthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 4 : Absences par section (NOUVEAU) -->
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absences cumulées par Section</h3>
+                        <p class="text-xs text-gray-500 text-center mb-4">Permet d'identifier d'éventuels problèmes de motivation au sein d'une section</p>
+                        <div class="relative w-full h-80">
+                            <canvas id="absencesBySectionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 5 : Taux d'abonnement Newsletter -->
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2 text-center">Couverture des Communications</h3>
+                        <p class="text-xs text-gray-500 text-center mb-4">Proportion des parents inscrits à la liste de diffusion</p>
+                        <div class="relative w-full h-80 max-w-lg mx-auto flex justify-center">
+                            <canvas id="newsletterSubscribersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
                 <h2 class="text-xl font-bold text-gray-900 mb-2">Communiqué à l'Unité Entière</h2>
                 <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Cet outil envoie un e-mail à TOUS les parents et TOUS les chefs de TOUTES les sections confondues.</p>
                 <form id="unitMailForm" class="space-y-4">
@@ -207,6 +262,13 @@
 
         let currentUniteId = null;
         let allDirectoryData = [];
+        
+        // Instances pour Chart.js
+        let childrenChartInstance = null;
+        let staffChartInstance = null;
+        let newsletterChartInstance = null;
+        let eventsChartInstance = null;
+        let absencesChartInstance = null;
 
         const ui = {
             auth: document.getElementById('authSection'), dash: document.getElementById('dashboardSection'), msg: document.getElementById('authMessage'),
@@ -371,9 +433,30 @@
         document.getElementById('unitMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'), statusText = document.getElementById('statusMessage');
-            btn.disabled = true; btn.textContent = 'Envoi en cours...'; statusText.textContent = '';
+            btn.disabled = true; btn.textContent = 'Préparation...'; statusText.textContent = '';
             
             try {
+                // 1. Récupérer le nombre total de membres depuis l'annuaire local
+                const totalMembers = allDirectoryData.length;
+                if (totalMembers === 0) {
+                    throw new Error("Aucun membre trouvé dans l'unité.");
+                }
+
+                // 2. Lancer l'animation de progression simulée
+                btn.textContent = 'Envoi en cours...';
+                let currentEmailIndex = 0;
+                const estimatedDelayPerEmail = 150; 
+                
+                const progressInterval = setInterval(() => {
+                    if (currentEmailIndex < totalMembers - 1) {
+                        currentEmailIndex++;
+                        statusText.textContent = `Distribution : ${currentEmailIndex}/${totalMembers} messages envoyés...`;
+                        statusText.className = "mt-2 text-sm text-blue-600 font-bold";
+                    }
+                }, estimatedDelayPerEmail);
+
+
+                // 3. Envoyer la requête à l'API
                 const payload = {
                     subject: document.getElementById('subject').value, 
                     message: document.getElementById('message').value, 
@@ -387,7 +470,6 @@
                     payload.attachment = { name: file.name, content: base64 };
                 }
                 
-                // NOUVEAU : Récupérer le token de session
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 const token = session.access_token;
 
@@ -401,10 +483,25 @@
                 });
                 
                 const data = await response.json();
-                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-unite-primary font-bold"; document.getElementById('unitMailForm').reset(); }
+                
+                // 4. Fin de l'envoi
+                clearInterval(progressInterval);
+                
+                if (response.ok) { 
+                    statusText.textContent = `Terminé ! Le communiqué a bien été distribué à l'ensemble de l'unité (${totalMembers} destinataires).`; 
+                    statusText.className = "mt-2 text-sm text-unite-primary font-bold"; 
+                    document.getElementById('unitMailForm').reset(); 
+                }
                 else throw new Error(data.detail);
-            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
-            finally { btn.disabled = false; btn.textContent = 'Envoyer le message général'; }
+                
+            } catch (err) { 
+                statusText.textContent = err.message; 
+                statusText.className = "mt-2 text-sm text-red-600 font-bold"; 
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.textContent = 'Envoyer le message général'; 
+            }
         });
 
         // --- NOUVEAU LOGIQUE : EVENEMENT CLÔTURE DE L'ANNÉE ---
@@ -431,14 +528,246 @@
 
 
                 const data = await response.json();
-                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-3 text-sm text-green-600 font-bold"; fetchDirectory();
-            setTimeout(() => { initUnitCalendar(); }, 100); } 
+                if (response.ok) { 
+                    statusText.textContent = data.message; 
+                    statusText.className = "mt-3 text-sm text-green-600 font-bold"; 
+                    fetchDirectory();
+                    setTimeout(() => { initUnitCalendar(); }, 100);
+                    setTimeout(() => { renderCharts(); }, 200); // Mise à jour des graphiques après la purge
+                } 
                 else throw new Error(data.detail);
             } catch (err) { statusText.textContent = err.message; statusText.className = "mt-3 text-sm text-red-600 font-bold"; } 
             finally { btn.disabled = false; btn.textContent = "Clôturer l'année scoute (Purge estivale)"; }
         });
 
-        
+        // --- NOUVELLE LOGIQUE : CHARGEMENT DES GRAPHIQUES (CHART.JS) ---
+        async function renderCharts() {
+            if (!currentUniteId) return;
+
+            // 1. Récupération des sections de l'unité
+            const { data: sections } = await supabaseClient.from('sections').select('id, nom').eq('unite_id', currentUniteId);
+            if (!sections || sections.length === 0) return;
+
+            const sectionIds = sections.map(s => s.id);
+            const sectionLabels = sections.map(s => s.nom);
+            
+            // Palette de couleurs pour les sections
+            const colors = ['#1E3A8A', '#2E7D32', '#800020', '#D97706', '#7C3AED', '#059669', '#DC2626'];
+
+            // 2. Préparation des données pour chaque graphique
+            let childrenCounts = new Array(sections.length).fill(0);
+            let staffCounts = new Array(sections.length).fill(0);
+            let newsletterSubscribed = 0;
+            let newsletterUnsubscribed = 0;
+
+            // 3. Récupérer et compter les animés par section
+            const { data: children } = await supabaseClient.from('children').select('section_id').in('section_id', sectionIds);
+            if (children) {
+                children.forEach(c => {
+                    const idx = sectionIds.indexOf(c.section_id);
+                    if (idx !== -1) childrenCounts[idx]++;
+                });
+            }
+
+            // 4. Récupérer et compter les staffs par section
+            const { data: admins } = await supabaseClient.from('admins').select('section_id').in('section_id', sectionIds);
+            if (admins) {
+                admins.forEach(a => {
+                    const idx = sectionIds.indexOf(a.section_id);
+                    if (idx !== -1) staffCounts[idx]++;
+                });
+            }
+
+            // 5. Récupérer et compter les abonnés newsletter
+            const { data: subscribers } = await supabaseClient.from('newsletter_subscribers').select('is_subscribed').in('section_id', sectionIds);
+            if (subscribers) {
+                subscribers.forEach(sub => {
+                    if (sub.is_subscribed) newsletterSubscribed++;
+                    else newsletterUnsubscribed++;
+                });
+            }
+
+            // 6. Récupérer TOUS les événements et les absences associées
+            const { data: eventsData } = await supabaseClient.from('events').select('id, start_time, section_id').in('section_id', sectionIds);
+            
+            const eventsPerMonthMap = new Map();
+            const eventIdToSection = {};
+            let absencesCounts = new Array(sections.length).fill(0);
+
+            if (eventsData && eventsData.length > 0) {
+                // Tri par date pour le graphique chronologique
+                eventsData.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+                
+                eventsData.forEach(ev => {
+                    const date = new Date(ev.start_time);
+                    const monthYear = date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                    const formattedMonth = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+                    
+                    eventsPerMonthMap.set(formattedMonth, (eventsPerMonthMap.get(formattedMonth) || 0) + 1);
+                    eventIdToSection[ev.id] = ev.section_id;
+                });
+
+                // Récupération des absences pour ces événements
+                const eventIds = eventsData.map(e => e.id);
+                const { data: absencesData } = await supabaseClient.from('absences').select('event_id').in('event_id', eventIds);
+                
+                if (absencesData) {
+                    absencesData.forEach(abs => {
+                        const secId = eventIdToSection[abs.event_id];
+                        const idx = sectionIds.indexOf(secId);
+                        if (idx !== -1) absencesCounts[idx]++;
+                    });
+                }
+            }
+
+
+            // ==========================================
+            // GRAPH 1 : Animés par section (Pie Chart centré)
+            // ==========================================
+            const ctxChildren = document.getElementById('childrenBySectionChart').getContext('2d');
+            if (childrenChartInstance) childrenChartInstance.destroy();
+            
+            childrenChartInstance = new Chart(ctxChildren, {
+                type: 'pie',
+                data: {
+                    labels: sectionLabels,
+                    datasets: [{
+                        data: childrenCounts,
+                        backgroundColor: colors.slice(0, sections.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 12 } } }
+                    }
+                }
+            });
+
+            // ==========================================
+            // GRAPH 2 : Staffs par section (Bar Chart Large)
+            // ==========================================
+            const ctxStaff = document.getElementById('staffBySectionChart').getContext('2d');
+            if (staffChartInstance) staffChartInstance.destroy();
+            
+            staffChartInstance = new Chart(ctxStaff, {
+                type: 'bar',
+                data: {
+                    labels: sectionLabels,
+                    datasets: [{
+                        label: 'Nombre de chefs',
+                        data: staffCounts,
+                        backgroundColor: '#1E3A8A', // unite-primary
+                        borderRadius: 4,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { font: { size: 12 } } }
+                    }
+                }
+            });
+
+            // ==========================================
+            // GRAPH 3 : Événements par mois (Line Chart Large)
+            // ==========================================
+            const ctxEvents = document.getElementById('eventsPerMonthChart').getContext('2d');
+            if (eventsChartInstance) eventsChartInstance.destroy();
+
+            const monthLabels = Array.from(eventsPerMonthMap.keys());
+            const monthData = Array.from(eventsPerMonthMap.values());
+            
+            eventsChartInstance = new Chart(ctxEvents, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Nombre d\'événements',
+                        data: monthData,
+                        borderColor: '#D97706', // amber-600
+                        backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#D97706',
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { font: { size: 12 } } }
+                    }
+                }
+            });
+
+            // ==========================================
+            // GRAPH 4 : Absences par section (Bar Chart Large)
+            // ==========================================
+            const ctxAbsences = document.getElementById('absencesBySectionChart').getContext('2d');
+            if (absencesChartInstance) absencesChartInstance.destroy();
+            
+            absencesChartInstance = new Chart(ctxAbsences, {
+                type: 'bar',
+                data: {
+                    labels: sectionLabels,
+                    datasets: [{
+                        label: 'Absences signalées',
+                        data: absencesCounts,
+                        backgroundColor: '#EF4444', // red-500
+                        borderRadius: 4,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { font: { size: 12 } } }
+                    }
+                }
+            });
+
+            // ==========================================
+            // GRAPH 5 : Abonnements Newsletter (Doughnut Chart centré)
+            // ==========================================
+            const ctxNewsletter = document.getElementById('newsletterSubscribersChart').getContext('2d');
+            if (newsletterChartInstance) newsletterChartInstance.destroy();
+            
+            newsletterChartInstance = new Chart(ctxNewsletter, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Abonnés (Actifs)', 'Désabonnés'],
+                    datasets: [{
+                        data: [newsletterSubscribed, newsletterUnsubscribed],
+                        backgroundColor: ['#2E7D32', '#EF4444'], // Vert scout et Rouge
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 12 } } }
+                    }
+                }
+            });
+        }
+
+
         let unitCalendarInstance = null;
 
         async function initUnitCalendar() {
@@ -532,6 +861,9 @@
             document.getElementById('userEmailDisplay').textContent = await getActiveEmail();
             fetchDirectory();
             setTimeout(() => { initUnitCalendar(); }, 100);
+            
+            // On lance le rendu des graphiques !
+            setTimeout(() => { renderCharts(); }, 200); 
         }
 
         supabaseClient.auth.getSession().then(async ({ data: { session } }) => {

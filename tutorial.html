@@ -587,6 +587,83 @@
         </div>
     </section>
 
+    <!-- Section Fichier Trop Lourd -->
+    <section id="file-too-large" class="py-24 bg-gray-50 dark:bg-gray-900 scroll-mt-20 border-t border-gray-100 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="mb-16 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-3xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Erreur : Fichier trop lourd</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mt-3 text-lg max-w-2xl">L'application Azimut limite la taille des fichiers PDF à 300 Ko pour garantir la rapidité de la plateforme. Voici comment compresser gratuitement votre fichier s'il dépasse cette limite.</p>
+                </div>
+            </div>
+
+            <div class="space-y-20">
+                
+                <!-- Étape 1 : Constat de l'erreur -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold rounded-full text-sm">Étape 1</span>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white">Le message de blocage</h4>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Lorsque vous essayez d'enregistrer la fiche de votre enfant, un message d'erreur rouge apparaît en bas de l'écran si votre fichier PDF (Fiche Médicale, Autorisation ou Assurance) pèse plus de 300 Ko. Cliquez simplement sur le lien souligné <strong>"ce site gratuit (pi7.org)"</strong> présent dans le message.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/file-too-large/1.png" alt="Erreur fichier trop lourd" class="rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 2 : Message d'erreur détaillé -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold rounded-full text-sm">Étape 2</span>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white">Repérer le fichier fautif</h4>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Le message d'erreur vous indique précisément le nom du fichier qui pose problème (ex: "Fiche Médicale ARTHUR LOUETTE.pdf"). C'est ce fichier spécifique que nous allons devoir réduire.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/file-too-large/2.png" alt="Détail de l'erreur" class="rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 3 : Compresser le PDF -->
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold rounded-full text-sm">Étape 3</span>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white">Utiliser le compresseur en ligne</h4>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Sur le site <strong>Pi7 PDF Tool</strong>, glissez-déposez votre fichier ou cliquez sur "Pick from PDF Drive" pour le sélectionner. Vérifiez que la valeur "Target size" est bien réglée sur <strong>300 KB</strong>, puis cliquez sur le bouton bleu <strong>"Compress PDF"</strong>.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/file-too-large/3.png" alt="Compression sur Pi7" class="rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+                <!-- Étape 4 : Téléchargement -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+                    <div class="md:w-1/2 space-y-4">
+                        <span class="inline-block px-4 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 font-bold rounded-full text-sm">Étape 4</span>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white">Télécharger et réessayer</h4>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Une fois la compression terminée, le site vous indique la nouvelle taille du fichier (qui doit être inférieure à 300 KB). Cliquez sur <strong>"Download PDF"</strong>. Il ne vous reste plus qu'à retourner sur Azimut, sélectionner ce nouveau fichier compressé, et enregistrer !
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 w-full">
+                        <img src="pics/file-too-large/4.png" alt="Téléchargement du fichier compressé" class="rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full object-cover hover:shadow-2xl transition-shadow duration-300">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-12 mt-auto">

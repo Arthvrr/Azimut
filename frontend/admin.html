@@ -704,8 +704,39 @@
         document.getElementById('massMailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'), statusText = document.getElementById('statusMessage');
-            btn.disabled = true; btn.textContent = 'Envoi...'; statusText.textContent = '';
+            btn.disabled = true; btn.textContent = 'Préparation...'; statusText.textContent = '';
+            
             try {
+                // 1. Récupérer le nombre total d'abonnés pour simuler la progression
+                const { count, error: countErr } = await supabaseClient
+                    .from('newsletter_subscribers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('section_id', currentSectionId)
+                    .eq('is_subscribed', true);
+                    
+                if (countErr) throw countErr;
+                const totalSubscribers = count || 0;
+                
+                if (totalSubscribers === 0) {
+                    throw new Error("Aucun abonné actif trouvé dans cette section.");
+                }
+
+                // 2. Lancer l'animation de progression simulée
+                btn.textContent = 'Envoi en cours...';
+                let currentEmailIndex = 0;
+                
+                // On estime un délai réaliste par e-mail (ex: 200ms) pour faire défiler le compteur
+                const estimatedDelayPerEmail = 200; 
+                const progressInterval = setInterval(() => {
+                    if (currentEmailIndex < totalSubscribers - 1) {
+                        currentEmailIndex++;
+                        statusText.textContent = `E-mail ${currentEmailIndex}/${totalSubscribers} en cours d'envoi...`;
+                        statusText.className = "mt-2 text-sm text-blue-600 font-bold";
+                    }
+                }, estimatedDelayPerEmail);
+
+
+                // 3. Préparer et envoyer la vraie requête à l'API (qui tourne en arrière-plan)
                 const payload = {
                     subject: document.getElementById('subject').value, 
                     message: document.getElementById('message').value, 
@@ -719,7 +750,6 @@
                     payload.attachment = { name: file.name, content: base64 };
                 }
                 
-                // NOUVEAU : Récupérer le token de session
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 const token = session.access_token;
 
@@ -731,11 +761,27 @@
                     }, 
                     body: JSON.stringify(payload)
                 });
+                
                 const data = await response.json();
-                if (response.ok) { statusText.textContent = data.message; statusText.className = "mt-2 text-sm text-scout-green font-bold"; document.getElementById('massMailForm').reset(); }
+                
+                // 4. Arrêter l'animation et afficher le résultat final dès que l'API répond
+                clearInterval(progressInterval);
+                
+                if (response.ok) { 
+                    statusText.textContent = `Terminé ! ${totalSubscribers}/${totalSubscribers} e-mails envoyés avec succès.`; 
+                    statusText.className = "mt-2 text-sm text-scout-green font-bold"; 
+                    document.getElementById('massMailForm').reset(); 
+                }
                 else throw new Error(data.detail);
-            } catch (err) { statusText.textContent = err.message; statusText.className = "mt-2 text-sm text-red-600 font-bold"; }
-            finally { btn.disabled = false; btn.textContent = 'Envoyer à toute la section'; }
+                
+            } catch (err) { 
+                statusText.textContent = err.message; 
+                statusText.className = "mt-2 text-sm text-red-600 font-bold"; 
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.textContent = 'Envoyer à toute la section'; 
+            }
         });
 
         // --- INITIALISATION CALENDRIER ---
