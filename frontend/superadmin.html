@@ -1,26 +1,24 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Azimut - Chef d'Unité">
     <title>Azimut - Chef d'Unité</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Ajout de Chart.js pour les graphiques -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = { darkMode: 'class', theme: { extend: { colors: { unite: { primary: '#1E3A8A', light: '#EFF6FF', dark: '#1E40AF' }, scout: { green: '#2E7D32' } } } } }
     </script>
-
     <link rel="icon" type="image/x-icon" href="../logo/logo.ico">
     <link rel="manifest" href="../manifest.json">
-    <meta name="theme-color" content="#111827">
+    <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="../logo/logo.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <script>
         // Eviter le flash blanc au chargement
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -28,233 +26,268 @@
         }
     </script>
     <style>
-        /* Implémentation du Dark Mode globale */
-        html.dark body { background-color: #111827; color: #e5e7eb; }
-        html.dark .bg-white { background-color: #1f2937 !important; border-color: #374151 !important; }
-        html.dark .bg-gray-50 { background-color: #111827 !important; border-color: #374151 !important; }
-        html.dark .text-gray-900 { color: #f9fafb !important; }
-        html.dark .text-gray-800 { color: #f3f4f6 !important; }
-        html.dark .text-gray-700 { color: #d1d5db !important; }
-        html.dark .text-gray-600 { color: #9ca3af !important; }
-        html.dark .text-gray-500 { color: #9ca3af !important; }
-        html.dark .border-gray-100, html.dark .border-gray-200, html.dark .border-gray-300 { border-color: #374151 !important; }
-        html.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #374151 !important; }
-        html.dark nav { background-color: #1f2937 !important; border-bottom-color: #374151 !important; }
-        html.dark input, html.dark select, html.dark textarea { background-color: #374151 !important; color: #f9fafb !important; border-color: #4b5563 !important; }
-        html.dark .bg-gray-100 { background-color: #374151 !important; border-color: #4b5563 !important; color: #e5e7eb !important; }
-        
-        /* Exceptions spécifiques aux portails */
-        html.dark .bg-red-50 { background-color: #450a0a !important; border-color: #7f1d1d !important; }
-        html.dark .bg-parent-light { background-color: #4d0013 !important; }
-        html.dark .bg-unite-light { background-color: #1e3a8a !important; color: #bfdbfe !important; }
-        html.dark .fc .fc-toolbar-title { color: #f9fafb !important; }
-        html.dark .fc-theme-standard td, html.dark .fc-theme-standard th, html.dark .fc-theme-standard .fc-scrollgrid { border-color: #4b5563 !important; }
-        html.dark .fc-day-today { background-color: #374151 !important; }
+        :root{--az-primary:#1E3A8A;--az-primary-dark:#1E40AF;--az-primary-light:#EFF6FF;--az-bg:#f8fafc;--az-surface:#ffffff;--az-surface-2:#f1f5f9;--az-border:#e2e8f0;--az-border-hover:#cbd5e1;--az-ink:#0f172a;--az-ink-2:#334155;--az-muted:#64748b;--az-muted-2:#94a3b8;--az-danger:#dc2626;--az-success:#1E3A8A;--az-shadow:0 1px 3px 0 rgb(0 0 0 / 0.08),0 1px 2px -1px rgb(0 0 0 / 0.06);--az-shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.10),0 2px 4px -2px rgb(0 0 0 / 0.06);--az-radius:.9rem;--az-transition:all .28s cubic-bezier(.4,0,.2,1)}
+        html.dark{--az-bg:#0b0f19;--az-surface:#101828;--az-surface-2:#172033;--az-border:#233045;--az-border-hover:#37465d;--az-ink:#f1f5f9;--az-ink-2:#cbd5e1;--az-muted:#94a3b8;--az-muted-2:#64748b;--az-shadow:0 1px 3px 0 rgb(0 0 0 / 0.5);--az-shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.4)}
+        *{box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--az-bg);color:var(--az-ink);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;line-height:1.55}
+        .az-c-ink{color:var(--az-ink)}.az-c-ink-2{color:var(--az-ink-2)}.az-c-muted{color:var(--az-muted)}.az-c-primary{color:var(--az-primary)}.az-bg-surf{background:var(--az-surface)}
+        .az-page{max-width:76rem;margin:0 auto;padding:0 1rem}
+        .az-nav{position:sticky;top:0;z-index:40;height:64px;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;background:color-mix(in srgb,var(--az-surface) 82%,transparent);border-bottom:1px solid var(--az-border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+        .az-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+        .az-brand img{width:34px;height:34px;border-radius:.7rem;object-fit:contain;background:var(--az-primary);padding:4px}
+        .az-brand-text{font-size:1.25rem;font-weight:800;color:var(--az-ink);letter-spacing:-.02em}
+        .az-brand-text span{color:var(--az-primary);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;opacity:.9}
+        .az-nav-right{display:flex;align-items:center;gap:.6rem}
+        .az-card{background:var(--az-surface);border:1px solid var(--az-border);border-radius:var(--az-radius);box-shadow:var(--az-shadow);overflow:hidden;transition:var(--az-transition)}
+        .az-card:hover{border-color:var(--az-border-hover);box-shadow:var(--az-shadow-md)}
+        .az-card-header{padding:1rem 1.25rem;border-bottom:1px solid var(--az-border);display:flex;align-items:center;justify-content:space-between}
+        .az-card-body{padding:1.125rem 1.25rem}
+        .az-card-footer{padding:.875rem 1.25rem;border-top:1px solid var(--az-border);background:var(--az-surface-2)}
+        .az-h1{font-size:1.75rem;font-weight:800;color:var(--az-ink);letter-spacing:-.02em;margin:0 0 .5rem}
+        .az-sub{color:var(--az-muted);font-size:.92rem;margin:0 0 1.5rem}
+        .az-section-head{display:flex;align-items:center;justify-content:space-between;margin:1.75rem 0 1rem}
+        .az-section-head h2{font-size:1.1rem;font-weight:800;color:var(--az-ink);letter-spacing:-.01em;margin:0;display:flex;align-items:center;gap:.5rem}
+        .az-section-head h2::before{content:'';width:4px;height:1.1rem;background:var(--az-primary);border-radius:2px}
+        .az-caption{color:var(--az-muted);font-size:.82rem;margin-top:.25rem}
+        .az-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .65rem;border-radius:999px;font-size:.72rem;font-weight:800;background:color-mix(in srgb,var(--az-primary) 14%,transparent);color:var(--az-primary-dark);border:1px solid color-mix(in srgb,var(--az-primary) 35%,transparent)}
+        html.dark .az-badge{color:var(--az-primary);background:color-mix(in srgb,var(--az-primary) 20%,transparent)}
+        .az-pill{display:inline-flex;align-items:center;gap:.45rem;padding:.32rem .85rem;border-radius:999px;font-size:.8rem;font-weight:700;background:var(--az-surface-2);border:1px solid var(--az-border);color:var(--az-muted)}
+        .az-field{display:flex;flex-direction:column;gap:.4rem}
+        .az-label{display:block;font-size:.8rem;font-weight:800;color:var(--az-ink-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.28rem}
+        .az-input,.az-select,.az-textarea{width:100%;background:var(--az-surface);border:1px solid var(--az-border);color:var(--az-ink);border-radius:.72rem;padding:.6rem .9rem;font-size:.93rem;transition:var(--az-transition)}
+        .az-select{cursor:pointer}
+        .az-input:focus,.az-select:focus,.az-textarea:focus{outline:none;border-color:var(--az-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--az-primary) 22%,transparent)}
+        .az-textarea{resize:vertical;font-family:inherit}
+        .az-help{color:var(--az-muted-2);font-size:.76rem;margin-top:.3rem}
+        html.dark .az-input,html.dark .az-select,html.dark .az-textarea{background:var(--az-surface-2);border-color:var(--az-border);color:var(--az-ink)}
+        .az-row{display:grid;gap:.9rem}.az-row-2{grid-template-columns:1fr 1fr}.az-row-3{grid-template-columns:1fr 1fr 1fr}
+        @media (max-width:640px){.az-row-2,.az-row-3{grid-template-columns:1fr}}
+        .az-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:none;border-radius:.72rem;font-size:.93rem;font-weight:700;padding:.6rem 1.1rem;cursor:pointer;transition:var(--az-transition);text-decoration:none;line-height:1}
+        .az-btn-primary{background:var(--az-primary);color:#fff;box-shadow:0 2px 5px color-mix(in srgb,var(--az-primary) 35%,transparent)}
+        .az-btn-primary:hover{background:var(--az-primary-dark);box-shadow:0 4px 8px color-mix(in srgb,var(--az-primary) 45%,transparent);transform:translateY(-1px)}
+        .az-btn-primary:disabled{opacity:.65;cursor:not-allowed;transform:none}
+        .az-btn-ghost{background:var(--az-surface-2);color:var(--az-ink-2);border:1px solid var(--az-border)}
+        .az-btn-ghost:hover{background:var(--az-border-hover);color:var(--az-ink)}
+        .az-btn-danger{background:var(--az-danger);color:#fff}
+        .az-btn-danger:hover{background:#b91c1c}
+        .az-btn-sm{padding:.4rem .8rem;font-size:.82rem}
+        .az-btn-group{display:flex;gap:.5rem;flex-wrap:wrap}
+        .az-btn-full{width:100%}
+        .az-stats{display:grid;gap:1rem;grid-template-columns:repeat(1,minmax(0,1fr))}
+        @media (min-width:640px){.az-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @media (min-width:1024px){.az-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+        .az-stat{display:flex;align-items:center;gap:.95rem;padding:.95rem 1.1rem;background:var(--az-surface-2);border:1px solid var(--az-border);border-radius:.85rem}
+        .az-stat .az-icon{width:2.75rem;height:2.75rem;border-radius:.75rem;display:grid;place-items:center;background:color-mix(in srgb,var(--az-primary) 16%,transparent);color:var(--az-primary-dark);font-size:1.25rem;flex-shrink:0}
+        html.dark .az-stat .az-icon{color:var(--az-primary)}
+        .az-stat .num{font-size:1.55rem;font-weight:800;color:var(--az-ink);line-height:1.15}
+        .az-stat .cap{color:var(--az-muted);font-size:.8rem;line-height:1.35}
+        .az-stat .trend{margin-left:auto;font-size:.78rem;font-weight:800;padding:.14rem .55rem;border-radius:.55rem;border:1px solid var(--az-border);color:var(--az-primary-dark);background:var(--az-surface)}
+        html.dark .az-stat .trend{color:var(--az-primary);background:var(--az-surface-2);border-color:var(--az-border)}
+        .az-auth{max-width:26rem;margin:2rem auto 0}
+        .az-tabs{display:flex;border-bottom:1px solid var(--az-border);margin-bottom:1.25rem}
+        .az-tab{flex:1;padding:0 0 .75rem 0;font-size:.9rem;font-weight:700;color:var(--az-muted);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--az-transition);text-align:center}
+        .az-modal-overlay{position:fixed;inset:0;background:rgb(0 0 0 / 0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem}
+        .az-modal{background:var(--az-surface);border:1px solid var(--az-border);border-radius:1rem;box-shadow:var(--az-shadow-md);width:100%;max-width:42rem;max-height:85vh;overflow-y-auto;display:flex;flex-direction:column}
+        .az-modal header{padding:1rem 1.25rem;border-bottom:1px solid var(--az-border);display:flex;align-items:center;justify-content:space-between}
+        .az-table{width:100%;border-collapse:separate;border-spacing:0}
+        .az-table th{text-align:left;font-size:.7rem;font-weight:800;color:var(--az-muted);text-transform:uppercase;letter-spacing:.08em;padding:.7rem .9rem;border-bottom:1px solid var(--az-border);background:var(--az-surface-2)}
+        .az-table td{padding:.8rem .9rem;border-bottom:1px solid var(--az-border);color:var(--az-ink-2);font-size:.92rem}
+        .az-table tbody tr:last-child td{border-bottom:none}
+        .az-table tbody tr:hover td{background:color-mix(in srgb,var(--az-primary) 6%,transparent)}
+        .fc .fc-toolbar-chunk{display:flex;align-items:center;gap:.5rem}
+        .fc .fc-toolbar-title{font-weight:800;color:var(--az-ink);font-size:1.1rem;letter-spacing:-.02em}
+        .fc .fc-button{border:1px solid var(--az-border);background:var(--az-surface);color:var(--az-ink);border-radius:.6rem;padding:.45rem .9rem;font-size:.85rem;font-weight:600;transition:var(--az-transition);box-shadow:none}
+        .fc .fc-button:hover{background:var(--az-surface-2);border-color:var(--az-border-hover)}
+        .fc .fc-button-primary{background:var(--az-primary);color:#fff;border-color:var(--az-primary)}
+        .fc .fc-button-primary:hover{background:var(--az-primary-dark);border-color:var(--az-primary-dark)}
+        .fc .fc-event{border:none;border-radius:.85rem;padding:.28rem .8rem;font-size:.82rem;font-weight:600;color:var(--az-ink-2);}
+        .fc .fc-event:hover{opacity:.95;filter:none}
+        .fc .fc-daygrid-day{border-color:var(--az-border)}
+        .fc .fc-scrollgrid{border-color:var(--az-border)}
+        .fc .fc-col-header-cell{border-bottom:1px solid var(--az-border);background:var(--az-surface-2)}
+        .fc .fc-col-header-cell-cushion{font-weight:800;color:var(--az-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;padding:.55rem}
+        .fc .fc-today{background:color-mix(in srgb,var(--az-primary) 10%,transparent)!important;position:relative}
+        .fc .fc-today::after{content:'';position:absolute;inset:0;border-radius:.5rem;border:2px solid var(--az-primary);pointer-events:none}
+
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+        .az-border{border-color:var(--az-border)}
+        .az-text-danger{color:var(--az-danger)}
+        html.dark .text-gray-500,html.dark .text-gray-400{color:#9ca3b8!important}
+        html.dark .text-gray-600{color:#cbd5e1!important}
+        html.dark .text-gray-800,html.dark .text-gray-900{color:#e2e8f0!important}
+        html.dark .bg-gray-50{background:#0b0f19!important}
+        html.dark .bg-gray-100{background:#172033!important}
+        html.dark .bg-gray-800{background:#1e293b!important}
+        html.dark .bg-gray-900{background:#0f172a!important}
+        html.dark .border-gray-100,html.dark .border-gray-200,html.dark .border-gray-300{border-color:#233045!important}
+        html.dark .hover\:bg-gray-100:hover{background:#172033!important}
+        html.dark .hover\:bg-gray-200:hover{background:#1e293b!important}
+        html.dark .hover\:bg-gray-50:hover{background:#172033!important}
+        html.dark .hover\:bg-gray-800:hover{background:#1e293b!important}
+        html.dark .hover\:bg-gray-900:hover{background:#0f172a!important}
+        html.dark .hover\:text-gray-600:hover{color:#cbd5e1!important}
+        html.dark .hover\:text-gray-700:hover{color:#e2e8f0!important}
+        html.dark .text-red-500,html.dark .text-red-600{color:#f87171!important}
+        html.dark .hover\:text-red-600:hover,html.dark .hover\:text-red-700:hover{color:#fca5a5!important}
+        html.dark .border-red-200,html.dark .border-red-500{border-color:#7f1d1d!important}
+        html.dark .bg-red-50{background:#450a0a!important}
+        html.dark .bg-red-600{background:#7f1d1d!important}
+        html.dark .hover\:bg-red-600:hover{background:#991b1b!important}
+        html.dark .hover\:bg-red-50:hover{background:#450a0a!important}
+        html.dark .az-table td, html.dark .az-table th { background: var(--az-surface) !important; border-color: var(--az-border) !important; }
+        html.dark .az-table tbody tr { background: var(--az-surface) !important; }
+        html.dark .az-table tbody tr:hover td { background: color-mix(in srgb,var(--az-primary) 10%,transparent) !important; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
-
-    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-unite-primary rounded-lg flex items-center justify-center text-white font-bold text-xl"><a href="../index.html"><img src="../logo/logo.png" alt="Azimut" class="w-full h-full object-contain rounded-lg"></a></div>
-            <h1 class="text-2xl font-bold text-gray-900">Azimut <span class="text-sm font-normal text-gray-500 ml-2">Espace Chef d'Unité</span></h1>
+<body class="min-h-screen">
+    <nav class="az-nav" aria-label="En-tête">
+        <div class="az-brand">
+            <a href="../index.html"><img src="../logo/logo.png" alt="Logo Azimut"></a>
+            <div class="az-brand-text">Azimut<span class="ml-2">Chef d'Unité</span></div>
         </div>
-        <div class="flex items-center gap-2 md:gap-4">
-            <!-- Bouton Dark Mode -->
-            <button id="theme-toggle" type="button" class="text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 rounded-lg text-sm p-2.5 transition-colors focus:outline-none" aria-label="Toggle Dark Mode">
+        <div class="az-nav-right">
+            <button id="theme-toggle" type="button" class="az-btn az-btn-ghost az-btn-sm p-2" aria-label="Thème sombre/clair">
                 <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
             </button>
-            <div id="userMenu" class="hidden flex items-center gap-4">
-            <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">
-                Connecté : <span id="userEmailDisplay" class="font-bold text-unite-primary"></span>
-            </span>
-            <button id="logoutBtnNav" class="text-sm text-gray-600 hover:text-red-600 font-medium transition-colors">Se déconnecter</button>
+            <div id="userMenu" class="hidden flex items-center gap-3">
+                <span class="az-pill">Connecté : <span id="userEmailDisplay" class="az-c-primary font-bold"></span></span>
+                <button id="logoutBtnNav" class="az-btn az-btn-ghost az-btn-sm text-sm">Se déconnecter</button>
+            </div>
         </div>
-    </div>
     </nav>
-
-    <main class="max-w-5xl mx-auto mt-10 p-6 space-y-8">
-        
-        <div id="authSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <div class="flex mb-6 border-b border-gray-200">
-                <button id="tabLogin" class="flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary transition-colors">Connexion</button>
-                <button id="tabRegister" class="flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700">Nouveau Chef d'Unité</button>
-            </div>
-            <div id="authMessage" class="mb-4 text-sm text-center font-medium"></div>
-            
-            <form id="loginForm" class="space-y-4">
-                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                <div>
-                    <label class="block text-sm font-medium mb-1">Mot de passe</label>
-                    <div class="relative">
-                        <input type="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary pr-10">
-                        <button type="button" onclick="togglePassword('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                        </button>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark transition-colors">Se connecter</button>
-                <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-unite-primary hover:underline">Mot de passe oublié ?</button></div>
-                <div class="text-center mt-2 text-xs text-gray-400">
-                    Besoin d'aide ? <a href="../tutorial.html#reset-password" class="underline hover:text-gray-600 transition-colors" target="_blank">Voir le tutoriel.</a>
-                </div>
-            </form>
-
-            <form id="registerForm" class="space-y-4 hidden">
-                <div><label class="block text-sm font-medium mb-1">Votre Unité</label><select id="regUnite" required class="w-full px-3 py-2 border rounded outline-none"><option value="">Chargement...</option></select></div>
-                <div>
-                    <label class="block text-sm font-medium text-red-600 mb-1">Code Secret d'Unité</label>
-                    <div class="relative">
-                        <input type="password" id="regCode" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-400 pr-10">
-                        <button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                        </button>
-                    </div>
-                </div>
-                <hr>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="block text-sm font-medium">Prénom</label><input type="text" id="regFName" required class="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                    <div><label class="block text-sm font-medium">Nom</label><input type="text" id="regLName" required class="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                </div>
-                <div><label class="block text-sm font-medium">Totem</label><input type="text" id="regTotem" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                <div><label class="block text-sm font-medium">E-mail</label><input type="email" id="regEmail" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Veuillez entrer une adresse e-mail valide sans caractères spéciaux" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                <div>
-                    <label class="block text-sm font-medium mb-1">Mot de passe</label>
-                    <div class="relative">
-                        <input type="password" id="regPassword" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary pr-10">
-                        <button type="button" onclick="togglePassword('regPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                        </button>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-unite-primary text-white px-4 py-3 rounded-lg font-bold hover:bg-unite-dark transition-colors">Valider mon profil Chef d'Unité</button>
-            </form>
-        </div>
-
-        <div id="dashboardSection" class="hidden space-y-6">
-            
-            <!-- NOUVELLE SECTION : Tableau de Bord Analytique (1 par 1) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full border-t-4 border-t-unite-primary">
-                <div class="mb-6 border-b border-gray-100 pb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Tableau de Bord Analytique de l'Unité</h2>
-                    <p class="text-sm text-gray-500">Vue globale sur les effectifs, l'activité et l'engagement de l'unité.</p>
-                </div>
-                
-                <!-- On passe d'une grille (grid-cols-3) à une pile verticale (flex-col) avec des marges -->
-                <div class="flex flex-col gap-8">
-                    
-                    <!-- Graphique 1 : Animés par section -->
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Répartition des Animés par Section</h3>
-                        <div class="relative w-full h-80 max-w-lg mx-auto flex justify-center">
-                            <canvas id="childrenBySectionChart"></canvas>
+    <div class="az-page">
+        <main class="py-6 space-y-8">
+            <div id="authSection" class="az-auth az-card">
+                <div class="az-card-body">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="../logo/logo.png" alt="Azimut" class="w-8 h-8 rounded object-contain">
+                        <div>
+                            <div class="az-h1" style="font-size:1.35rem">Azimut</div>
+                            <div class="az-c-muted text-sm">Espace Chef d'Unité &mdash; Direction</div>
                         </div>
                     </div>
-
-                    <!-- Graphique 2 : Staffs par section -->
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Encadrement (Staffs par Section)</h3>
-                        <div class="relative w-full h-80">
-                            <canvas id="staffBySectionChart"></canvas>
-                        </div>
+                    <div id="authMessage" class="mb-4 text-sm text-center"></div>
+                    <div class="az-tabs">
+                        <button id="tabLogin" class="az-tab flex-1 pb-3 text-center font-bold text-unite-primary border-b-2 border-unite-primary">Connexion</button>
+                        <button id="tabRegister" class="az-tab flex-1 pb-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700">Nouveau Chef d'Unité</button>
                     </div>
-
-                    <!-- Graphique 3 : Événements par mois (NOUVEAU) -->
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dynamique de l'année (Événements par mois)</h3>
-                        <div class="relative w-full h-80">
-                            <canvas id="eventsPerMonthChart"></canvas>
+                    <form id="loginForm" class="space-y-4">
+                        <div class="az-field"><label class="az-label" for="loginEmail">E-mail</label><input type="email" id="loginEmail" required class="az-input" placeholder="prenom.nom@email.com"></div>
+                        <div class="az-field">
+                            <label class="az-label" for="loginPassword">Mot de passe</label>
+                            <div class="relative"><input type="password" id="loginPassword" required class="az-input pr-10"><button type="button" onclick="togglePassword('loginPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"><i class="far fa-eye w-5 h-5"></i></button></div>
                         </div>
-                    </div>
-
-                    <!-- Graphique 4 : Absences par section (NOUVEAU) -->
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absences cumulées par Section</h3>
-                        <p class="text-xs text-gray-500 text-center mb-4">Permet d'identifier d'éventuels problèmes de motivation au sein d'une section</p>
-                        <div class="relative w-full h-80">
-                            <canvas id="absencesBySectionChart"></canvas>
+                        <button type="submit" class="az-btn az-btn-primary az-btn-full">Se connecter</button>
+                        <div class="text-center mt-2"><button type="button" id="forgotPasswordBtn" class="text-xs text-gray-500 hover:text-unite-primary hover:underline font-medium">Mot de passe oublié ?</button></div>
+                        <div class="text-center mt-2 text-xs text-gray-400">Besoin d'aide ? <a href="../tutorial.html#reset-password" class="underline hover:text-gray-600 transition-colors" target="_blank">Voir le tutoriel.</a></div>
+                    </form>
+                    <form id="registerForm" class="hidden space-y-4">
+                        <div class="az-field"><label class="az-label" for="regUnite">Votre Unité</label><select id="regUnite" required class="az-select"><option value="">Chargement...</option></select></div>
+                        <div class="az-field"><label class="az-label" style="color:var(--az-danger)">Code Secret d'Unité</label><div class="relative"><input type="password" id="regCode" required class="az-input pr-10"><button type="button" onclick="togglePassword('regCode', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"><i class="far fa-eye w-5 h-5"></i></button></div></div>
+                        <hr class="my-4 border az-border">
+                        <div class="az-row az-row-2">
+                            <div class="az-field"><label class="az-label">Prénom</label><input type="text" id="regFName" required class="az-input"></div>
+                            <div class="az-field"><label class="az-label">Nom</label><input type="text" id="regLName" required class="az-input"></div>
                         </div>
-                    </div>
-
-                    <!-- Graphique 5 : Taux d'abonnement Newsletter -->
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-2 text-center">Couverture des Communications</h3>
-                        <p class="text-xs text-gray-500 text-center mb-4">Proportion des parents inscrits à la liste de diffusion</p>
-                        <div class="relative w-full h-80 max-w-lg mx-auto flex justify-center">
-                            <canvas id="newsletterSubscribersChart"></canvas>
-                        </div>
-                    </div>
+                        <div class="az-field"><label class="az-label">Totem</label><input type="text" id="regTotem" required class="az-input"></div>
+                        <div class="az-field"><label class="az-label" for="regEmail">E-mail</label><input type="email" id="regEmail" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Veuillez entrer une adresse e-mail valide sans caractères spéciaux" required class="az-input"></div>
+                        <div class="az-field"><label class="az-label" for="regPassword">Mot de passe</label><div class="relative"><input type="password" id="regPassword" required class="az-input pr-10"><button type="button" onclick="togglePassword('regPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"><i class="far fa-eye w-5 h-5"></i></button></div></div>
+                        <button type="submit" class="az-btn az-btn-primary az-btn-full">Valider mon profil Chef d'Unité</button>
+                    </form>
                 </div>
             </div>
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
-                <h2 class="text-xl font-bold text-gray-900 mb-2">Communiqué à l'Unité Entière</h2>
-                <p class="text-sm text-gray-500 mb-6 border-b border-gray-100 pb-4">Cet outil envoie un e-mail à TOUS les parents et TOUS les chefs de TOUTES les sections confondues.</p>
-                <form id="unitMailForm" class="space-y-4">
-                    <div><label class="block text-sm font-medium">Sujet</label><input type="text" id="subject" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></div>
-                    <div><label class="block text-sm font-medium">Message</label><textarea id="message" rows="6" required class="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary"></textarea></div>
+            <div id="dashboardSection" class="hidden space-y-6">
+                <div class="az-section-head">
                     <div>
-                        <label class="block text-sm font-medium">Pièce jointe (Optionnel)</label>
-                        <input type="file" id="unitAttachment" class="w-full px-4 py-2 border rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-unite-primary outline-none">
+                        <h2 class="az-h1" style="font-size:1.5rem">Pilotage de l'unité</h2>
+                        <p class="az-sub">Vue globale sur les effectifs, l'activité et l'engagement de l'unité.</p>
                     </div>
-                    <button type="submit" id="submitBtn" class="w-full md:w-auto md:px-12 bg-unite-primary hover:bg-unite-dark text-white py-3 rounded-lg font-medium transition-colors">Envoyer le message général</button>
-                    <p id="statusMessage" class="mt-2 text-sm font-medium"></p>
-                </form>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
-                <h2 class="text-xl font-bold text-gray-900 mb-2">Annuaire Global de l'Unité</h2>
-                
-                <div class="flex flex-col md:flex-row gap-4 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <input type="text" id="searchDir" placeholder="Rechercher un e-mail ou un nom..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-unite-primary">
-                    <select id="filterSection" class="px-4 py-2 border rounded-lg outline-none"><option value="all">Toutes les sections</option></select>
-                    <select id="filterType" class="px-4 py-2 border rounded-lg outline-none">
-                        <option value="all">Tous rôles</option>
-                        <option value="chef">Staffs</option>
-                        <option value="parent">Parents</option>
-                    </select>
+                    <div class="az-btn-group"></div>
                 </div>
-                
-                <div id="directoryList" class="overflow-y-auto max-h-[500px] pr-2 space-y-2">
-                    <p class="text-gray-500 text-sm text-center mt-10">Chargement de l'annuaire...</p>
-                </div>
-            </div>
 
-            
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-100 pb-4 gap-4">
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-xl font-bold text-gray-900">Éphéméride de l'Unité</h2>
-                        <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">Vue Globale</span>
+                <!-- Tableau de bord analytique (5 graphiques empilés) -->
+                <div class="az-card border-t-4 border-t-unite-primary">
+                    <div class="az-card-header"><h2 class="text-xl font-bold az-c-ink">Tableau de Bord Analytique de l'Unité</h2></div>
+                    <div class="az-card-body">
+                        <div class="az-row" style="grid-template-columns:repeat(1,minmax(0,1fr));gap:1.5rem">
+                            <div>
+                                <h3 class="text-sm font-bold az-c-ink-2 mb-3 text-center">Répartition des Animés par Section</h3>
+                                <div class="relative h-72 w-full max-w-lg mx-auto"><canvas id="childrenBySectionChart" class="h-full w-full"></canvas></div>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold az-c-ink-2 mb-3 text-center">Encadrement (Staffs par Section)</h3>
+                                <div class="relative h-72 w-full"><canvas id="staffBySectionChart" class="h-full w-full"></canvas></div>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold az-c-ink-2 mb-3 text-center">Dynamique de l'année (Événements/mois)</h3>
+                                <div class="relative h-72 w-full"><canvas id="eventsPerMonthChart" class="h-full w-full"></canvas></div>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold az-c-ink-2 mb-3 text-center">Absences cumulées par Section</h3>
+                                <p class="az-caption text-center mb-3">Identifier d'éventuels problèmes de motivation.</p>
+                                <div class="relative h-72 w-full"><canvas id="absencesBySectionChart" class="h-full w-full"></canvas></div>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold az-c-ink-2 mb-2 text-center">Couverture des Communications</h3>
+                                <p class="az-caption text-center mb-3">Proportion des parents inscrits à la newsletter.</p>
+                                <div class="relative h-72 w-full max-w-lg mx-auto"><canvas id="newsletterSubscribersChart" class="h-full w-full"></canvas></div>
+                            </div>
+                        </div>
                     </div>
-                    <button onclick="exportSuperAdminCalendarICS()" class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
-                        <svg class="w-4 h-4 text-unite-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        Exporter (.ics)
-                    </button>
                 </div>
-                <div id="unitCalendar" class="min-h-[600px]"></div>
-            </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-8 w-full border-t-4 border-t-red-600">
-                <h2 class="text-xl font-bold text-red-600 mb-2 flex items-center gap-2">
-                    ⚠️ Zone de danger : Gestion de la Rentrée
-                </h2>
-                <p class="text-sm text-gray-600 mb-6">
-                    Cette action prépare l'unité pour la nouvelle année (septembre). Elle supprime l'intégralité des calendriers, efface l'historique des absences, réinitialise les abonnements newsletters et révoque les accès de tous les anciens chefs de section. <strong>Les profils parents, enfants et les fichiers PDF restent intacts.</strong>
-                </p>
-                <button id="resetYearBtn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold text-sm transition-colors shadow-sm">
-                    Clôturer l'année scoute (Purge estivale)
-                </button>
-                <p id="resetYearStatus" class="mt-3 text-sm font-bold"></p>
-            </div>
+                <!-- Communiqué à l'unité entière -->
+                <div class="az-card">
+                    <div class="az-card-header"><h2 class="text-xl font-bold az-c-ink">Communiqué à l'Unité Entière</h2><p class="az-caption" style="margin:0">Cet outil envoie un e-mail à TOUS les parents et TOUS les chefs de toutes les sections.</p></div>
+                    <div class="az-card-body">
+                        <form id="unitMailForm" class="space-y-4">
+                            <div class="az-field"><label class="az-label" for="subject">Sujet</label><input type="text" id="subject" required class="az-input"></div>
+                            <div class="az-field"><label class="az-label" for="message">Message</label><textarea id="message" rows="6" required class="az-textarea"></textarea></div>
+                            <div class="az-field"><label class="az-label" for="unitAttachment">Pièce jointe (Optionnel)</label><input type="file" id="unitAttachment" class="az-input text-sm"></div>
+                            <button type="submit" id="submitBtn" class="az-btn az-btn-primary az-btn-full">Envoyer le message général</button>
+                            <p id="statusMessage" class="mt-2 text-sm font-medium"></p>
+                        </form>
+                    </div>
+                </div>
 
-            <div class="text-center pt-4 pb-10">
-                <button id="logoutBtnMain" class="text-red-500 hover:text-red-700 font-medium flex items-center gap-2 justify-center w-full transition-colors">Se déconnecter de l'Unité</button>
-            </div>
-        </div>
-    </main>
+                <!-- Annuaire global -->
+                <div class="az-card">
+                    <div class="az-card-header"><h2 class="text-xl font-bold az-c-ink">Annuaire Global de l'Unité</h2></div>
+                    <div class="az-card-body">
+                        <div class="flex flex-col md:flex-row gap-3 mb-6 az-bg-surf p-4 rounded-lg border az-border">
+                            <input type="text" id="searchDir" placeholder="Rechercher un e-mail ou un nom..." class="az-input flex-1">
+                            <select id="filterSection" class="az-select"><option value="all">Toutes les sections</option></select>
+                            <select id="filterType" class="az-select"><option value="all">Tous rôles</option><option value="chef">Staffs</option><option value="parent">Parents</option></select>
+                        </div>
+                        <div id="directoryList" class="overflow-y-auto max-h-[520px] pr-2 space-y-2"><p class="text-gray-500 text-sm text-center mt-10">Chargement de l'annuaire...</p></div>
+                    </div>
+                </div>
 
+                <!-- Éphéméride de l'unité -->
+                <div class="az-card">
+                    <div class="az-card-header">
+                        <div class="flex items-center gap-2"><h2 class="text-xl font-bold az-c-ink">Éphéméride de l'Unité</h2><span class="az-pill">Vue globale</span></div>
+                        <button onclick="exportSuperAdminCalendarICS()" class="az-btn az-btn-ghost az-btn-sm"><i class="fa-solid fa-download mr-2"></i>Exporter (.ics)</button>
+                    </div>
+                    <div class="az-card-body"><div id="unitCalendar" class="h-[600px]"></div></div>
+                </div>
+
+                <!-- Zone de danger -->
+                <div class="az-card border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/10 border-t-4 border-t-red-600">
+                    <div class="az-card-header" style="background:transparent;border-bottom:none;padding-bottom:0">
+                        <h2 class="text-xl font-bold text-red-600 dark:text-red-400 flex items-center gap-2">⚠️ Zone de danger : Gestion de la Rentrée</h2>
+                    </div>
+                    <div class="az-card-body">
+                        <p class="text-sm az-c-ink-2 mb-6">Cette action prépare l'unité pour la nouvelle année (septembre). Elle supprime l'intégralité des calendriers, efface l'historique des absences, réinitialise les abonnements newsletters et révoque les accès de tous les anciens chefs de section. <strong class="az-c-ink">Les profils parents, enfants et les fichiers PDF restent intacts.</strong></p>
+                        <button id="resetYearBtn" class="az-btn az-btn-danger az-btn-full">Clôturer l'année scoute (Purge estivale)</button>
+                        <p id="resetYearStatus" class="mt-3 text-sm font-bold"></p>
+                    </div>
+                </div>
+
+                <div class="text-center pt-4 pb-10"><button id="logoutBtnMain" class="az-btn az-btn-ghost az-btn-sm">Se déconnecter de l'Unité</button></div>
+            </div>
+        </main>
+    </div>
     <script>
         const supabaseUrl = 'https://nbhpninmmpayivjqhouj.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iaHBuaW5tbXBheWl2anFob3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTgyNzMsImV4cCI6MjA5ODEzNDI3M30.A6BdwmCVq6uWK6hlNekvetek3Er3LfO67vfwlRPpcpU';
@@ -413,7 +446,7 @@
             if(filtered.length === 0) { list.innerHTML = '<p class="text-sm text-gray-500 text-center mt-4">Aucun résultat.</p>'; return; }
 
             list.innerHTML = filtered.map(item => `
-                <div class="p-4 bg-white border border-gray-100 rounded-lg flex flex-col md:flex-row md:items-center justify-between shadow-sm hover:shadow transition-shadow">
+                <div class="p-4 az-bg-surf border border-gray-100 rounded-lg flex flex-col md:flex-row md:items-center justify-between shadow-sm hover:shadow transition-shadow">
                     <div class="mb-2 md:mb-0">
                         <p class="font-bold text-gray-800 text-sm">${item.name}</p>
                         <p class="text-xs text-gray-500">${item.email}</p>
@@ -445,9 +478,10 @@
                 // 2. Lancer l'animation de progression simulée
                 btn.textContent = 'Envoi en cours...';
                 let currentEmailIndex = 0;
+                let progressInterval = null;
                 const estimatedDelayPerEmail = 150; 
                 
-                const progressInterval = setInterval(() => {
+                progressInterval = setInterval(() => {
                     if (currentEmailIndex < totalMembers - 1) {
                         currentEmailIndex++;
                         statusText.textContent = `Distribution : ${currentEmailIndex}/${totalMembers} messages envoyés...`;
@@ -499,6 +533,7 @@
                 statusText.className = "mt-2 text-sm text-red-600 font-bold"; 
             }
             finally { 
+                if (progressInterval) clearInterval(progressInterval);
                 btn.disabled = false; 
                 btn.textContent = 'Envoyer le message général'; 
             }
@@ -780,6 +815,18 @@
             const sectionIds = sections.map(s => s.id);
             const sectionMap = {};
             sections.forEach(s => sectionMap[s.id] = s.nom);
+
+
+            // Légende des couleurs de section
+            const legendSec = document.createElement('div');
+            legendSec.id = 'unitCalendarLegend';
+            legendSec.className = 'flex flex-wrap gap-3 text-sm font-medium py-3 border-b border-border';
+            document.querySelector('.az-page').appendChild(legendSec);
+            const unitColors = ['#1E3A8A', '#2E7D32', '#800020', '#D97706', '#7C3AED', '#059669'];
+            sections.forEach((sec, i) => {
+                const color = unitColors[i % unitColors.length];
+                legendSec.innerHTML += `<div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: ${color}"></span><span>${sec.nom}</span></div>`;
+            });
 
             var calendarEl = document.getElementById('unitCalendar');
             unitCalendarInstance = new FullCalendar.Calendar(calendarEl, {
